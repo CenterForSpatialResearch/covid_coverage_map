@@ -1,0 +1,87 @@
+body{
+	font-family:'Open Sans', sans-serif;
+    font-weight:300;
+	color:#000000;
+    font-size:11px;
+    padding:10px;
+}
+a{
+	color:#aaaaaa;
+}
+#head{
+    padding:10px;
+    letter-spacing:1px;
+    font-size:24px;
+    position:absolute;
+    left:0px;
+    top:0px;
+    background-color:rgba(255,255,255,0.8);
+    border-bottom:1px solid #dddddd;
+    height:20px;
+    width:100%;
+    overflow:hidden;
+}
+/* for charts and maps */
+ #map{
+     padding:10px;
+	 position:absolute;
+	 left:0px;
+     top:0px;
+     width:100%;
+     height:100%;
+     z-index:-1;
+ }
+ #nav{
+     width:150px;
+     position:absolute;
+     left:0px;
+     top:80px;
+     padding:0px;
+     background:rgba(255,255,255,0.1);
+     height:80%;
+ }
+ #subtitle{
+     top:50px;
+     left:10px;
+     position:absolute;
+     font-size:18px;
+ }
+ #layerControl{
+     z-index:999;
+     width:500px;
+     height:180px;
+     background-color:none;
+     margin:10px;
+ }
+ #key{
+
+     z-index:999;
+     width:400px;
+     height:100px;
+     margin:10px;
+     background-color:none;
+     border-bottom:1px solid black;
+     
+ }
+ 
+ .menu{
+     background: #fff;
+     padding-bottom:10px;
+     margin:10px;
+     width: 120px;
+     font-family: 'Open Sans', sans-serif;
+     background:rgba(0,0,0,0);
+     border-bottom:1px solid black;
+ }
+ .menu a{
+     font-size: 11px;
+     color: #000;
+     display: block;
+     padding: 5px;
+     margin:5px;
+     text-decoration: none;
+     background:#fff;
+     border:1px solid #000;
+ }
+
+ 
