@@ -427,29 +427,27 @@ function drawMap(data,aiannh,prison){
          },"admin");
          
          //for pattern: https://docs.mapbox.com/mapbox-gl-js/example/fill-pattern/
-       /*
          map.addSource("aiannh",{
-                    "type":"geojson",
-                    "data":aiannh
-                })
-                
-             
-             
-                      map.addLayer({
-                                'id': 'aiannh',
-                                'type': 'line',
-                                'source': 'aiannh',
-                                  'layout': {
-                                  // make layer visible by default
-                                  'visibility': 'none'
-                                  },
-                                'paint': {
-                                    "line-color":"black",
-                                    "line-opacity":1
-                                },
-                                'filter': ['==', '$type', 'Polygon']
-                            });*/
-       
+             "type":"geojson",
+             "data":aiannh
+         })
+         
+      
+      
+               map.addLayer({
+                         'id': 'aiannh',
+                         'type': 'line',
+                         'source': 'aiannh',
+                           'layout': {
+                           // make layer visible by default
+                           'visibility': 'none'
+                           },
+                         'paint': {
+                             "line-color":"black",
+                             "line-opacity":1
+                         },
+                         'filter': ['==', '$type', 'Polygon']
+                     });
             
       
          
