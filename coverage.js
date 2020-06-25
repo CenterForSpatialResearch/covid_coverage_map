@@ -434,26 +434,26 @@ function drawMap(data,aiannh,prison){
          
       
       
-               map.addLayer({
-                         'id': 'aiannh',
-                         'type': 'line',
-                         'source': 'aiannh',
-                           'layout': {
-                           // make layer visible by default
-                           'visibility': 'none'
-                           },
-                         'paint': {
-                             "line-color":"black",
-                             "line-opacity":1
-                         },
-                         'filter': ['==', '$type', 'Polygon']
-                     });
-            
+               // map.addLayer({
+   //                       'id': 'aiannh',
+   //                       'type': 'line',
+   //                       'source': 'aiannh',
+   //                         'layout': {
+   //                         // make layer visible by default
+   //                         'visibility': 'none'
+   //                         },
+   //                       'paint': {
+   //                           "line-color":"black",
+   //                           "line-opacity":1
+   //                       },
+   //                       'filter': ['==', '$type', 'Polygon']
+   //                   });
+   //
       
-         
- /*
+         map.removeLayer('aiannh')
+ 
          map.loadImage(
-                       'Tile_Able_Pattern.png',
+                       'pattern_thin_2_t.png',
                        function(err, image) {
                        // Throw an error if something went wrong
                            if (err) throw err;
@@ -472,7 +472,7 @@ function drawMap(data,aiannh,prison){
                            });
                        }
                    );
-          */
+          
  
          
          
