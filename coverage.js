@@ -290,7 +290,6 @@ function coverageMenu(map){
         link.textContent = displayTextC[id]
         link.id = id;
         link.onclick = function(e){
-            console.log(id)
             d3.selectAll("#coverageMenu a").style("background","#fff")
             d3.select(this).style("background","rgb(255,255,0)")
             var clickedId = d3.select(this).attr("id")
@@ -410,6 +409,8 @@ function drawMap(data,aiannh,prison){
       //   map.setLayoutProperty("counties", 'visibility', 'none')
 
 //layer order https://docs.mapbox.com/mapbox-gl-js/example/geojson-layer-in-stack/
+        map.setLayoutProperty("aiannh-text", 'visibility', 'none');
+         
          map.addSource("counties_2",{
              "type":"geojson",
              "data":data
@@ -432,7 +433,7 @@ function drawMap(data,aiannh,prison){
              "data":aiannh
          })
          
-      
+         
       
                // map.addLayer({
    //                       'id': 'aiannh',
@@ -450,7 +451,6 @@ function drawMap(data,aiannh,prison){
    //                   });
    //
       
-         map.removeLayer('aiannh')
  
          map.loadImage(
                        'pattern_thin_2_t.png',
@@ -466,6 +466,9 @@ function drawMap(data,aiannh,prison){
                                'id': 'aiannh',
                                'type': 'fill',
                                'source': 'aiannh',
+                               'layout': {
+                                   'visibility': 'none'
+                                },
                                'paint': {
                                    'fill-pattern': 'pattern'
                                }
@@ -518,30 +521,32 @@ function drawMap(data,aiannh,prison){
     // console.log(map.getStyle().layers)
          
      })
-     map.on("click","admin",function(e){
+     map.on("click","county_boundary",function(e){
          console.log(e)
      })
      
+    /*
       map.on("move",function(){
-          var zoom = map.getZoom();
-          if(zoom >=5){
-              showpopup(map)
-          }else{
-            d3.selectAll(".mappopup").remove()
-          }
-          
-          if(zoom<7){
-              d3.select("#mapbox-satellite").style("opacity",.3)
-              d3.select("#tract_svi").style("opacity",.3)
-              document.getElementById("tract_svi").disabled = true;
-              document.getElementById("mapbox-satellite").disabled = true;
+              var zoom = map.getZoom();
+              if(zoom >=5){
+                  showpopup(map)
+              }else{
+                d3.selectAll(".mappopup").remove()
+              }
               
-             // map.setLayoutProperty("county_boundary", 'visibility', 'none')
-          }else{
-              d3.select("#mapbox-satellite").style("opacity",1)
-              d3.select("#tract_svi").style("opacity",1)
-          }
-      })
+              if(zoom<7){
+                  d3.select("#mapbox-satellite").style("opacity",.3)
+                  d3.select("#tract_svi").style("opacity",.3)
+                  document.getElementById("tract_svi").disabled = true;
+                  document.getElementById("mapbox-satellite").disabled = true;
+                  
+                 // map.setLayoutProperty("county_boundary", 'visibility', 'none')
+              }else{
+                  d3.select("#mapbox-satellite").style("opacity",1)
+                  d3.select("#tract_svi").style("opacity",1)
+              }
+          })*/
+    
 }
 
 function showpopup(map){
@@ -667,13 +672,17 @@ function toggleLayers(map){
             if (visibility === 'visible') {
             map.setLayoutProperty(clickedLayer, 'visibility', 'none');
                 d3.select(this).style("background-color","white")
-            
-            this.className = '';
+                if(clickedLayer=="aiannh"){
+                    map.setLayoutProperty("aiannh-text", 'visibility', 'none');
+                }
+                this.className = '';
             } else {
-            this.className = 'active';
-            map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
-                d3.select(this).style("background-color","yellow")
-            
+                this.className = 'active';
+                map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
+                    d3.select(this).style("background-color","yellow")
+                if(clickedLayer=="aiannh"){
+                    map.setLayoutProperty("aiannh-text", 'visibility', 'visible');
+                }
             }
         };
 

@@ -54,7 +54,6 @@ a{
      margin:10px;
  }
  #key{
-
      z-index:999;
      width:400px;
      height:100px;
@@ -63,7 +62,13 @@ a{
      border-bottom:1px solid black;
      
  }
- 
+ #mainMenu{
+     position:absolute;
+     right:0px;
+     top:0px;
+     padding:10px;
+     font-size:14px;
+ }
  .menu{
      background: #fff;
      padding-bottom:10px;
