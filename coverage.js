@@ -402,6 +402,13 @@ function drawMap(data,aiannh,prison){
        // maxBounds: bounds    
      });
      map.on("load",function(){         
+         
+         map.addControl(
+             new MapboxGeocoder({
+                 accessToken: mapboxgl.accessToken,
+                 mapboxgl: mapboxgl
+             })
+         );
   
        // drawlayerControl(map)
          //zoomToBounds(map)

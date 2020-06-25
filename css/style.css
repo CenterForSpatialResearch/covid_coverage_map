@@ -8,6 +8,17 @@ body{
 a{
 	color:#aaaaaa;
 }
+.mapboxgl-ctrl-top-right{
+    margin-top:40px;
+    width:200px;
+    margin-right:40px;
+}
+.mapboxgl-ctrl-geocoder--input{
+    margin-left:30px;
+    margin-top:8px;
+    width:190px;
+    border:1px solid #fff;
+}
 #head{
     padding:10px;
     letter-spacing:1px;
