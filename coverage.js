@@ -60,10 +60,38 @@ var fillOpacity = {
 }
 
 var fillColor = {
-    SVI:{property:"SVI"+colorColumn,stops:[[0,"white"],[.33,"#8B7FA0"],[.66,"#343466"],[1,colors["SVI"]]]},
-    hotspot:{property:"hotspot"+colorColumn,stops:[[0,"white"],[1,colors["hotspot"]]]},
-    hotspotSVI:{property:"hotspotSVI"+colorColumn,stops:[[0,"white"],[1,colors["hotspotSVI"]]]},
-    highDemand:{property:"highDemand"+colorColumn,stops:[[0,"white"],[1,colors["highDemand"]]]},
+    SVI:{
+        property:"SVI"+colorColumn,
+        stops:[
+            [0,colors["SVI"][3]],
+            [16000,colors["SVI"][2]],
+            [60000,colors["SVI"][1]],
+            [240000,colors["SVI"][0]]]},
+    hotspot:{
+        property:"hotspot"+colorColumn,
+        stops:[
+            [0,colors["hotspot"][3]],
+            [0.00018,colors["hotspot"][2]],
+            [0.00065,colors["hotspot"][1]],
+            [0.99205,colors["hotspot"][0]]
+        ]
+    },
+    hotspotSVI:{
+        property:"hotspotSVI"+colorColumn,
+        stops:[
+            [0,colors["hotspotSVI"][3]],
+            [6.1,colors["hotspotSVI"][2]],
+            [25.70,colors["hotspotSVI"][1]],
+            [81.31,colors["hotspotSVI"][0]]
+        ]},
+    highDemand:{
+        property:"highDemand"+colorColumn,
+        stops:[
+            [0,colors["highDemand"][3]],
+            [50,colors["highDemand"][2]],
+            [250,colors["highDemand"][1]],
+            [1000,colors["highDemand"][0]]
+        ]},
     normal:{}
 }
 
@@ -153,12 +181,14 @@ function turnToDict(data,keyColumn,prefix){
             newDict[key]=newEntry
         }
     }
+   /*
     if(prefix!="normal"){
-    fillColor[prefix]["stops"] = [[0,colors[prefix][3]],
-    [maxPriority*.33,colors[prefix][2]],
-    [maxPriority*.67,colors[prefix][1]],
-    [maxPriority,colors[prefix][0]]]
-    }
+       fillColor[prefix]["stops"] = [[0,colors[prefix][3]],
+       [maxPriority*.33,colors[prefix][2]],
+       [maxPriority*.67,colors[prefix][1]],
+       [maxPriority,colors[prefix][0]]]
+       }*/
+   
    
     return newDict
 }
