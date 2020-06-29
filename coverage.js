@@ -431,7 +431,10 @@ function drawMap(data,aiannh,prison){
         minZoom:4//,
        // maxBounds: bounds    
      });
+     
      map.on("load",function(){         
+         map.setLayoutProperty("aiannh-text", 'visibility', 'none');
+         map.setLayoutProperty("mapbox-satellite", 'visibility', 'none');
          
          map.addControl(
              new MapboxGeocoder({
@@ -446,7 +449,6 @@ function drawMap(data,aiannh,prison){
       //   map.setLayoutProperty("counties", 'visibility', 'none')
 
 //layer order https://docs.mapbox.com/mapbox-gl-js/example/geojson-layer-in-stack/
-        map.setLayoutProperty("aiannh-text", 'visibility', 'none');
          
          map.addSource("counties_2",{
              "type":"geojson",
@@ -562,7 +564,7 @@ function drawMap(data,aiannh,prison){
          console.log(e)
      })
      
-    /*
+    
       map.on("move",function(){
               var zoom = map.getZoom();
               if(zoom >=5){
@@ -582,7 +584,7 @@ function drawMap(data,aiannh,prison){
                   d3.select("#mapbox-satellite").style("opacity",1)
                   d3.select("#tract_svi").style("opacity",1)
               }
-          })*/
+          })
     
 }
 
