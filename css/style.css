@@ -4,9 +4,11 @@ body{
 	color:#000000;
     font-size:11px;
     padding:10px;
+    overflow:hidden;
 }
 a{
 	color:#aaaaaa;
+    text-decoration:none;
 }
 .mapboxgl-ctrl-top-right{
     margin-top:40px;
@@ -19,11 +21,16 @@ a{
     width:190px;
     border:1px solid #fff;
 }
+#about{
+    position:absolute;
+    top:100px;
+    width:50%;
+}
 #head{
-    padding:10px;
+    padding:20px;
     letter-spacing:1px;
     font-size:24px;
-    position:absolute;
+    position:fixed;
     left:0px;
     top:0px;
     background-color:rgba(255,255,255,0.8);
@@ -31,6 +38,7 @@ a{
     height:20px;
     width:100%;
     overflow:hidden;
+    z-index:9;
 }
 /* for charts and maps */
  #map{
@@ -38,21 +46,22 @@ a{
 	 position:absolute;
 	 left:0px;
      top:0px;
-     width:100%;
-     height:100%;
+     width:98%;
+     height:98%;
      z-index:-1;
+     overflow:hidden;
  }
  #nav{
-     width:150px;
-     position:absolute;
-     left:0px;
-     top:80px;
+     width:200px;
+     position:fixed;
+     right:0px;
+     top:60px;
      padding:0px;
-     background:rgba(255,255,255,0.1);
+     background:rgba(255,255,255,0.8);
      height:80%;
  }
  #subtitle{
-     top:50px;
+     top:80px;
      left:10px;
      position:absolute;
      font-size:18px;
@@ -79,12 +88,13 @@ a{
      top:0px;
      padding:10px;
      font-size:14px;
+     z-index:99;
  }
+ #geocoder{width:30px;}
  .menu{
      background: #fff;
      padding-bottom:10px;
      margin:10px;
-     width: 120px;
      font-family: 'Open Sans', sans-serif;
      background:rgba(0,0,0,0);
      border-bottom:1px solid black;

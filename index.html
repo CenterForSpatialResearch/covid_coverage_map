@@ -22,6 +22,8 @@ type="text/css"
 />
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
 
+<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
 <!--
   <script type="text/javascript" src="js/mapbox-gl.js"></script>
 -->
@@ -34,19 +36,22 @@ type="text/css"
 
 <body>
 
-<div id="head">POLITICS OF CARE: CONTACT TRACER MAPPING</div>
-<div id="mainMenu">About | <strong>Map</strong></div>
+<div id="head"><strong>POLITICS OF CARE :</strong> Community Health Worker Mapping</div>
+<div id="subtitle">Map Subtitle</div>
+
+<div id="mainMenu"><a href="about.html">About</a> | <strong>Map</strong></div>
 <div id="byState"></div>
 <div id="nav">
-  <nav id="strategiesMenu" class="menu"><i>Strategies:</i></nav>
-  <nav id="coverageMenu" class="menu"><i>% Coverage for:</i></nav>
+  <nav id="strategiesMenu" class="menu"><i>How do you want to measure the need for Community Health Workers?</i></nav>
+  <nav id="coverageMenu" class="menu"><i>How many Community Health Workers can you pay for? 
+</i></nav>
+<nav id = "geocoder"></nav>
   <nav id="menu" class="menu"><i>Show Layers:</i></nav>
   <nav id="placesMenu" class="menu"><i>Go To:</i></nav>
   <nav id="download" class="menu"><i>Download the Data</i></nav>
 </div>
   <div id="map"></div>
 
-<div id="subtitle">Map Subtitle</div>
 
 
 <script type="text/javascript" src="js/d3.js"></script>

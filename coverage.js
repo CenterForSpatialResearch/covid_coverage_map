@@ -23,10 +23,10 @@ var pub = {
     tract_svi:false
 }
 var colors = {
-hotspot:["#76272D","#B53B45","#F37985","#FBD3D6"],
-SVI:["#141D45","#343466","#8B7FA0","#FBD3D6"],
-hotspotSVI:["#02568B","#3983A8","#6EAFC3","#A7DCDF"],
-    highDemand:["#2C4525","#5A7E5E","#8AB798","#BFE2CB"]}
+hotspot:["#02568B","#3983A8","#6EAFC3","#A7DCDF"],
+SVI:["#2C4525","#5A7E5E","#8AB798","#BFE2CB"],
+hotspotSVI:["#2171b5","#6baed6","#bdd7e7","#eff3ff"],
+    highDemand:["#02568B","#3983A8","#6EAFC3","#A7DCDF"]}
 function toTitleCase(str){
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
@@ -270,7 +270,7 @@ function drawKey(demandType){
 
 function strategyMenu(map){
     var strategies = ["highDemand","hotspot","SVI","hotspotSVI"]
-    var displayTextS = {highDemand:"High Demand",hotspot:"Hotspot",SVI:"SVI*Population",hotspotSVI:"Hotspot & SVI"}
+    var displayTextS = {highDemand:"Number of New COVID Cases",hotspot:"New Cases as % of Population",SVI:"Census Demographic Social Vulnerability",hotspotSVI:"Census Demographic Social Vulnerability and New Cases as % of Population "}
     var displayTextC = {percentage_for_30:"30 CT per 100,000",percentage_for_50:"50 CT per 100,000",percentage_for_70:"70 CT per 100,000",show_all:"hide coverage info"}
 
     for (var i = 0; i < strategies.length; i++) {
@@ -308,7 +308,8 @@ function strategyMenu(map){
 }
 function coverageMenu(map){
     var strategies = ["percentage_for_30","percentage_for_50","percentage_for_70","show_all"]
-    var displayTextC = {percentage_for_30:"30 CT per 100,000",percentage_for_50:"50 CT per 100,000",percentage_for_70:"70 CT per 100,000",show_all:"hide coverage info"}
+    var displayTextC = {percentage_for_30:"30 CHW per 100,000",percentage_for_50:"50 CHW per 100,000",
+    percentage_for_70:"70 CHW per 100,000",show_all:"hide coverage info"}
     var displayTextS = {highDemand:"High Demand",hotspot:"Hotspot",SVI:"SVI*Population",hotspotSVI:"Hotspot & SVI"}
 
     for (var i = 0; i < strategies.length; i++) {
@@ -436,13 +437,13 @@ function drawMap(data,aiannh,prison){
          map.setLayoutProperty("aiannh-text", 'visibility', 'none');
          map.setLayoutProperty("mapbox-satellite", 'visibility', 'none');
          
-         map.addControl(
-             new MapboxGeocoder({
+        var geocoder = new MapboxGeocoder({
                  accessToken: mapboxgl.accessToken,
                  mapboxgl: mapboxgl
              })
-         );
   
+         document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
+         
        // drawlayerControl(map)
          //zoomToBounds(map)
        //  d3.select("#hotspot_coverage30").attr("opacity",1)
@@ -464,7 +465,7 @@ function drawMap(data,aiannh,prison){
              'fill-opacity':0
              },
              'filter': ['==', '$type', 'Polygon']
-         },"admin");
+         },"us_background");
          
          //for pattern: https://docs.mapbox.com/mapbox-gl-js/example/fill-pattern/
          map.addSource("aiannh",{
@@ -519,28 +520,30 @@ function drawMap(data,aiannh,prison){
          
          
          
+        /*
          map.addSource("prisonData",{
-             "type":"geojson",
-             "data":prison
-         })
-         map.addLayer({
-             'id': 'prison',
-             'type': 'circle',
-             'source': 'prisonData',
-             'layout': {
-             // make layer visible by default
-             'visibility': 'none'
-             },
-             'paint': {
-                 /*
-                 "line-color":"blue",
-                                  "line-opacity":1*/
-                'circle-radius': 2,
-                 'circle-opacity':.5,
-                'circle-color': 'rgba(0,0,0,.4)'
-             }
-         });
-         map.setLayoutProperty("tract_svi", 'visibility', 'none');
+                     "type":"geojson",
+                     "data":prison
+                 })
+                 map.addLayer({
+                     'id': 'prison',
+                     'type': 'circle',
+                     'source': 'prisonData',
+                     'layout': {
+                     // make layer visible by default
+                     'visibility': 'none'
+                     },
+                     'paint': {
+                         
+                         "line-color":"blue",
+                                          "line-opacity":1,
+                        'circle-radius': 2,
+                         'circle-opacity':.5,
+                        'circle-color': 'rgba(0,0,0,.4)'
+                     }
+                 });*/
+        
+         //map.setLayoutProperty("tract_svi", 'visibility', 'none');
          map.setLayoutProperty("mapbox-satellite", 'visibility', 'none');
          
          
@@ -568,7 +571,7 @@ function drawMap(data,aiannh,prison){
       map.on("move",function(){
               var zoom = map.getZoom();
               if(zoom >=5){
-                  showpopup(map)
+                  //showpopup(map)
               }else{
                 d3.selectAll(".mappopup").remove()
               }
@@ -576,13 +579,13 @@ function drawMap(data,aiannh,prison){
               if(zoom<7){
                   d3.select("#mapbox-satellite").style("opacity",.3)
                   d3.select("#tract_svi").style("opacity",.3)
-                  document.getElementById("tract_svi").disabled = true;
+                  //document.getElementById("tract_svi").disabled = true;
                   document.getElementById("mapbox-satellite").disabled = true;
                   
                  // map.setLayoutProperty("county_boundary", 'visibility', 'none')
               }else{
                   d3.select("#mapbox-satellite").style("opacity",1)
-                  d3.select("#tract_svi").style("opacity",1)
+                  //d3.select("#tract_svi").style("opacity",1)
               }
           })
     
@@ -596,52 +599,62 @@ function showpopup(map){
     });     
      var hoveredStateId = null;
      
-    map.on('mousemove', 'county_boundary', function(e) {
-        if(e.features.length>0){
+    map.on('mousemove', function(e) {
+        var feature = map.queryRenderedFeatures(e.point)[0];
+        
+        
+        d3.selectAll(".mappopup").remove()
+           /*if(e.features.length>0){
              var feature = e.features[0].properties
-            // TODO: Change the cursor style as a UI indicator.             
-                         var countyName = feature.LOCATION
-                         var population = feature["E_TOTPOP"]
-                          var totalDemand = feature["SVI_total_demand_of_county"]
+        console.log(feature.COUNTY)
+            
+         */
+            // TODO: Change the cursor style as a UI indicator.    
+               
+               if(feature["properties"].LOCATION!=undefined){
+                    var countyName = feature["properties"].LOCATION
+                    var population = feature["properties"]["E_TOTPOP"]
+                          
+                var columnsToShow = ["hotspotSVI_priority","hotspot_priority","SVI_priority","highDemand_priority"]
+                  var displayString = "<strong>"+countyName+"</strong><br>"
+                                +"<strong>Population:</strong> "+population+"<br>"
+                          
+                   for(var c in columnsToShow){
+                       var label = columnsToShow[c]
+                       var value = feature["properties"][label]
+                       displayString+="<strong>"+label.split("_").join(" ")+ ": </strong>"+value+"<br>"                 
+                   }
+                   var coords = feature.geometry.coordinates[0][0]
+                   var formattedCoords = {lat:coords[1],lng:coords[0]}
                    
-                         var columnsToShow = ["hotspotSVI_priority","hotspot_priority","SVI_priority","highDemand_priority"]
-           var displayString = "<strong>"+countyName+"</strong><br>"
-                         +"<strong>Population:</strong> "+population+"<br>"
-                         +"<strong>Demand:</strong> "+totalDemand+"<br>"
+                   while (Math.abs(e.lngLat.lng - formattedCoords[0]) > 180) {
+                   formattedCoords[0] += e.lngLat.lng > formattedCoords[0] ? 360 : -360;
+                   }
+ 
+                   // Populate the popup and set its coordinates
+                   // based on the feature found.
+                   popup
+                   .setLngLat(formattedCoords)
+                   .setHTML(displayString)
+                   .addTo(map);
                    
-            for(var c in columnsToShow){
-                var label = columnsToShow[c]
-                var value = feature[label]
-                displayString+="<strong>"+label.split("_").join(" ")+ ": </strong>"+value+"<br>"                 
-            }
-       
-       
-            var x = event.clientX;     // Get the horizontal coordinate
-            var y = event.clientY;     // Get the vertical coordinate
-            d3.selectAll(".mappopup").remove()
-              d3.select("body")
-            .append("div")
-            .attr("class","mappopup")
-            .style("position","absolute")
-            .style("background-color","rgba(255,255,255,.7)")
-            .style("padding","10px")
-            .style("left",x+10+"px").style("top",y+10+"px")
-            .html(displayString)
-        }
-      
-           if (e.features.length > 0) {
-           if (hoveredStateId) {
-           map.setFeatureState(
-           { source: 'counties_2', id: "county_boundary" },
-           { hover: false }
-           );
-           }
-           hoveredStateId = e.features[0].id;
-           map.setFeatureState(
-           { source: 'counties_2', id: "county_boundary" },
-           { hover: true }
-           );
-           }
+                   /*
+                   var x = event.clientX;     // Get the horizontal coordinate
+                                      var y = event.clientY;     // Get the vertical coordinate
+                                      d3.select("body")
+                                      .append("div")
+                                      .attr("class","mappopup")
+                                      .style("position","absolute")
+                                      .style("background-color","rgba(255,255,255,.7)")
+                                      .style("padding","10px")
+                                      .style("left",x+10+"px").style("top",y+10+"px")
+                                      .html(displayString)*/
+                   
+                   
+                   
+               }         
+                         
+      //  }
        });
        map.on('mouseleave','county_boundary', function(e) {
             d3.selectAll(".mappopup").remove()
@@ -687,7 +700,8 @@ function placesMenus(map){
 
 function toggleLayers(map){
     // enumerate ids of the layers
-    var toggleableLayerIds = ['aiannh', 'prison','mapbox-satellite',"tract_svi"];
+   // var toggleableLayerIds = ['aiannh', 'prison','mapbox-satellite',"tract_svi"];
+    var toggleableLayerIds = ['mapbox-satellite'];
 
     // set up the corresponding toggle button for each layer
     for (var i = 0; i < toggleableLayerIds.length; i++) {
@@ -696,12 +710,12 @@ function toggleLayers(map){
         var link = document.createElement('a');
         link.href = '#';
         link.className = 'active';
-        link.textContent = id
+        link.textContent = "Satellite Only"
         link.id = id;
         
         link.onclick = function(e) {//TODO toggle click 
          
-            var clickedLayer = this.textContent;
+            var clickedLayer = this.id;
             e.preventDefault();
             e.stopPropagation();
 
@@ -711,17 +725,13 @@ function toggleLayers(map){
             if (visibility === 'visible') {
             map.setLayoutProperty(clickedLayer, 'visibility', 'none');
                 d3.select(this).style("background-color","white")
-                if(clickedLayer=="aiannh"){
-                    map.setLayoutProperty("aiannh-text", 'visibility', 'none');
-                }
+                link.textContent = "Satellite Only"
                 this.className = '';
             } else {
                 this.className = 'active';
                 map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
                     d3.select(this).style("background-color","yellow")
-                if(clickedLayer=="aiannh"){
-                    map.setLayoutProperty("aiannh-text", 'visibility', 'visible');
-                }
+               link.textContent = "Hide Satellite"
             }
         };
 
