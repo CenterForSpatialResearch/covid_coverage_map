@@ -465,7 +465,7 @@ function drawMap(data,aiannh,prison){
              'fill-opacity':0
              },
              'filter': ['==', '$type', 'Polygon']
-         },"us_background");
+         },"mapbox-satellite");
          
          //for pattern: https://docs.mapbox.com/mapbox-gl-js/example/fill-pattern/
          map.addSource("aiannh",{
