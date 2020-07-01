@@ -2,6 +2,7 @@
 
 //"F_THEME1","F_THEME2", "F_THEME3", "F_THEME4"
 var map;
+var detailMap;
 var themesDefinitions ={
     "SPL_THEME1":"Sum of series for Socioeconomic",
     "RPL_THEME1":"Percentile ranking for Socioeconomic",
@@ -782,50 +783,56 @@ function drawMap(data,aiannh,prison){
      });     
       var hoveredStateId = null;
      
+     var firstMove = true
      map.on('mousemove', 'county_boundary', function(e) {
          var feature = e.features[0]
          map.getCanvas().style.cursor = 'pointer'; 
         
          if(feature["properties"].LOCATION!=undefined){
-         var countyName = feature["properties"].LOCATION
-         var population = feature["properties"]["E_TOTPOP"]
+             var countyName = feature["properties"].LOCATION
+             var population = feature["properties"]["E_TOTPOP"]
   
-         var columnsToShow = ["hotspotSVI_priority","hotspot_priority","SVI_priority","highDemand_priority"]
+           //  var columnsToShow = ["hotspotSVI_priority","hotspot_priority","SVI_priority","highDemand_priority"]
+
+                  var columnsToShow = ["RPL_THEMES","highDemand_priority"]
+             var displayTextS = {highDemand_priority:"Number of New COVID Cases",hotspot_priority:"New Cases as % of Population",RPL_THEMES:"County Census Demographic Social Vulnerability Percentile",hotspotSVI_priority:"Census Demographic Social Vulnerability and New Cases as % of Population "}
 
 
-         var displayTextS = {highDemand_priority:"Number of New COVID Cases",hotspot_priority:"New Cases as % of Population",SVI_priority:"Census Demographic Social Vulnerability",hotspotSVI_priority:"Census Demographic Social Vulnerability and New Cases as % of Population "}
+             var displayString = "<span class=\"popupTitle\">"+countyName+"</span><br>"
+                     +"Population: "+population+"<br>"
+             
+             for(var c in columnsToShow){
+                 var label = displayTextS[columnsToShow[c]]
+                 // console.log(columnsToShow[c]+"_priority")
+                 var value = feature["properties"][columnsToShow[c]]
+                 displayString+=label.split("_").join(" ")+ ":"+value+"<br>"                 
+             }
+            // var coords = feature.geometry.coordinates[0][0]
+             var coords = pub.centroids[feature.properties["FIPS"]]
+             var formattedCoords =coords// {lat:coords[1],lng:coords[0]}
 
+             while (Math.abs(e.lngLat.lng - formattedCoords[0]) > 180) {
+                 formattedCoords[0] += e.lngLat.lng > formattedCoords[0] ? 360 : -360;
+             }
 
-         var displayString = "<strong>"+countyName+"</strong><br>"
-                 +"<strong>Population:</strong> "+population+"<br><br>"
-  
-         for(var c in columnsToShow){
-         var label = displayTextS[columnsToShow[c]]
-         // console.log(columnsToShow[c]+"_priority")
-         var value = feature["properties"][columnsToShow[c]]
-         displayString+="<strong>"+label.split("_").join(" ")+ ": </strong>"+value+"<br><br>"                 
-         }
-        // var coords = feature.geometry.coordinates[0][0]
-         var coords = pub.centroids[feature.properties["FIPS"]]
-         var formattedCoords =coords// {lat:coords[1],lng:coords[0]}
-
-         while (Math.abs(e.lngLat.lng - formattedCoords[0]) > 180) {
-         formattedCoords[0] += e.lngLat.lng > formattedCoords[0] ? 360 : -360;
-         }
-
-         // Populate the popup and set its coordinates
-         // based on the feature found.
-         popup
-         .setLngLat(formattedCoords)
-         .setHTML(displayString)
-         .addTo(map);
+             popup
+             .setLngLat(formattedCoords)
+             .setHTML(displayString)
+             .addTo(map);
 
          }         
+         
+         d3.select(".mapboxgl-popup-content").style("background-color","rgba(255,255,255,.9)")
+         d3.select(".mapboxgl-popup-content").append("div").attr("id","sMap").style("width","200px").style("height","200px")//.style('background-color',"red")
+         
+         subMap(firstMove,formattedCoords)
+         firstMove=false
+
      });
  
-     map.on('mouseleave','county_boundary', function(e) {
-         d3.selectAll(".mapboxgl-popup").remove()
-     })
+     // map.on('mouseleave','county_boundary', function(e) {
+  //        d3.selectAll(".mapboxgl-popup").remove()
+  //    })
     
       map.on("move",function(){
               var zoom = map.getZoom();
@@ -846,7 +853,21 @@ function drawMap(data,aiannh,prison){
           })
     
 }
-
+function subMap(firstMove,center){
+  //  console.log(center)
+    if(firstMove == false){
+        detailMap.remove()
+    }
+    detailMap = new mapboxgl.Map({
+         container: 'sMap',
+ 		style: "mapbox://styles/sidl/ckbsbi96q3mta1hplaopbjt9s",
+ 		center:[center.lng,center.lat],
+         zoom: 15,
+         preserveDrawingBuffer: true,
+        minZoom:4//,
+       // maxBounds: bounds    
+     });
+}
 function showpopup(map){
     //popup
     var popup = new mapboxgl.Popup({
