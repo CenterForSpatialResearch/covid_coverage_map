@@ -29,10 +29,10 @@ var highlightColor = "#3983a8"
 var bghighlightColor = "#ffcc67"
 var outlineColor = "#ffcc67"
 var colors = {
-hotspot:["#02568B","#3983A8","#6EAFC3","#A7DCDF"],
+hotspot:["#A7DCDF","#6EAFC3","#3983A8","#02568B"],
 SVI:["#A7DCDF","#6EAFC3","#3983A8","#02568B"],
-hotspotSVI:["#02568B","#3983A8","#6EAFC3","#A7DCDF"],
-    highDemand:["#02568B","#3983A8","#6EAFC3","#A7DCDF"]}
+hotspotSVI:["#A7DCDF","#6EAFC3","#3983A8","#02568B"],
+    highDemand:["#A7DCDF","#6EAFC3","#3983A8","#02568B"]}
 function toTitleCase(str){
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
@@ -88,27 +88,27 @@ var fillColor = {
     hotspot:{
         property:"hotspot"+colorColumn,
         stops:[
-            [0,colors["hotspot"][3]],
-            [0.00018,colors["hotspot"][2]],
-            [0.00065,colors["hotspot"][1]],
-            [0.99205,colors["hotspot"][0]]
+            [0,colors["hotspot"][0]],
+            [0.00018,colors["hotspot"][1]],
+            [0.00065,colors["hotspot"][2]],
+            [0.99205,colors["hotspot"][3]]
         ]
     },
     hotspotSVI:{
         property:"hotspotSVI"+colorColumn,
         stops:[
-            [0,colors["hotspotSVI"][3]],
-            [6.1,colors["hotspotSVI"][2]],
-            [25.70,colors["hotspotSVI"][1]],
-            [81.31,colors["hotspotSVI"][0]]
+            [0,colors["hotspotSVI"][0]],
+            [6.1,colors["hotspotSVI"][1]],
+            [25.70,colors["hotspotSVI"][2]],
+            [81.31,colors["hotspotSVI"][3]]
         ]},
     highDemand:{
         property:"highDemand"+colorColumn,
         stops:[
-            [0,colors["highDemand"][3]],
-            [50,colors["highDemand"][2]],
-            [250,colors["highDemand"][1]],
-            [1000,colors["highDemand"][0]]
+            [0,colors["highDemand"][0]],
+            [50,colors["highDemand"][1]],
+            [250,colors["highDemand"][2]],
+            [1000,colors["highDemand"][3]]
         ]},
     normal:{}
 }
@@ -255,14 +255,22 @@ function combineGeojson(all,counties){
     return counties
 }
 
+function sumProperty(prop,list){
+     var total = 0
+    for ( var i = 0, _len = list.length; i < _len; i++ ) {
+        total += parseFloat(list[i][prop])
+    }
+    return total
+}
+
 function drawHistogram(strategy){
   //  var strategy = "SVI"
     var priority = strategy+"_priority"
     d3.select("#histogram svg").remove()
    var svg = d3.select("#histogram")
-    .append("svg").attr("width",1200).attr("height",100)
-   
-
+                .append("svg")
+                .attr("width",1200)
+                .attr("height",100)
    
     var height = 80
     var width = 700
@@ -271,7 +279,7 @@ function drawHistogram(strategy){
     
     var breaks = fillColor[strategy]["stops"]
 
-    var max = Math.round(Math.max.apply(Math, activeData.map(function(o) { return o[priority]; })))
+    var max = Math.max.apply(Math, activeData.map(function(o) { return o[priority]; }))
     
     var totalCounties = activeData.length
     
@@ -287,20 +295,21 @@ function drawHistogram(strategy){
             var startValue = breaks[i][0]
             var endValue = breaks[parseInt(i)+1][0]
         }
-    
+        
         var group =activeData.filter(function(d){
-            //console.log(d[coverage])
-            return d[priority]>startValue && d[priority]<endValue
-        })
+            return d[priority]>=startValue && d[priority]<=endValue
+        })        
+        var sum = sumProperty(strategy+"_total_demand_of_county",group)
+        
         var startX = cLength
         cLength+=Math.round((group.length/totalCounties)*10000)/100
         actualLength = group.length
         var color = colors[strategy][i]
-        formattedBreaks.push({startV:startValue,endV:endValue,color:color,cLength:cLength, sLength:startX,actualLength:actualLength,length:Math.round((group.length/totalCounties)*10000)/100})
+        formattedBreaks.push({cases:sum,color:color,cLength:cLength, sLength:startX,actualLength:actualLength,length:Math.round((group.length/totalCounties)*10000)/100})
     }
-  //  console.log(formattedBreaks)
     var xScale = d3.scaleLinear().domain([0,100]).range([0, barWidth])
     
+    console.log(formattedBreaks)
    var gradient = svg.append("defs").append("linearGradient")
     .attr("id","test")
     .attr("x1","0%")
@@ -308,8 +317,10 @@ function drawHistogram(strategy){
     .attr("x2","100%")
     .attr("y2","0%")
     
-    svg.append("text").text("priority value").attr("x",20).attr("y",30)
-    svg.append("text").text("# of counties").attr("x",20).attr("y",90)
+   // svg.append("text").text("priority value").attr("x",20).attr("y",30)
+    svg.append("text").text("# of counties").attr("x",10).attr("y",45)
+    svg.append("text").text("# of cases").attr("x",10).attr("y",75)
+
 
     for(var b in formattedBreaks){
         var bk = formattedBreaks[b]
@@ -324,28 +335,45 @@ function drawHistogram(strategy){
     .attr("width", barWidth)
     .attr("height",10)
     .attr("fill","url(#test)")
+    .attr("stroke","#fff")
     
     for(var b in formattedBreaks){
         var bk = formattedBreaks[b]
-        svg.append("text")
-        .text(bk.endV)
-        .attr("x",xScale(bk.cLength)-5)
-        .attr("y",55)
-        .style("writing-mode","vertical-rl")
-        .attr("text-anchor","end")
+        // svg.append("text")
+ //        .text(bk.endV)
+ //        .attr("x",xScale(bk.cLength)-5)
+ //        .attr("y",55)
+ //        .style("writing-mode","vertical-rl")
+ //        .attr("text-anchor","end")
         
+        
+        // svg.append("rect")
+      //       .attr("x",xScale(bk.sLength))
+      //       .attr("y",20)
+      //       .attr("width", xScale(bk.length))
+      //       .attr("height",10)
+      //       .attr("fill",bk.color)
         
         svg.append("text")
         .text(bk.actualLength)
         .attr("x",xScale(bk.sLength+bk.length/2)-5)
-        .attr("y",75)
+        .attr("y",55)
+        .attr("text-anchor","end")
+        .style("writing-mode","vertical-rl")
+        
+        svg.append("text")
+        .text(bk.cases)
+        .attr("x",xScale(bk.sLength+bk.length/2)-5)
+        .attr("y",65)
         .attr("text-anchor","start")
+        .style("writing-mode","vertical-rl")
         
         svg.append("rect")
         .attr("width",2)
         .attr("height",10)
         .attr("x",xScale(bk.cLength)-2)
         .attr("y",50)
+        .attr("fill","white")
     }
     
 
@@ -642,10 +670,10 @@ function drawMap(data,aiannh,prison){
     map = new mapboxgl.Map({
          container: 'map',
  		style: "mapbox://styles/sidl/ckbsbi96q3mta1hplaopbjt9s",
- 		center:[-96,39],
-         zoom: 4,
+ 		center:[-93,37],
+         zoom: 3.8,
          preserveDrawingBuffer: true,
-        minZoom:4//,
+        minZoom:3.5//,
        // maxBounds: bounds    
      });
      
@@ -748,9 +776,11 @@ function drawMap(data,aiannh,prison){
     // console.log(map.getStyle().layers)
          
      })
+    /*
      map.on("click","county_boundary",function(e){
-         console.log(e.features[0].properties["SVI_total_demand_of_county"])
-     })
+             console.log(e.features[0].properties["SVI_total_demand_of_county"])
+         })*/
+    
      var popup = new mapboxgl.Popup({
          closeButton: false,
          closeOnClick: false
@@ -761,12 +791,11 @@ function drawMap(data,aiannh,prison){
      map.on('mousemove', 'county_boundary', function(e) {
          var feature = e.features[0]
          map.getCanvas().style.cursor = 'pointer'; 
-        
          if(feature["properties"].LOCATION!=undefined){
              var countyName = feature["properties"].LOCATION
              var population = feature["properties"]["E_TOTPOP"]
              var geometry = feature["geometry"]
-  
+             var countyId = feature["properties"]["FIPS"]
            //  var columnsToShow = ["hotspotSVI_priority","hotspot_priority","SVI_priority","highDemand_priority"]
 
                   var columnsToShow = ["RPL_THEMES","highDemand_priority"]
@@ -800,7 +829,7 @@ function drawMap(data,aiannh,prison){
          d3.select(".mapboxgl-popup-content").style("background-color","rgba(255,255,255,.9)")
          d3.select(".mapboxgl-popup-content").append("div").attr("id","sMap").style("width","200px").style("height","200px")//.style('background-color',"red")
          
-         subMap(firstMove,formattedCoords,geometry)
+         subMap(firstMove,formattedCoords,geometry,countyId)
          firstMove=false
 
      });
@@ -828,7 +857,7 @@ function drawMap(data,aiannh,prison){
           })
     
 }
-function subMap(firstMove,center,geometry){
+function subMap(firstMove,center,geometry,countyId){
     var coordinates = geometry.coordinates[0]
     var bounds = coordinates.reduce(function(bounds, coord) {
             return bounds.extend(coord);
@@ -848,6 +877,11 @@ function subMap(firstMove,center,geometry){
      detailMap.fitBounds(bounds, {
          padding: 5
      });
+/*
+     var filter = ['in',["get",'FIPS'],["literal",[countyId]]];
+     detailMap.setFilter("county",filter)*/
+
+     
 }
 
 function placesMenus(map){

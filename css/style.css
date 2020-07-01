@@ -51,12 +51,11 @@ a{
 }
 /* for charts and maps */
  #map{
-     padding:10px;
 	 position:absolute;
 	 left:0px;
-     top:0px;
-     width:98%;
-     height:98%;
+     top:80px;
+     width:100%;
+     height:100%;
      z-index:-1;
      overflow:hidden;
  }
@@ -108,7 +107,7 @@ a{
  #histogram{
      position:absolute;
      left:0px;
-     bottom:40px;
+     bottom:20px;
      z-index:999;
      margin:10px;
  }
