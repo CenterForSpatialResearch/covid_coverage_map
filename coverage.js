@@ -26,7 +26,8 @@ var pub = {
     centroids:null
 }
 var highlightColor = "#3983a8"
-var bghighlightColor = "rgba(255,255,0,.5)"
+var bghighlightColor = "#ffcc67"
+var outlineColor = "#ffcc67"
 var colors = {
 hotspot:["#02568B","#3983A8","#6EAFC3","#A7DCDF"],
 SVI:["#A7DCDF","#6EAFC3","#3983A8","#02568B"],
@@ -451,48 +452,19 @@ function strategyMenu(map){
              lineOpacity[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
               
               if (pub.coverage=="show_all"){
-                  d3.select("#subtitle").html("Map showing "+displayTextS[pub.strategy]+ "")
-                  map.setPaintProperty("county_outline", 'line-opacity',.3)
+                  map.setPaintProperty("county_outline", 'line-opacity',0)
+                  map.setPaintProperty("county_outline", 'line-color',"#fff")
+                  map.setPaintProperty("county_outline", 'line-width',1)
               }else{
                   map.setPaintProperty("county_outline", 'line-opacity',lineOpacity[pub.coverage])
-                  map.setPaintProperty("county_outline", 'line-color',"orange")
+                  map.setPaintProperty("county_outline", 'line-color',outlineColor)
+              map.setPaintProperty("county_outline", 'line-width',lineWeight[pub.coverage])
                   
-              }
-
+              }          
               map.setPaintProperty("county_boundary", 'fill-opacity',1)
               map.setPaintProperty("county_boundary", 'fill-color',fillColor[pub.strategy])        
               drawHistogram(pub.strategy)
         })
-        
-            // var link = document.createElement('a');
-    //         link.href = '#';
-    //         link.className = 'active';
-    //         link.textContent = displayTextS[id]
-    //         link.id =id
-    //
-    //         link.onclick = function(e){
-    //             d3.selectAll("#strategiesMenu a").style("background","#fff")
-    //             d3.select(this).style("background","rgb(255,255,0)")
-    //
-    //             var clickedId = d3.select(this).attr("id")
-    //             pub.strategy = clickedId
-    //             if(pub.coverage==undefined){
-    //                 pub.coverage = "show_all"
-    //                 d3.select("#show_all").style("background","yellow")
-    //             }
-    //             fillOpacity[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
-    //             d3.select("#subtitle").html("Map showing percent coverage at " +displayTextC[pub.coverage]+" if "+displayTextS[pub.strategy]+ " is prioritized")
-    //             if (pub.coverage=="show_all"){
-    //                 d3.select("#subtitle").html("Map showing "+displayTextS[pub.strategy]+ "")
-    //             }
-    //             map.setPaintProperty("county_boundary", 'fill-color',fillColor[pub.strategy])
-    //             map.setPaintProperty("county_boundary", 'fill-opacity',fillOpacity[pub.coverage])
-    //
-    //             drawHistogram(pub.strategy)
-    //         }
-    //         var layers = document.getElementById('strategiesMenu');
-    //
-    //         layers.appendChild(link);
      }
 }
 function coverageMenu(map){
@@ -545,11 +517,13 @@ function coverageMenu(map){
                d3.select("#subtitle").html("Map showing percent coverage at " +displayTextC[pub.coverage]+" if "+displayTextS[pub.strategy]+ " is prioritized")
               if (pub.coverage=="show_all"){
                   d3.select("#subtitle").html("Map showing "+displayTextS[pub.strategy]+ "")
-                  map.setPaintProperty("county_outline", 'line-opacity',.3)
+                  map.setPaintProperty("county_outline", 'line-opacity',0)
+                  map.setPaintProperty("county_outline", 'line-color',"#fff")
+                  map.setPaintProperty("county_outline", 'line-width',1)
               }else{
                   map.setPaintProperty("county_outline", 'line-opacity',lineOpacity[pub.coverage])
                   map.setPaintProperty("county_outline", 'line-width',lineWeight[pub.coverage])
-                  map.setPaintProperty("county_outline", 'line-color',"orange")
+                  map.setPaintProperty("county_outline", 'line-color',outlineColor)
               }
 
               map.setPaintProperty("county_boundary", 'fill-opacity',1)
@@ -791,6 +765,7 @@ function drawMap(data,aiannh,prison){
          if(feature["properties"].LOCATION!=undefined){
              var countyName = feature["properties"].LOCATION
              var population = feature["properties"]["E_TOTPOP"]
+             var geometry = feature["geometry"]
   
            //  var columnsToShow = ["hotspotSVI_priority","hotspot_priority","SVI_priority","highDemand_priority"]
 
@@ -805,7 +780,7 @@ function drawMap(data,aiannh,prison){
                  var label = displayTextS[columnsToShow[c]]
                  // console.log(columnsToShow[c]+"_priority")
                  var value = feature["properties"][columnsToShow[c]]
-                 displayString+=label.split("_").join(" ")+ ":"+value+"<br>"                 
+                 displayString+=label.split("_").join(" ")+ ": "+value+"<br>"                 
              }
             // var coords = feature.geometry.coordinates[0][0]
              var coords = pub.centroids[feature.properties["FIPS"]]
@@ -825,7 +800,7 @@ function drawMap(data,aiannh,prison){
          d3.select(".mapboxgl-popup-content").style("background-color","rgba(255,255,255,.9)")
          d3.select(".mapboxgl-popup-content").append("div").attr("id","sMap").style("width","200px").style("height","200px")//.style('background-color',"red")
          
-         subMap(firstMove,formattedCoords)
+         subMap(firstMove,formattedCoords,geometry)
          firstMove=false
 
      });
@@ -853,75 +828,28 @@ function drawMap(data,aiannh,prison){
           })
     
 }
-function subMap(firstMove,center){
+function subMap(firstMove,center,geometry){
+    var coordinates = geometry.coordinates[0]
+    var bounds = coordinates.reduce(function(bounds, coord) {
+            return bounds.extend(coord);
+        }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+    
   //  console.log(center)
     if(firstMove == false){
         detailMap.remove()
     }
     detailMap = new mapboxgl.Map({
          container: 'sMap',
- 		style: "mapbox://styles/sidl/ckbsbi96q3mta1hplaopbjt9s",
+ 		style: "mapbox://styles/sidl/ckc3ibioh0iza1iqiz0d3vnii",
  		center:[center.lng,center.lat],
-         zoom: 15,
+         zoom: 8,
          preserveDrawingBuffer: true,
-        minZoom:4//,
-       // maxBounds: bounds    
+     });
+     detailMap.fitBounds(bounds, {
+         padding: 5
      });
 }
-function showpopup(map){
-    //popup
-    var popup = new mapboxgl.Popup({
-    closeButton: false,
-    closeOnClick: false
-    });     
-     var hoveredStateId = null;
-     
-    map.on('mousemove', 'counties', function(e) {
-        console.log(moved)
-        var feature = e.features[0]
-        map.getCanvas().style.cursor = 'pointer'; 
-        
-        if(feature["properties"].LOCATION!=undefined){
-        var countyName = feature["properties"].LOCATION
-        var population = feature["properties"]["E_TOTPOP"]
-  
-        var columnsToShow = ["hotspotSVI_priority","hotspot_priority","SVI_priority","highDemand_priority"]
 
-
-        var displayTextS = {highDemand_priority:"Number of New COVID Cases",hotspot_priority:"New Cases as % of Population",SVI_priority:"Census Demographic Social Vulnerability",hotspotSVI_priority:"Census Demographic Social Vulnerability and New Cases as % of Population "}
-
-
-        var displayString = "<strong>"+countyName+"</strong><br>"
-                +"<strong>Population:</strong> "+population+"<br><br>"
-  
-        for(var c in columnsToShow){
-        var label = displayTextS[columnsToShow[c]]
-        // console.log(columnsToShow[c]+"_priority")
-        var value = feature["properties"][columnsToShow[c]]
-        displayString+="<strong>"+label.split("_").join(" ")+ ": </strong>"+value+"<br><br>"                 
-        }
-       // var coords = feature.geometry.coordinates[0][0]
-        var coords = pub.centroids[feature.properties["FIPS"]]
-        var formattedCoords =coords// {lat:coords[1],lng:coords[0]}
-
-        while (Math.abs(e.lngLat.lng - formattedCoords[0]) > 180) {
-        formattedCoords[0] += e.lngLat.lng > formattedCoords[0] ? 360 : -360;
-        }
-
-        // Populate the popup and set its coordinates
-        // based on the feature found.
-        popup
-        .setLngLat(formattedCoords)
-        .setHTML(displayString)
-        .addTo(map);
-
-        }         
-    });
- 
-    map.on('mouseleave','county_boundary', function(e) {
-        d3.selectAll(".mappopup").remove()
-    })
-}
 function placesMenus(map){
     var places = ["Contiguous 48","Alaska","Hawaii","Puerto_Rico"]
     var coords = {
