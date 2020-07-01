@@ -91,6 +91,13 @@ a{
      z-index:99;
  }
  #geocoder{width:30px;}
+ #histogram{
+     position:absolute;
+     left:0px;
+     bottom:40px;
+     z-index:999;
+     margin:10px;
+ }
  .menu{
      background: #fff;
      padding-bottom:10px;

@@ -20,12 +20,14 @@ var pub = {
     aiannh:false,
     prison:false,
     satellite:false,
-    tract_svi:false
+    tract_svi:false,
+    all:null,
+    centroids:null
 }
 var colors = {
 hotspot:["#02568B","#3983A8","#6EAFC3","#A7DCDF"],
-SVI:["#2C4525","#5A7E5E","#8AB798","#BFE2CB"],
-hotspotSVI:["#2171b5","#6baed6","#bdd7e7","#eff3ff"],
+SVI:["#A7DCDF","#6EAFC3","#3983A8","#02568B"],
+hotspotSVI:["#02568B","#3983A8","#6EAFC3","#A7DCDF"],
     highDemand:["#02568B","#3983A8","#6EAFC3","#A7DCDF"]}
 function toTitleCase(str){
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
@@ -47,26 +49,26 @@ var prison = d3.json("prisons_centroids.geojson")
 var usOutline = d3.json("us_outline.geojson")
 var normalizedPriority = d3.csv("priority_normalized_for_policies.csv")
 
-Promise.all([highDemand,hotspot,SVI,hotspotSVI,counties,aiannh,prison,usOutline,normalizedPriority])
+Promise.all([highDemand,hotspot,SVI,hotspotSVI,counties,aiannh,prison,usOutline,normalizedPriority,countyCentroids])
 .then(function(data){
-    ready(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8],data[9])
+    ready(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8],data[9],data[10])
 })
 
 var fillOpacity = {
-    percentage_for_70:{property:"percentage_for_70",stops:[[0,0],[1,.8]]},
-    percentage_for_50:{property:"percentage_for_50",stops:[[0,0],[1,.8]]},
-    percentage_for_30:{property:"percentage_for_30",stops:[[0,0],[1,.8]]},
-    show_all:.8
+    percentage_for_70:{property:"percentage_for_70",stops:[[0,0],[1,1]]},
+    percentage_for_50:{property:"percentage_for_50",stops:[[0,0],[1,1]]},
+    percentage_for_30:{property:"percentage_for_30",stops:[[0,0],[1,1]]},
+    show_all:1
 }
-
+var gray = "#aaaaaa"
 var fillColor = {
     SVI:{
         property:"SVI"+colorColumn,
         stops:[
-            [0,colors["SVI"][3]],
-            [16000,colors["SVI"][2]],
-            [60000,colors["SVI"][1]],
-            [240000,colors["SVI"][0]]]},
+            [0,colors["SVI"][0]],
+            [16000,colors["SVI"][1]],
+            [60000,colors["SVI"][2]],
+            [240000,colors["SVI"][3]]]},
     hotspot:{
         property:"hotspot"+colorColumn,
         stops:[
@@ -111,18 +113,19 @@ var latestDate = null
 var coverageSet = ["percentage_for_30","percentage_for_50","percentage_for_70","show_all"]
 var demandSet = ["highDemand","hotspot","SVI","hotspotSVI"]
 var startColor = "white"
-function ready(highDemandData,hotspotData,SVIData,hotspotSVIData,counties,aiannh,prison,usOutline,normalizedPriority){
+function ready(highDemandData,hotspotData,SVIData,hotspotSVIData,counties,aiannh,prison,usOutline,normalizedPriority,county_centroids){
     //convert to geoid dict
+    
     var highDemand=turnToDict(highDemandData,"County FIPS","highDemand")
     var hotspot=turnToDict(hotspotData,"County FIPS","hotspot")
     var SVI=turnToDict(SVIData,"County FIPS","SVI")
     var hotspotSVI=turnToDict(hotspotSVIData,"County FIPS","hotspotSVI")
     var normalizedP = turnToDict(normalizedPriority,"FIPS","normal")
     
-    var all = {"highDemand":highDemand,"hotspot":hotspot,"SVI":SVI,"hotspotSVI":hotspotSVI,"normal":normalizedP}
-   // centroids = formatCentroids(county_centroids.features)
+    pub.all = {"highDemand":highDemand,"hotspot":hotspot,"SVI":SVI,"hotspotSVI":hotspotSVI,"normal":normalizedP}
+    pub.centroids = formatCentroids(county_centroids.features)
     //add to geojson of counties
-    var combinedGeojson = combineGeojson(all,counties)
+    var combinedGeojson = combineGeojson(pub.all,counties)
     //console.log(combinedGeojson)
     //drawKey("none")
     drawMap(combinedGeojson,aiannh,prison,usOutline)
@@ -145,11 +148,25 @@ function ready(highDemandData,hotspotData,SVIData,hotspotSVIData,counties,aiannh
             var blob = new Blob([d3.csvFormat(data)], {type: "text/csv;charset=utf-8"});
             saveAs(blob, "politics_of_care_data_"+today+".csv");
         });
+        
+        var noDemand = []
+        
+        for(j in pub.all["highDemand"]){
+            var actualDemand = pub.all["highDemand"][j]["SVI_total_demand_of_county"]
+            if(actualDemand ==0){
+                noDemand.push(pub.all["highDemand"][j]["County_FIPS"])
+            }
+        }
+        console.log(noDemand)
+        
+    //drawHistogram(pub.strategy,pub.coverage)
 };
 function turnToDict(data,keyColumn,prefix){
     var newDict = {}
     var maxPriority = 0
     for(var i in data){
+        var actualDemand = parseInt(data[i]["total_demand_of_county"])
+        
         if(data[i][keyColumn]!=undefined){
             var key = data[i][keyColumn]
             if(key.length==4){
@@ -166,6 +183,14 @@ function turnToDict(data,keyColumn,prefix){
                 if(keys[k]=="County FIPS"){
                     var cKey = "County_FIPS"
                     var cValue = data[i][keys[k]]
+                }
+                else if(keys[k]=="percent_for_30" ||keys[k]=="percent_for_50"||keys[k]=="percent_for_70"){
+                    var cKey = prefix+"_"+keys[k]
+                    if(actualDemand == 0){
+                        var cValue = -999
+                    }else{
+                        var cValue = data[i][keys[k]]
+                    }
                 }
                 //add type to coverage to differentiate when combined
                 else {
@@ -188,7 +213,6 @@ function turnToDict(data,keyColumn,prefix){
        [maxPriority*.67,colors[prefix][1]],
        [maxPriority,colors[prefix][0]]]
        }*/
-   
    
     return newDict
 }
@@ -213,6 +237,101 @@ function combineGeojson(all,counties){
         }
     }
     return counties
+}
+
+function drawHistogram(strategy){
+  //  var strategy = "SVI"
+    var priority = strategy+"_priority"
+   var svg = d3.select("#histogram")
+    .append("svg").attr("width",1200).attr("height",100)
+   
+
+   
+    var height = 80
+    var width = 700
+    var barWidth = 650
+    var activeData = Object.values(pub.all[strategy])
+    
+    var breaks = fillColor[strategy]["stops"]
+
+    var max = Math.round(Math.max.apply(Math, activeData.map(function(o) { return o[priority]; })))
+    
+    var totalCounties = activeData.length
+    
+    var formattedBreaks = []
+    var cLength = 0
+    
+    for(var i in breaks){
+        if(i==breaks.length-1){
+            var endValue = max
+            var startValue = breaks[i][0]
+
+        }else{
+            var startValue = breaks[i][0]
+            var endValue = breaks[parseInt(i)+1][0]
+        }
+    
+        var group =activeData.filter(function(d){
+            //console.log(d[coverage])
+            return d[priority]>startValue && d[priority]<endValue
+        })
+        var startX = cLength
+        cLength+=Math.round((group.length/totalCounties)*10000)/100
+        actualLength = group.length
+        var color = colors[strategy][i]
+        formattedBreaks.push({startV:startValue,endV:endValue,color:color,cLength:cLength, sLength:startX,actualLength:actualLength,length:Math.round((group.length/totalCounties)*10000)/100})
+    }
+  //  console.log(formattedBreaks)
+    var xScale = d3.scaleLinear().domain([0,100]).range([0, barWidth])
+    
+   var gradient = svg.append("defs").append("linearGradient")
+    .attr("id","test")
+    .attr("x1","0%")
+    .attr("y1","0%")
+    .attr("x2","100%")
+    .attr("y2","0%")
+    
+    svg.append("text").text("priority value").attr("x",20).attr("y",30)
+    svg.append("text").text("# of counties").attr("x",20).attr("y",90)
+
+    for(var b in formattedBreaks){
+        var bk = formattedBreaks[b]
+        gradient.append("stop")
+        .attr("offset",bk.sLength+"%")
+        .style("stop-color",bk.color)
+        
+    }
+    svg.append("rect")
+    .attr("x",0)
+    .attr("y",50)
+    .attr("width", barWidth)
+    .attr("height",10)
+    .attr("fill","url(#test)")
+    
+    for(var b in formattedBreaks){
+        var bk = formattedBreaks[b]
+        svg.append("text")
+        .text(bk.endV)
+        .attr("x",xScale(bk.cLength)-5)
+        .attr("y",55)
+        .style("writing-mode","vertical-rl")
+        .attr("text-anchor","end")
+        
+        
+        svg.append("text")
+        .text(bk.actualLength)
+        .attr("x",xScale(bk.sLength+bk.length/2)-5)
+        .attr("y",75)
+        .attr("text-anchor","start")
+        
+        svg.append("rect")
+        .attr("width",2)
+        .attr("height",10)
+        .attr("x",xScale(bk.cLength)-2)
+        .attr("y",50)
+    }
+    
+
 }
 
 function drawKey(demandType){
@@ -297,10 +416,10 @@ function strategyMenu(map){
             if (pub.coverage=="show_all"){
                 d3.select("#subtitle").html("Map showing "+displayTextS[pub.strategy]+ "")
             }
-            
             map.setPaintProperty("county_boundary", 'fill-color',fillColor[pub.strategy])
-           
             map.setPaintProperty("county_boundary", 'fill-opacity',fillOpacity[pub.coverage])
+            
+            drawHistogram(pub.strategy)
         }
         var layers = document.getElementById('strategiesMenu');
         layers.appendChild(link);
@@ -395,7 +514,7 @@ function drawlayerControl(map){
                 fillOpacity[coverage]["property"]=demand+"_"+coverage
                 
                 map.setPaintProperty("county_boundary", 'fill-color',fillColor[demand])
-                map.setPaintProperty("county_boundary", 'fill-opacity',fillOpacity[coverage])
+                map.setPaintProperty("county_boundary", 'stroke-opacity',fillOpacity[coverage])
                 
                 //drawKey(demand)
             })
@@ -472,8 +591,11 @@ function drawMap(data,aiannh,prison){
              "type":"geojson",
              "data":aiannh
          })
-         
-         
+         console.log(map.getStyle().layers)
+    /*
+         var filter = ["==",]
+             map.filter()*/
+    
       
                // map.addLayer({
    //                       'id': 'aiannh',
@@ -564,17 +686,64 @@ function drawMap(data,aiannh,prison){
          
      })
      map.on("click","county_boundary",function(e){
-         console.log(e)
+         console.log(e.features[0].properties["SVI_total_demand_of_county"])
      })
+     var popup = new mapboxgl.Popup({
+     closeButton: false,
+     closeOnClick: false
+     });     
+      var hoveredStateId = null;
      
+     map.on('mousemove', 'county_boundary', function(e) {
+         var feature = e.features[0]
+         map.getCanvas().style.cursor = 'pointer'; 
+        
+         if(feature["properties"].LOCATION!=undefined){
+         var countyName = feature["properties"].LOCATION
+         var population = feature["properties"]["E_TOTPOP"]
+  
+         var columnsToShow = ["hotspotSVI_priority","hotspot_priority","SVI_priority","highDemand_priority"]
+
+
+         var displayTextS = {highDemand_priority:"Number of New COVID Cases",hotspot_priority:"New Cases as % of Population",SVI_priority:"Census Demographic Social Vulnerability",hotspotSVI_priority:"Census Demographic Social Vulnerability and New Cases as % of Population "}
+
+
+         var displayString = "<strong>"+countyName+"</strong><br>"
+                 +"<strong>Population:</strong> "+population+"<br><br>"
+  
+         for(var c in columnsToShow){
+         var label = displayTextS[columnsToShow[c]]
+         // console.log(columnsToShow[c]+"_priority")
+         var value = feature["properties"][columnsToShow[c]]
+         displayString+="<strong>"+label.split("_").join(" ")+ ": </strong>"+value+"<br><br>"                 
+         }
+        // var coords = feature.geometry.coordinates[0][0]
+         var coords = pub.centroids[feature.properties["FIPS"]]
+         var formattedCoords =coords// {lat:coords[1],lng:coords[0]}
+
+         while (Math.abs(e.lngLat.lng - formattedCoords[0]) > 180) {
+         formattedCoords[0] += e.lngLat.lng > formattedCoords[0] ? 360 : -360;
+         }
+
+         // Populate the popup and set its coordinates
+         // based on the feature found.
+         popup
+         .setLngLat(formattedCoords)
+         .setHTML(displayString)
+         .addTo(map);
+
+         }         
+     });
+ 
+     map.on('mouseleave','county_boundary', function(e) {
+         console.log('eft')
+         d3.selectAll(".mapboxgl-popup").remove()
+     })
     
       map.on("move",function(){
               var zoom = map.getZoom();
-              if(zoom >=5){
                   //showpopup(map)
-              }else{
-                d3.selectAll(".mappopup").remove()
-              }
+            
               
               if(zoom<7){
                   d3.select("#mapbox-satellite").style("opacity",.3)
@@ -599,66 +768,51 @@ function showpopup(map){
     });     
      var hoveredStateId = null;
      
-    map.on('mousemove', function(e) {
-        var feature = map.queryRenderedFeatures(e.point)[0];
+    map.on('mousemove', 'counties', function(e) {
+        console.log(moved)
+        var feature = e.features[0]
+        map.getCanvas().style.cursor = 'pointer'; 
         
-        
-        d3.selectAll(".mappopup").remove()
-           /*if(e.features.length>0){
-             var feature = e.features[0].properties
-        console.log(feature.COUNTY)
-            
-         */
-            // TODO: Change the cursor style as a UI indicator.    
-               
-               if(feature["properties"].LOCATION!=undefined){
-                    var countyName = feature["properties"].LOCATION
-                    var population = feature["properties"]["E_TOTPOP"]
-                          
-                var columnsToShow = ["hotspotSVI_priority","hotspot_priority","SVI_priority","highDemand_priority"]
-                  var displayString = "<strong>"+countyName+"</strong><br>"
-                                +"<strong>Population:</strong> "+population+"<br>"
-                          
-                   for(var c in columnsToShow){
-                       var label = columnsToShow[c]
-                       var value = feature["properties"][label]
-                       displayString+="<strong>"+label.split("_").join(" ")+ ": </strong>"+value+"<br>"                 
-                   }
-                   var coords = feature.geometry.coordinates[0][0]
-                   var formattedCoords = {lat:coords[1],lng:coords[0]}
-                   
-                   while (Math.abs(e.lngLat.lng - formattedCoords[0]) > 180) {
-                   formattedCoords[0] += e.lngLat.lng > formattedCoords[0] ? 360 : -360;
-                   }
+        if(feature["properties"].LOCATION!=undefined){
+        var countyName = feature["properties"].LOCATION
+        var population = feature["properties"]["E_TOTPOP"]
+  
+        var columnsToShow = ["hotspotSVI_priority","hotspot_priority","SVI_priority","highDemand_priority"]
+
+
+        var displayTextS = {highDemand_priority:"Number of New COVID Cases",hotspot_priority:"New Cases as % of Population",SVI_priority:"Census Demographic Social Vulnerability",hotspotSVI_priority:"Census Demographic Social Vulnerability and New Cases as % of Population "}
+
+
+        var displayString = "<strong>"+countyName+"</strong><br>"
+                +"<strong>Population:</strong> "+population+"<br><br>"
+  
+        for(var c in columnsToShow){
+        var label = displayTextS[columnsToShow[c]]
+        // console.log(columnsToShow[c]+"_priority")
+        var value = feature["properties"][columnsToShow[c]]
+        displayString+="<strong>"+label.split("_").join(" ")+ ": </strong>"+value+"<br><br>"                 
+        }
+       // var coords = feature.geometry.coordinates[0][0]
+        var coords = pub.centroids[feature.properties["FIPS"]]
+        var formattedCoords =coords// {lat:coords[1],lng:coords[0]}
+
+        while (Math.abs(e.lngLat.lng - formattedCoords[0]) > 180) {
+        formattedCoords[0] += e.lngLat.lng > formattedCoords[0] ? 360 : -360;
+        }
+
+        // Populate the popup and set its coordinates
+        // based on the feature found.
+        popup
+        .setLngLat(formattedCoords)
+        .setHTML(displayString)
+        .addTo(map);
+
+        }         
+    });
  
-                   // Populate the popup and set its coordinates
-                   // based on the feature found.
-                   popup
-                   .setLngLat(formattedCoords)
-                   .setHTML(displayString)
-                   .addTo(map);
-                   
-                   /*
-                   var x = event.clientX;     // Get the horizontal coordinate
-                                      var y = event.clientY;     // Get the vertical coordinate
-                                      d3.select("body")
-                                      .append("div")
-                                      .attr("class","mappopup")
-                                      .style("position","absolute")
-                                      .style("background-color","rgba(255,255,255,.7)")
-                                      .style("padding","10px")
-                                      .style("left",x+10+"px").style("top",y+10+"px")
-                                      .html(displayString)*/
-                   
-                   
-                   
-               }         
-                         
-      //  }
-       });
-       map.on('mouseleave','county_boundary', function(e) {
-            d3.selectAll(".mappopup").remove()
-       })
+    map.on('mouseleave','county_boundary', function(e) {
+        d3.selectAll(".mappopup").remove()
+    })
 }
 function placesMenus(map){
     var places = ["Mainland","Alaska","Hawaii","Puerto_Rico"]
