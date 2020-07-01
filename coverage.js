@@ -56,6 +56,18 @@ Promise.all([highDemand,hotspot,SVI,hotspotSVI,counties,aiannh,prison,usOutline,
     ready(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8],data[9],data[10])
 })
 
+var lineOpacity = {
+    percentage_for_70:{property:"percentage_for_70",stops:[[0,1],[1,0]]},
+    percentage_for_50:{property:"percentage_for_50",stops:[[0,1],[1,0]]},
+    percentage_for_30:{property:"percentage_for_30",stops:[[0,1],[1,0]]},
+    show_all:1
+}
+var lineWeight = {
+    percentage_for_70:{property:"percentage_for_70",stops:[[0,2],[1,0]]},
+    percentage_for_50:{property:"percentage_for_50",stops:[[0,2],[1,0]]},
+    percentage_for_30:{property:"percentage_for_30",stops:[[0,2],[1,0]]},
+    show_all:1
+}
 var fillOpacity = {
     percentage_for_70:{property:"percentage_for_70",stops:[[0,0],[1,1]]},
     percentage_for_50:{property:"percentage_for_50",stops:[[0,0],[1,1]]},
@@ -189,12 +201,12 @@ function turnToDict(data,keyColumn,prefix){
                 else if(keys[k]=="percent_for_30" ||keys[k]=="percent_for_50"||keys[k]=="percent_for_70"){
                     var cKey = prefix+"_"+keys[k]
                     if(actualDemand == 0){
-                        var cValue = -999
+                        var cValue = 1
                     }else{
                         var cValue = data[i][keys[k]]
                     }
                 }
-                //add type to coverage to differentiate when combined
+               //add type to coverage to differentiate when combined
                 else {
                     var cKey = prefix+"_"+keys[k]
                     var cValue = data[i][keys[k]]
@@ -433,14 +445,21 @@ function strategyMenu(map){
                  d3.select(".show_all_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
                 d3.selectAll(".show_all").style("color",highlightColor)
              }
-             fillOpacity[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
               d3.select("#subtitle").html("Map showing percent coverage at " +displayTextC[pub.coverage]+" if "+displayTextS[pub.strategy]+ " is prioritized")
+              
+             lineOpacity[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
+              
               if (pub.coverage=="show_all"){
                   d3.select("#subtitle").html("Map showing "+displayTextS[pub.strategy]+ "")
+                  map.setPaintProperty("county_outline", 'line-opacity',.3)
+              }else{
+                  map.setPaintProperty("county_outline", 'line-opacity',lineOpacity[pub.coverage])
+                  map.setPaintProperty("county_outline", 'line-color',"orange")
+                  
               }
-              map.setPaintProperty("county_boundary", 'fill-color',fillColor[pub.strategy])
-              map.setPaintProperty("county_boundary", 'fill-opacity',fillOpacity[pub.coverage])
- 
+
+              map.setPaintProperty("county_boundary", 'fill-opacity',1)
+              map.setPaintProperty("county_boundary", 'fill-color',fillColor[pub.strategy])        
               drawHistogram(pub.strategy)
         })
         
@@ -519,15 +538,22 @@ function coverageMenu(map){
                   d3.select(".SVI_radialS").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
                  d3.selectAll(".SVI").style("color",highlightColor)
               }
-              fillOpacity[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
+             
+             lineOpacity[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
+             lineWeight[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
                d3.select("#subtitle").html("Map showing percent coverage at " +displayTextC[pub.coverage]+" if "+displayTextS[pub.strategy]+ " is prioritized")
-               if (pub.coverage=="show_all"){
-                   d3.select("#subtitle").html("Map showing "+displayTextS[pub.strategy]+ "")
-               }
-               map.setPaintProperty("county_boundary", 'fill-color',fillColor[pub.strategy])
-               map.setPaintProperty("county_boundary", 'fill-opacity',fillOpacity[pub.coverage])
- 
-               drawHistogram(pub.strategy)
+              if (pub.coverage=="show_all"){
+                  d3.select("#subtitle").html("Map showing "+displayTextS[pub.strategy]+ "")
+                  map.setPaintProperty("county_outline", 'line-opacity',.3)
+              }else{
+                  map.setPaintProperty("county_outline", 'line-opacity',lineOpacity[pub.coverage])
+                  map.setPaintProperty("county_outline", 'line-width',lineWeight[pub.coverage])
+                  map.setPaintProperty("county_outline", 'line-color',"orange")
+              }
+
+              map.setPaintProperty("county_boundary", 'fill-opacity',1)
+              map.setPaintProperty("county_boundary", 'fill-color',fillColor[pub.strategy])
+              drawHistogram(pub.strategy)
          })
          
         // var link = document.createElement('a');
@@ -674,17 +700,6 @@ function drawMap(data,aiannh,prison){
          })
          
          map.addLayer({
-             'id': 'county_boundary',
-             'type': 'fill',
-             'source': 'counties_2',
-             'paint': {
-             'fill-color': "white",
-                 'fill-opacity':0
-             },
-             'filter': ['==', '$type', 'Polygon']
-         },"mapbox-satellite");
-         
-         map.addLayer({
              'id': 'county_outline',
              'type': 'line',
              'source': 'counties_2',
@@ -693,37 +708,28 @@ function drawMap(data,aiannh,prison){
                  'line-opacity':.3
              },
              'filter': ['==', '$type', 'Polygon']
-         },"county_boundary");
+         },"mapbox-satellite");
          
          
          
+         map.addLayer({
+             'id': 'county_boundary',
+             'type': 'fill',
+             'source': 'counties_2',
+             'paint': {
+             'fill-color': "white",
+                 'fill-opacity':0
+             },
+             'filter': ['==', '$type', 'Polygon']
+         },"county_outline");
+         
+        
          
          //for pattern: https://docs.mapbox.com/mapbox-gl-js/example/fill-pattern/
          map.addSource("aiannh",{
              "type":"geojson",
              "data":aiannh
          })
-    /*
-         var filter = ["==",]
-             map.filter()*/
-    
-      
-               // map.addLayer({
-   //                       'id': 'aiannh',
-   //                       'type': 'line',
-   //                       'source': 'aiannh',
-   //                         'layout': {
-   //                         // make layer visible by default
-   //                         'visibility': 'none'
-   //                         },
-   //                       'paint': {
-   //                           "line-color":"black",
-   //                           "line-opacity":1
-   //                       },
-   //                       'filter': ['==', '$type', 'Polygon']
-   //                   });
-   //
-      
  
          map.loadImage(
                        'pattern_transparent.png',
@@ -749,34 +755,6 @@ function drawMap(data,aiannh,prison){
                        }
                    );
           
- 
-         
-         
-         
-        /*
-         map.addSource("prisonData",{
-                     "type":"geojson",
-                     "data":prison
-                 })
-                 map.addLayer({
-                     'id': 'prison',
-                     'type': 'circle',
-                     'source': 'prisonData',
-                     'layout': {
-                     // make layer visible by default
-                     'visibility': 'none'
-                     },
-                     'paint': {
-                         
-                         "line-color":"blue",
-                                          "line-opacity":1,
-                        'circle-radius': 2,
-                         'circle-opacity':.5,
-                        'circle-color': 'rgba(0,0,0,.4)'
-                     }
-                 });*/
-        
-         //map.setLayoutProperty("tract_svi", 'visibility', 'none');
          map.setLayoutProperty("mapbox-satellite", 'visibility', 'none');
          
          
@@ -785,7 +763,6 @@ function drawMap(data,aiannh,prison){
          toggleLayers(map)
          placesMenus(map)
               d3.select("#mapbox-satellite").style("opacity",.3)
-              d3.select("#tract_svi").style("opacity",.3)
          /*paint code for masking - not in use, not tested
          'paint': 
                     {
@@ -800,8 +777,8 @@ function drawMap(data,aiannh,prison){
          console.log(e.features[0].properties["SVI_total_demand_of_county"])
      })
      var popup = new mapboxgl.Popup({
-     closeButton: false,
-     closeOnClick: false
+         closeButton: false,
+         closeOnClick: false
      });     
       var hoveredStateId = null;
      
