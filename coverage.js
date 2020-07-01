@@ -830,9 +830,9 @@ function drawMap(data,aiannh,prison){
 
      });
  
-     // map.on('mouseleave','county_boundary', function(e) {
-  //        d3.selectAll(".mapboxgl-popup").remove()
-  //    })
+      map.on('mouseleave','county_boundary', function(e) {
+          d3.selectAll(".mapboxgl-popup").remove()
+      })
     
       map.on("move",function(){
               var zoom = map.getZoom();
