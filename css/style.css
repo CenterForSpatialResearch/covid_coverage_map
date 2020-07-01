@@ -55,10 +55,12 @@ a{
      width:200px;
      position:fixed;
      right:0px;
-     top:60px;
-     padding:0px;
+     top:0px;
+     padding-top:60px;
      background:rgba(255,255,255,0.8);
-     height:80%;
+     height:100%;
+     overflow:auto;
+     
  }
  #subtitle{
      top:80px;
@@ -105,6 +107,14 @@ a{
      font-family: 'Open Sans', sans-serif;
      background:rgba(0,0,0,0);
      border-bottom:1px solid black;
+     font-size:14px;
+     font-weight:400;
+ }
+ .labelS{
+     font-size:11px;
+ }
+ .labelC{
+     font-size:11px;
  }
  .menu a{
      font-size: 11px;
@@ -114,7 +124,12 @@ a{
      margin:5px;
      text-decoration: none;
      background:#fff;
-     border:1px solid #000;
+ }
+ #placesMenu a{
+     border:none;
+     padding:0px;
+     margin:0px;
+     margin-left:10px;
  }
 
  

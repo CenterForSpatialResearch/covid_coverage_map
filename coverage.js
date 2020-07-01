@@ -24,6 +24,8 @@ var pub = {
     all:null,
     centroids:null
 }
+var highlightColor = "magenta"
+var bghighlightColor = "yellow"
 var colors = {
 hotspot:["#02568B","#3983A8","#6EAFC3","#A7DCDF"],
 SVI:["#A7DCDF","#6EAFC3","#3983A8","#02568B"],
@@ -242,6 +244,7 @@ function combineGeojson(all,counties){
 function drawHistogram(strategy){
   //  var strategy = "SVI"
     var priority = strategy+"_priority"
+    d3.select("#histogram svg").remove()
    var svg = d3.select("#histogram")
     .append("svg").attr("width",1200).attr("height",100)
    
@@ -392,79 +395,172 @@ function strategyMenu(map){
     var displayTextS = {highDemand:"Number of New COVID Cases",hotspot:"New Cases as % of Population",SVI:"Census Demographic Social Vulnerability",hotspotSVI:"Census Demographic Social Vulnerability and New Cases as % of Population "}
     var displayTextC = {percentage_for_30:"30 CT per 100,000",percentage_for_50:"50 CT per 100,000",percentage_for_70:"70 CT per 100,000",show_all:"hide coverage info"}
 
+
+    var buttons = d3.select("#strategiesMenu").append("div").attr("class",id)
+
     for (var i = 0; i < strategies.length; i++) {
         var id = strategies[i];
-
-        var link = document.createElement('a');
-        link.href = '#';
-        link.className = 'active';
-        link.textContent = displayTextS[id]
-        link.id =id
+        var displayText = displayTextS[id]
         
-        link.onclick = function(e){
-            d3.selectAll("#strategiesMenu a").style("background","#fff")
-            d3.select(this).style("background","rgb(255,255,0)")
+       
+        var row = d3.select("#strategiesMenu").append("div").attr("class",id+"_radialMenuS radialMenuS").attr("id",id).style("cursor","pointer")
+        var radial = row.append("div")
+            .style("width","9px").style("height","9px")
+            .style("border","1px solid black")
+            .style("margin","4px")
+            .style("border-radius","5px").attr("class",id+"_radialS radialS "+id)
+            .style("display","inline-block")
+            .style("vertical-align","top")
+        var label = row.append("div").html(displayText).attr("class",id+"_labelS labelS "+id).style("width","160px").style("display","inline-block")
+             
+         row.on("mouseover",function(){
+             d3.select(this).style("background-color",bghighlightColor)
+         })
+         row.on("mouseout",function(){
+             d3.select(this).style("background-color","#fff")
+         })
+        row.on("click",function(){
+            d3.selectAll(".radialS").style("background-color","white").style("border","1px solid black")
+            d3.selectAll(".labelS").style("color","black")
+            
             
             var clickedId = d3.select(this).attr("id")
+            d3.selectAll("."+clickedId).style("color",highlightColor)
+            d3.selectAll("."+clickedId+"_radialS").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
             pub.strategy = clickedId
             if(pub.coverage==undefined){
-                pub.coverage = "show_all"
-                d3.select("#show_all").style("background","yellow")
-            }
-            fillOpacity[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
-            d3.select("#subtitle").html("Map showing percent coverage at " +displayTextC[pub.coverage]+" if "+displayTextS[pub.strategy]+ " is prioritized")
-            if (pub.coverage=="show_all"){
-                d3.select("#subtitle").html("Map showing "+displayTextS[pub.strategy]+ "")
-            }
-            map.setPaintProperty("county_boundary", 'fill-color',fillColor[pub.strategy])
-            map.setPaintProperty("county_boundary", 'fill-opacity',fillOpacity[pub.coverage])
-            
-            drawHistogram(pub.strategy)
-        }
-        var layers = document.getElementById('strategiesMenu');
-        layers.appendChild(link);
-    }
+                 pub.coverage = "show_all"
+                 d3.select(".show_all_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
+                d3.selectAll(".show_all").style("color",highlightColor)
+             }
+             fillOpacity[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
+              d3.select("#subtitle").html("Map showing percent coverage at " +displayTextC[pub.coverage]+" if "+displayTextS[pub.strategy]+ " is prioritized")
+              if (pub.coverage=="show_all"){
+                  d3.select("#subtitle").html("Map showing "+displayTextS[pub.strategy]+ "")
+              }
+              map.setPaintProperty("county_boundary", 'fill-color',fillColor[pub.strategy])
+              map.setPaintProperty("county_boundary", 'fill-opacity',fillOpacity[pub.coverage])
+ 
+              drawHistogram(pub.strategy)
+        })
+        
+            // var link = document.createElement('a');
+    //         link.href = '#';
+    //         link.className = 'active';
+    //         link.textContent = displayTextS[id]
+    //         link.id =id
+    //
+    //         link.onclick = function(e){
+    //             d3.selectAll("#strategiesMenu a").style("background","#fff")
+    //             d3.select(this).style("background","rgb(255,255,0)")
+    //
+    //             var clickedId = d3.select(this).attr("id")
+    //             pub.strategy = clickedId
+    //             if(pub.coverage==undefined){
+    //                 pub.coverage = "show_all"
+    //                 d3.select("#show_all").style("background","yellow")
+    //             }
+    //             fillOpacity[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
+    //             d3.select("#subtitle").html("Map showing percent coverage at " +displayTextC[pub.coverage]+" if "+displayTextS[pub.strategy]+ " is prioritized")
+    //             if (pub.coverage=="show_all"){
+    //                 d3.select("#subtitle").html("Map showing "+displayTextS[pub.strategy]+ "")
+    //             }
+    //             map.setPaintProperty("county_boundary", 'fill-color',fillColor[pub.strategy])
+    //             map.setPaintProperty("county_boundary", 'fill-opacity',fillOpacity[pub.coverage])
+    //
+    //             drawHistogram(pub.strategy)
+    //         }
+    //         var layers = document.getElementById('strategiesMenu');
+    //
+    //         layers.appendChild(link);
+     }
 }
 function coverageMenu(map){
     var strategies = ["percentage_for_30","percentage_for_50","percentage_for_70","show_all"]
-    var displayTextC = {percentage_for_30:"30 CHW per 100,000",percentage_for_50:"50 CHW per 100,000",
+    var displayTextC = {percentage_for_30:"30 CHW per 100,000 Residents",percentage_for_50:"50 CHW per 100,000",
     percentage_for_70:"70 CHW per 100,000",show_all:"hide coverage info"}
     var displayTextS = {highDemand:"High Demand",hotspot:"Hotspot",SVI:"SVI*Population",hotspotSVI:"Hotspot & SVI"}
 
     for (var i = 0; i < strategies.length; i++) {
         var id = strategies[i];
-
-        var link = document.createElement('a');
-        link.href = '#';
-        link.className = 'active';
-        link.textContent = displayTextC[id]
-        link.id = id;
-        link.onclick = function(e){
-            d3.selectAll("#coverageMenu a").style("background","#fff")
-            d3.select(this).style("background","rgb(255,255,0)")
-            var clickedId = d3.select(this).attr("id")
-            pub.coverage = clickedId
-           /*
-            console.log(pub.coverage)
-                       console.log(fillOpacity[pub.coverage])*/
-           
-            if(pub.strategy==undefined){
-                pub.strategy = "SVI"
-                d3.select("#SVI").style("background","yellow")
-            }
+        
+        var id = strategies[i];
+        var displayText = displayTextC[id]
+        
+       
+        var row = d3.select("#coverageMenu").append("div").attr("class",id+"_radialMenuC radialMenuC").attr("id",id).style("cursor","pointer")
+        var radial = row.append("div")
+            .style("width","9px").style("height","9px")
+            .style("border","1px solid black")
+            .style("margin","4px")
+            .style("border-radius","5px").attr("class",id+"_radialC radialC "+id)
+            .style("display","inline-block")
+            .style("vertical-align","top")
+        var label = row.append("div").html(displayText).attr("class",id+"_labelC labelC "+id).style("width","160px").style("display","inline-block")
+             
+         row.on("mouseover",function(){
+             d3.select(this).style("background-color",bghighlightColor)
+         })
+         row.on("mouseout",function(){
+             d3.select(this).style("background-color","#fff")
+         })
+         
+         row.on("click",function(){
+             d3.selectAll(".radialC").style("background-color","white").style("border","1px solid black")
+             d3.selectAll(".labelC").style("color","black")
             
-            d3.select("#subtitle").html("Map showing percent coverage at " +displayTextC[pub.coverage]+" if "+displayTextS[pub.strategy]+ " is prioritized")
-            if (pub.coverage=="show_all"){
-                d3.select("#subtitle").html("Map showing "+displayTextS[pub.strategy]+ "")
-            }
-            fillOpacity[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
             
-            map.setPaintProperty("county_boundary", 'fill-color',fillColor[pub.strategy])
-           
-            map.setPaintProperty("county_boundary", 'fill-opacity',fillOpacity[pub.coverage])
-        }
-        var layers = document.getElementById('coverageMenu');
-        layers.appendChild(link);
+             var clickedId = d3.select(this).attr("id")
+             d3.selectAll("."+clickedId).style("color",highlightColor)
+             d3.selectAll("."+clickedId+"_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
+             pub.coverage = clickedId
+             if(pub.strategy==undefined){
+                  pub.strategy = "SVI"
+                  d3.select(".SVI_radialS").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
+                 d3.selectAll(".SVI").style("color",highlightColor)
+              }
+              fillOpacity[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
+               d3.select("#subtitle").html("Map showing percent coverage at " +displayTextC[pub.coverage]+" if "+displayTextS[pub.strategy]+ " is prioritized")
+               if (pub.coverage=="show_all"){
+                   d3.select("#subtitle").html("Map showing "+displayTextS[pub.strategy]+ "")
+               }
+               map.setPaintProperty("county_boundary", 'fill-color',fillColor[pub.strategy])
+               map.setPaintProperty("county_boundary", 'fill-opacity',fillOpacity[pub.coverage])
+ 
+               drawHistogram(pub.strategy)
+         })
+         
+        // var link = document.createElement('a');
+ //        link.href = '#';
+ //        link.className = 'active';
+ //        link.textContent = displayTextC[id]
+ //        link.id = id;
+ //        link.onclick = function(e){
+ //            d3.selectAll("#coverageMenu a").style("background","#fff")
+ //            d3.select(this).style("background","rgb(255,255,0)")
+ //            var clickedId = d3.select(this).attr("id")
+ //            pub.coverage = clickedId
+ //           /*
+ //            console.log(pub.coverage)
+ //                       console.log(fillOpacity[pub.coverage])*/
+ //
+ //            if(pub.strategy==undefined){
+ //                pub.strategy = "SVI"
+ //                d3.select("#SVI").style("background","yellow")
+ //            }
+ //
+ //            d3.select("#subtitle").html("Map showing percent coverage at " +displayTextC[pub.coverage]+" if "+displayTextS[pub.strategy]+ " is prioritized")
+ //            if (pub.coverage=="show_all"){
+ //                d3.select("#subtitle").html("Map showing "+displayTextS[pub.strategy]+ "")
+ //            }
+ //            fillOpacity[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
+ //
+ //            map.setPaintProperty("county_boundary", 'fill-color',fillColor[pub.strategy])
+ //
+ //            map.setPaintProperty("county_boundary", 'fill-opacity',fillOpacity[pub.coverage])
+ //        }
+ //        var layers = document.getElementById('coverageMenu');
+ //        layers.appendChild(link);
     }
 }
 function drawlayerControl(map){
@@ -514,7 +610,7 @@ function drawlayerControl(map){
                 fillOpacity[coverage]["property"]=demand+"_"+coverage
                 
                 map.setPaintProperty("county_boundary", 'fill-color',fillColor[demand])
-                map.setPaintProperty("county_boundary", 'stroke-opacity',fillOpacity[coverage])
+               // map.setPaintProperty("county_boundary", 'line-opacity',fillOpacity[coverage])
                 
                 //drawKey(demand)
             })
@@ -556,12 +652,14 @@ function drawMap(data,aiannh,prison){
          map.setLayoutProperty("aiannh-text", 'visibility', 'none');
          map.setLayoutProperty("mapbox-satellite", 'visibility', 'none');
          
+      /*
         var geocoder = new MapboxGeocoder({
-                 accessToken: mapboxgl.accessToken,
-                 mapboxgl: mapboxgl
-             })
+                       accessToken: mapboxgl.accessToken,
+                       mapboxgl: mapboxgl
+                   })*/
+      
   
-         document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
+       //  document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
          
        // drawlayerControl(map)
          //zoomToBounds(map)
@@ -581,17 +679,30 @@ function drawMap(data,aiannh,prison){
              'source': 'counties_2',
              'paint': {
              'fill-color': "white",
-             'fill-opacity':0
+                 'fill-opacity':0
              },
              'filter': ['==', '$type', 'Polygon']
          },"mapbox-satellite");
+         
+         map.addLayer({
+             'id': 'county_outline',
+             'type': 'line',
+             'source': 'counties_2',
+             'paint': {
+                 'line-color':"white",
+                 'line-opacity':.3
+             },
+             'filter': ['==', '$type', 'Polygon']
+         },"county_boundary");
+         
+         
+         
          
          //for pattern: https://docs.mapbox.com/mapbox-gl-js/example/fill-pattern/
          map.addSource("aiannh",{
              "type":"geojson",
              "data":aiannh
          })
-         console.log(map.getStyle().layers)
     /*
          var filter = ["==",]
              map.filter()*/
@@ -615,7 +726,7 @@ function drawMap(data,aiannh,prison){
       
  
          map.loadImage(
-                       'pattern_thin_2_t.png',
+                       'pattern_transparent.png',
                        function(err, image) {
                        // Throw an error if something went wrong
                            if (err) throw err;
@@ -629,7 +740,7 @@ function drawMap(data,aiannh,prison){
                                'type': 'fill',
                                'source': 'aiannh',
                                'layout': {
-                                   'visibility': 'none'
+                                   'visibility': 'visible'
                                 },
                                'paint': {
                                    'fill-pattern': 'pattern'
@@ -736,7 +847,6 @@ function drawMap(data,aiannh,prison){
      });
  
      map.on('mouseleave','county_boundary', function(e) {
-         console.log('eft')
          d3.selectAll(".mapboxgl-popup").remove()
      })
     
@@ -815,9 +925,9 @@ function showpopup(map){
     })
 }
 function placesMenus(map){
-    var places = ["Mainland","Alaska","Hawaii","Puerto_Rico"]
+    var places = ["Contiguous 48","Alaska","Hawaii","Puerto_Rico"]
     var coords = {
-        "Mainland":{coord:[39,-96],zoom:4},
+        "Contiguous 48":{coord:[39,-96],zoom:4},
         "Alaska":{coord:[63.739,-147.653],zoom:4},
         "Hawaii":{coord:[20.524,-157.063],zoom:7.1},
         "Puerto_Rico":{coord:[18.219,-66.338],zoom:8}
