@@ -24,8 +24,8 @@ var pub = {
     all:null,
     centroids:null
 }
-var highlightColor = "magenta"
-var bghighlightColor = "yellow"
+var highlightColor = "#3983a8"
+var bghighlightColor = "rgba(255,255,0,.5)"
 var colors = {
 hotspot:["#02568B","#3983A8","#6EAFC3","#A7DCDF"],
 SVI:["#A7DCDF","#6EAFC3","#3983A8","#02568B"],
@@ -417,7 +417,7 @@ function strategyMenu(map){
              d3.select(this).style("background-color",bghighlightColor)
          })
          row.on("mouseout",function(){
-             d3.select(this).style("background-color","#fff")
+             d3.select(this).style("background-color","rgba(0,0,0,0)")
          })
         row.on("click",function(){
             d3.selectAll(".radialS").style("background-color","white").style("border","1px solid black")
@@ -502,7 +502,7 @@ function coverageMenu(map){
              d3.select(this).style("background-color",bghighlightColor)
          })
          row.on("mouseout",function(){
-             d3.select(this).style("background-color","#fff")
+             d3.select(this).style("background-color","rgba(0,0,0,0)")
          })
          
          row.on("click",function(){
