@@ -59,15 +59,15 @@ Promise.all([highDemand,hotspot,SVI,hotspotSVI,counties,aiannh,prison,usOutline,
 })
 
 var lineOpacity = {
-    percentage_for_70:{property:"percentage_for_70",stops:[[0,1],[1,0]]},
-    percentage_for_50:{property:"percentage_for_50",stops:[[0,1],[1,0]]},
-    percentage_for_30:{property:"percentage_for_30",stops:[[0,1],[1,0]]},
+    percentage_for_70:{property:"percentage_for_70",stops:[[0,1],[100,0.3]]},
+    percentage_for_50:{property:"percentage_for_50",stops:[[0,1],[100,0.3]]},
+    percentage_for_30:{property:"percentage_for_30",stops:[[0,1],[100,0.3]]},
     show_all:1
 }
 var lineWeight = {
-    percentage_for_70:{property:"percentage_for_70",stops:[[0,2],[1,0]]},
-    percentage_for_50:{property:"percentage_for_50",stops:[[0,2],[1,0]]},
-    percentage_for_30:{property:"percentage_for_30",stops:[[0,2],[1,0]]},
+    percentage_for_70:{property:"percentage_for_70",stops:[[0,2],[99,1],[100,0]]},
+    percentage_for_50:{property:"percentage_for_50",stops:[[0,3],[99,1],[100,0]]},
+    percentage_for_30:{property:"percentage_for_30",stops:[[0,3],[99,1],[100,0]]},
     show_all:1
 }
 var fillOpacity = {
@@ -180,6 +180,9 @@ function ready(highDemandData,hotspotData,SVIData,hotspotSVIData,counties,aiannh
 function turnToDict(data,keyColumn,prefix){
     var newDict = {}
     var maxPriority = 0
+    var keys = Object.keys(data[0])
+    //console.log(keys)
+    var notBinaryCoverage = []
     for(var i in data){
         var actualDemand = parseInt(data[i]["total_demand_of_county"])
         
@@ -188,10 +191,13 @@ function turnToDict(data,keyColumn,prefix){
             if(key.length==4){
                 key = "0"+key
             }
-            var keys = Object.keys(data[i])
             var newEntry = {}
             if(data[i]["priority"]>maxPriority){
                 maxPriority = parseFloat(data[i]["priority"])
+            }
+            if(data[i]["percentage_for_30"]>0 &&data[i]["percentage_for_30"]<100){
+               // console.log(data[i]["percentage_for_30"])
+                notBinaryCoverage.push(data[i]["percentage_for_30"])
             }
             for(var k in keys){
                 //add underscore to connect column heading
@@ -200,14 +206,14 @@ function turnToDict(data,keyColumn,prefix){
                     var cKey = "County_FIPS"
                     var cValue = data[i][keys[k]]
                 }
-                else if(keys[k]=="percent_for_30" ||keys[k]=="percent_for_50"||keys[k]=="percent_for_70"){
-                    var cKey = prefix+"_"+keys[k]
-                    if(actualDemand == 0){
-                        var cValue = 1
-                    }else{
-                        var cValue = data[i][keys[k]]
-                    }
-                }
+                // else if(coverageSet.indexOf(keys[k])>-1){//keys[k]=="percent_for_30" ||keys[k]=="percent_for_50"||keys[k]=="percent_for_70")
+//                     var cKey = prefix+"_"+keys[k]
+//                     if(actualDemand == 0){
+//                         var cValue = 1
+//                     }else{
+//                         var cValue = data[i][keys[k]]
+//                     }
+//                 }
                //add type to coverage to differentiate when combined
                 else {
                     var cKey = prefix+"_"+keys[k]
@@ -216,12 +222,16 @@ function turnToDict(data,keyColumn,prefix){
                         var cValue = parseFloat(data[i][keys[k]])
                     }
                 }
+                if(isNaN(cValue)==false){
+                    cValue = parseFloat(cValue)
+                }
                 
                 newEntry[cKey]=cValue
             }
             newDict[key]=newEntry
         }
     }
+    console.log(notBinaryCoverage)
    /*
     if(prefix!="normal"){
        fillColor[prefix]["stops"] = [[0,colors[prefix][3]],
@@ -229,7 +239,7 @@ function turnToDict(data,keyColumn,prefix){
        [maxPriority*.67,colors[prefix][1]],
        [maxPriority,colors[prefix][0]]]
        }*/
-   
+   console.log(newDict)
     return newDict
 }
 
@@ -335,6 +345,7 @@ function drawHistogram(strategy){
     .attr("height",10)
     .attr("fill","url(#test)")
     .attr("stroke","#fff")
+    .attr("stroke-width","2px")
     
     for(var b in formattedBreaks){
         var bk = formattedBreaks[b]
@@ -815,6 +826,12 @@ function drawMap(data,aiannh,prison){
                  var value = feature["properties"][columnsToShow[c]]
                  displayString+=label.split("_").join(" ")+ ": "+value+"<br>"                 
              }
+           //  console.log(feature["properties"])
+             if(pub.strategy!==null && pub.coverage!=null){
+                 var coverage = feature["properties"][pub.strategy+"_"+pub.coverage]
+             }
+             
+             displayString+="% of needs met: "+coverage+"<br>"
             // var coords = feature.geometry.coordinates[0][0]
              var coords = pub.centroids[feature.properties["FIPS"]]
              var formattedCoords =coords// {lat:coords[1],lng:coords[0]}
