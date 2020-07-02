@@ -309,13 +309,12 @@ function drawHistogram(strategy){
     }
     var xScale = d3.scaleLinear().domain([0,100]).range([0, barWidth])
     
-    console.log(formattedBreaks)
-   var gradient = svg.append("defs").append("linearGradient")
-    .attr("id","test")
-    .attr("x1","0%")
-    .attr("y1","0%")
-    .attr("x2","100%")
-    .attr("y2","0%")
+    var gradient = svg.append("defs").append("linearGradient")
+        .attr("id","test")
+        .attr("x1","0%")
+        .attr("y1","0%")
+        .attr("x2","100%")
+        .attr("y2","0%")
     
    // svg.append("text").text("priority value").attr("x",20).attr("y",30)
     svg.append("text").text("# of counties").attr("x",10).attr("y",45)
@@ -435,7 +434,7 @@ function drawKey(demandType){
 function strategyMenu(map){
     var strategies = ["highDemand","hotspot","SVI","hotspotSVI"]
     var displayTextS = {highDemand:"Number of New COVID Cases",hotspot:"New Cases as % of Population",SVI:"Census Demographic Social Vulnerability",hotspotSVI:"Census Demographic Social Vulnerability and New Cases as % of Population "}
-    var displayTextC = {percentage_for_30:"30 CT per 100,000",percentage_for_50:"50 CT per 100,000",percentage_for_70:"70 CT per 100,000",show_all:"hide coverage info"}
+    var displayTextC = {percentage_for_30:"30 CHW per 100,000",percentage_for_50:"50 CHW per 100,000",percentage_for_70:"70 CHW per 100,000",show_all:"hide coverage info"}
 
 
     var buttons = d3.select("#strategiesMenu").append("div").attr("class",id)
@@ -444,7 +443,6 @@ function strategyMenu(map){
         var id = strategies[i];
         var displayText = displayTextS[id]
         
-       
         var row = d3.select("#strategiesMenu").append("div").attr("class",id+"_radialMenuS radialMenuS").attr("id",id).style("cursor","pointer")
         var radial = row.append("div")
             .style("width","9px").style("height","9px")
@@ -462,23 +460,29 @@ function strategyMenu(map){
              d3.select(this).style("background-color","rgba(0,0,0,0)")
          })
         row.on("click",function(){
-            d3.selectAll(".radialS").style("background-color","white").style("border","1px solid black")
-            d3.selectAll(".labelS").style("color","black")
-            
-            
             var clickedId = d3.select(this).attr("id")
-            d3.selectAll("."+clickedId).style("color",highlightColor)
-            d3.selectAll("."+clickedId+"_radialS").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
             pub.strategy = clickedId
             if(pub.coverage==undefined){
                  pub.coverage = "show_all"
                  d3.select(".show_all_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
                 d3.selectAll(".show_all").style("color",highlightColor)
              }
+             
+            
+            d3.selectAll(".radialS").style("background-color","white").style("border","1px solid black")
+            d3.selectAll(".labelS").style("color","black")
+            
+            d3.selectAll("."+clickedId).style("color",highlightColor)
+            d3.selectAll("."+clickedId+"_radialS").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
+           
               d3.select("#subtitle").html("Map showing percent coverage at " +displayTextC[pub.coverage]+" if "+displayTextS[pub.strategy]+ " is prioritized")
               
              lineOpacity[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
-              
+             lineWeight[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
+             
+              map.setPaintProperty("county_boundary", 'fill-opacity',1)
+              map.setPaintProperty("county_boundary", 'fill-color',fillColor[pub.strategy])     
+             
               if (pub.coverage=="show_all"){
                   map.setPaintProperty("county_outline", 'line-opacity',0)
                   map.setPaintProperty("county_outline", 'line-color',"#fff")
@@ -486,11 +490,9 @@ function strategyMenu(map){
               }else{
                   map.setPaintProperty("county_outline", 'line-opacity',lineOpacity[pub.coverage])
                   map.setPaintProperty("county_outline", 'line-color',outlineColor)
-              map.setPaintProperty("county_outline", 'line-width',lineWeight[pub.coverage])
-                  
+                  map.setPaintProperty("county_outline", 'line-width',lineWeight[pub.coverage])
               }          
-              map.setPaintProperty("county_boundary", 'fill-opacity',1)
-              map.setPaintProperty("county_boundary", 'fill-color',fillColor[pub.strategy])        
+                 
               drawHistogram(pub.strategy)
         })
      }
@@ -526,13 +528,8 @@ function coverageMenu(map){
          })
          
          row.on("click",function(){
-             d3.selectAll(".radialC").style("background-color","white").style("border","1px solid black")
-             d3.selectAll(".labelC").style("color","black")
-            
-            
-             var clickedId = d3.select(this).attr("id")
-             d3.selectAll("."+clickedId).style("color",highlightColor)
-             d3.selectAll("."+clickedId+"_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
+            var clickedId = d3.select(this).attr("id")
+             
              pub.coverage = clickedId
              if(pub.strategy==undefined){
                   pub.strategy = "SVI"
@@ -540,6 +537,13 @@ function coverageMenu(map){
                  d3.selectAll(".SVI").style("color",highlightColor)
               }
              
+             d3.selectAll(".radialC").style("background-color","white").style("border","1px solid black")
+             d3.selectAll(".labelC").style("color","black")
+            
+            
+             d3.selectAll("."+clickedId).style("color",highlightColor)
+             d3.selectAll("."+clickedId+"_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
+           
              lineOpacity[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
              lineWeight[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
                d3.select("#subtitle").html("Map showing percent coverage at " +displayTextC[pub.coverage]+" if "+displayTextS[pub.strategy]+ " is prioritized")
