@@ -167,13 +167,13 @@ function ready(highDemandData,hotspotData,SVIData,hotspotSVIData,counties,aiannh
         
         var noDemand = []
         
-        for(j in pub.all["highDemand"]){
-            var actualDemand = pub.all["highDemand"][j]["SVI_total_demand_of_county"]
-            if(actualDemand ==0){
-                noDemand.push(pub.all["highDemand"][j]["County_FIPS"])
-            }
-        }
-        console.log(noDemand)
+        // for(j in pub.all["highDemand"]){
+ //            var actualDemand = pub.all["highDemand"][j]["SVI_total_demand_of_county"]
+ //            if(actualDemand ==0){
+ //                noDemand.push(pub.all["highDemand"][j]["County_FIPS"])
+ //            }
+ //        }
+       // console.log(noDemand)
         
     //drawHistogram(pub.strategy,pub.coverage)
 };
@@ -231,7 +231,7 @@ function turnToDict(data,keyColumn,prefix){
             newDict[key]=newEntry
         }
     }
-    console.log(notBinaryCoverage)
+   // console.log(notBinaryCoverage)
    /*
     if(prefix!="normal"){
        fillColor[prefix]["stops"] = [[0,colors[prefix][3]],
@@ -239,7 +239,7 @@ function turnToDict(data,keyColumn,prefix){
        [maxPriority*.67,colors[prefix][1]],
        [maxPriority,colors[prefix][0]]]
        }*/
-   console.log(newDict)
+ //  console.log(newDict)
     return newDict
 }
 
