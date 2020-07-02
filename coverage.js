@@ -66,8 +66,8 @@ var lineOpacity = {
 }
 var lineWeight = {
     percentage_for_70:{property:"percentage_for_70",stops:[[0,2],[99,1],[100,0]]},
-    percentage_for_50:{property:"percentage_for_50",stops:[[0,3],[99,1],[100,0]]},
-    percentage_for_30:{property:"percentage_for_30",stops:[[0,3],[99,1],[100,0]]},
+    percentage_for_50:{property:"percentage_for_50",stops:[[0,2],[99,1],[100,0]]},
+    percentage_for_30:{property:"percentage_for_30",stops:[[0,2],[99,1],[100,0]]},
     show_all:1
 }
 var fillOpacity = {
@@ -129,6 +129,8 @@ var latestDate = null
 var coverageSet = ["percentage_for_30","percentage_for_50","percentage_for_70","show_all"]
 var demandSet = ["highDemand","hotspot","SVI","hotspotSVI"]
 var startColor = "white"
+d3.select("#layersMenu").style("display","none")
+
 function ready(highDemandData,hotspotData,SVIData,hotspotSVIData,counties,aiannh,prison,usOutline,normalizedPriority,county_centroids){
     //convert to geoid dict
     
@@ -144,6 +146,7 @@ function ready(highDemandData,hotspotData,SVIData,hotspotSVIData,counties,aiannh
     var combinedGeojson = combineGeojson(pub.all,counties)
     //console.log(combinedGeojson)
     //drawKey("none")
+    
     drawMap(combinedGeojson,aiannh,prison,usOutline)
     
     var formattedData = []
@@ -279,8 +282,8 @@ function drawHistogram(strategy){
     d3.select("#histogram svg").remove()
    var svg = d3.select("#histogram")
                 .append("svg")
-                .attr("width",1200)
-                .attr("height",100)
+                .attr("width",800)
+                .attr("height",140)
    
     var height = 80
     var width = 700
@@ -294,7 +297,7 @@ function drawHistogram(strategy){
     var totalCounties = activeData.length
     
     var formattedBreaks = []
-    var cLength = 0
+    var cLength = 0    
     
     for(var i in breaks){
         if(i==breaks.length-1){
@@ -327,8 +330,8 @@ function drawHistogram(strategy){
         .attr("y2","0%")
     
    // svg.append("text").text("priority value").attr("x",20).attr("y",30)
-    svg.append("text").text("# of counties").attr("x",10).attr("y",45)
-    svg.append("text").text("# of cases").attr("x",10).attr("y",75)
+    svg.append("text").text("# of counties").attr("x",0).attr("y",45)
+    svg.append("text").text("# of cases").attr("x",0).attr("y",75)
 
 
     for(var b in formattedBreaks){
@@ -386,7 +389,55 @@ function drawHistogram(strategy){
         .attr("fill","white")
     }
     
-
+    
+    if(pub.coverage !="show_all"){
+        var cBreaks = 10
+        var cmax = 100
+        var cmin = 0
+        var formattedCBreaks = []
+    
+        var cGroup = activeData.filter(function(d){
+                var cKey = pub.strategy+"_"+pub.coverage
+                return d[cKey]==0
+            }) 
+        var cummulativeLength =Math.round(cGroup.length/totalCounties*10000)/100
+        formattedCBreaks.push({minValue:0,maxValue:0,length:cGroup.length,lengthP:Math.round(cGroup.length/totalCounties*10000)/100,start:0})
+        
+        
+        
+        for(var c = 0; c<10; c++){
+             var cBreakStart = (cmax-cmin)/cBreaks*c
+             var cBreakEnd = (cmax-cmin)/cBreaks*(c+1)
+            if(cBreakStart==0){
+                cBreakStart = 1
+            }
+            var cGroup =activeData.filter(function(d){
+                var cKey = pub.strategy+"_"+pub.coverage
+                return d[cKey]>=cBreakStart && d[cKey]<cBreakEnd
+            }) 
+            formattedCBreaks.push({minValue:cBreakStart,maxValue:cBreakEnd-1,length:cGroup.length,lengthP:Math.round(cGroup.length/totalCounties*10000)/100,start:cummulativeLength})
+            cummulativeLength+=Math.round(cGroup.length/totalCounties*10000)/100
+        }
+    
+        var oScale = d3.scaleLinear().domain([0,99.9]).range([1,0])
+        var sScale = d3.scaleLinear().domain([0,99.9]).range([2,1])
+        for(var i in formattedCBreaks){
+            var fcb = formattedCBreaks[i]
+            svg.append("rect")
+            .attr("y",100)
+            .attr("x",xScale(fcb.start)+i*2)
+            .attr("height",10)
+            .attr("width",xScale(fcb.lengthP))
+            .attr("fill","none")
+            .attr("stroke","#ffcc67")
+            .attr("opacity",oScale(fcb.minValue))
+            .attr("stroke-width",sScale(fcb.minValue))
+            break
+        }
+    
+        svg.append("text").text(formattedCBreaks[0].length+" ("+formattedCBreaks[0].lengthP+"%)"+" counties with 0% coverage")
+        .attr("y",130).attr("x",0)
+    }
 }
 
 function drawKey(demandType){
@@ -824,14 +875,14 @@ function drawMap(data,aiannh,prison){
                  var label = displayTextS[columnsToShow[c]]
                  // console.log(columnsToShow[c]+"_priority")
                  var value = feature["properties"][columnsToShow[c]]
-                 displayString+=label.split("_").join(" ")+ ": "+value+"<br>"                 
+                 displayString+=label.split("_").join(" ")+ ": "+value+"<br>"       
              }
            //  console.log(feature["properties"])
              if(pub.strategy!==null && pub.coverage!=null){
                  var coverage = feature["properties"][pub.strategy+"_"+pub.coverage]
+                 displayString+="% of needs met: "+coverage+"<br>"
              }
              
-             displayString+="% of needs met: "+coverage+"<br>"
             // var coords = feature.geometry.coordinates[0][0]
              var coords = pub.centroids[feature.properties["FIPS"]]
              var formattedCoords =coords// {lat:coords[1],lng:coords[0]}
@@ -858,22 +909,22 @@ function drawMap(data,aiannh,prison){
       map.on('mouseleave','county_boundary', function(e) {
           d3.selectAll(".mapboxgl-popup").remove()
       })
-    
+        
       map.on("move",function(){
               var zoom = map.getZoom();
                   //showpopup(map)
             
               
               if(zoom<7){
+                  d3.select("#layersMenu").style("display","none")
                   d3.select("#mapbox-satellite").style("opacity",.3)
-                  d3.select("#tract_svi").style("opacity",.3)
                   //document.getElementById("tract_svi").disabled = true;
                   document.getElementById("mapbox-satellite").disabled = true;
                   
                  // map.setLayoutProperty("county_boundary", 'visibility', 'none')
               }else{
+                  d3.select("#layersMenu").style("display","block")
                   d3.select("#mapbox-satellite").style("opacity",1)
-                  //d3.select("#tract_svi").style("opacity",1)
               }
           })
     
@@ -980,7 +1031,7 @@ function toggleLayers(map){
             }
         };
 
-        var layers = document.getElementById('menu');
+        var layers = document.getElementById('layersMenu');
         layers.appendChild(link);
     }
 }
