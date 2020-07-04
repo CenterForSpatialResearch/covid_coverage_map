@@ -170,16 +170,23 @@ function ready(highDemandData,hotspotData,SVIData,hotspotSVIData,counties,aiannh
         
         var noDemand = []
         
-        // for(j in pub.all["highDemand"]){
- //            var actualDemand = pub.all["highDemand"][j]["SVI_total_demand_of_county"]
- //            if(actualDemand ==0){
- //                noDemand.push(pub.all["highDemand"][j]["County_FIPS"])
- //            }
- //        }
-       // console.log(noDemand)
-        
+         for(j in pub.all["highDemand"]){
+             var actualDemand = pub.all["highDemand"][j]["SVI_total_demand_of_county"]
+             if(actualDemand ==0){
+                 noDemand.push(pub.all["highDemand"][j]["County_FIPS"])
+             }else if(pub.all["hotspotSVI"][j]["SVI_percentage_for_50"] ==-1){
+                 console.log("-1")
+             }
+         }
+        console.log(noDemand)
+        console.log(numberWithCommas(9098272))
     //drawHistogram(pub.strategy,pub.coverage)
 };
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 function turnToDict(data,keyColumn,prefix){
     var newDict = {}
     var maxPriority = 0
@@ -329,9 +336,12 @@ function drawHistogram(strategy){
         .attr("x2","100%")
         .attr("y2","0%")
     
+    var y1 = 100
+    var y2 = 20
+    
    // svg.append("text").text("priority value").attr("x",20).attr("y",30)
-    svg.append("text").text("# of counties").attr("x",0).attr("y",45)
-    svg.append("text").text("# of cases").attr("x",0).attr("y",75)
+    svg.append("text").text("# of counties").attr("x",0).attr("y",y1)
+    svg.append("text").text("# of cases").attr("x",0).attr("y",y1+30)
 
 
     for(var b in formattedBreaks){
@@ -343,7 +353,7 @@ function drawHistogram(strategy){
     }
     svg.append("rect")
     .attr("x",0)
-    .attr("y",50)
+    .attr("y",y1+5)
     .attr("width", barWidth)
     .attr("height",10)
     .attr("fill","url(#test)")
@@ -368,16 +378,16 @@ function drawHistogram(strategy){
       //       .attr("fill",bk.color)
         
         svg.append("text")
-        .text(bk.actualLength)
+        .text(numberWithCommas(bk.actualLength))
         .attr("x",xScale(bk.sLength+bk.length/2)-5)
-        .attr("y",55)
+        .attr("y",y1+10)
         .attr("text-anchor","end")
         .style("writing-mode","vertical-rl")
         
         svg.append("text")
-        .text(bk.cases)
+        .text(numberWithCommas(bk.cases))
         .attr("x",xScale(bk.sLength+bk.length/2)-5)
-        .attr("y",65)
+        .attr("y",y1+20)
         .attr("text-anchor","start")
         .style("writing-mode","vertical-rl")
         
@@ -385,7 +395,7 @@ function drawHistogram(strategy){
         .attr("width",2)
         .attr("height",10)
         .attr("x",xScale(bk.cLength)-2)
-        .attr("y",50)
+        .attr("y",y1+5)
         .attr("fill","white")
     }
     
@@ -424,19 +434,19 @@ function drawHistogram(strategy){
         for(var i in formattedCBreaks){
             var fcb = formattedCBreaks[i]
             svg.append("rect")
-            .attr("y",100)
+            .attr("y",y2)
             .attr("x",xScale(fcb.start)+i*2)
             .attr("height",10)
             .attr("width",xScale(fcb.lengthP))
             .attr("fill","none")
-            .attr("stroke","#ffcc67")
+            .attr("stroke",outlineColor)
             .attr("opacity",oScale(fcb.minValue))
             .attr("stroke-width",sScale(fcb.minValue))
             break
         }
     
-        svg.append("text").text(formattedCBreaks[0].length+" ("+formattedCBreaks[0].lengthP+"%)"+" counties with 0% coverage")
-        .attr("y",130).attr("x",0)
+        svg.append("text").text(numberWithCommas(formattedCBreaks[0].length)+" ("+formattedCBreaks[0].lengthP+"%)"+" counties with 0% coverage")
+        .attr("y",y2+25).attr("x",0).attr("fill","black")
     }
 }
 
@@ -728,6 +738,7 @@ function zoomToBounds(map){
 
 function drawMap(data,aiannh,prison){
 	mapboxgl.accessToken = 'pk.eyJ1Ijoic2lkbCIsImEiOiJkOGM1ZDc0ZTc5NGY0ZGM4MmNkNWIyMmIzNDBkMmZkNiJ9.Qn36nbIqgMc4V0KEhb4iEw';    
+    //mapboxgl.accessToken = "pk.eyJ1IjoiYzRzci1nc2FwcCIsImEiOiJja2J0ajRtNzMwOHBnMnNvNnM3Ymw5MnJzIn0.fsTNczOFZG8Ik3EtO9LdNQ"//new account
     var bounds = [
     [-74.1, 40.6], // Southwest coordinates
     [-73.6, 40.9] // Northeast coordinates
@@ -736,7 +747,8 @@ function drawMap(data,aiannh,prison){
     map = new mapboxgl.Map({
          container: 'map',
  		style: "mapbox://styles/sidl/ckbsbi96q3mta1hplaopbjt9s",
- 		center:[-93,37],
+ 		//style:"mapbox://styles/c4sr-gsapp/ckc4s079z0z5q1ioiybc8u6zp",//new account
+        center:[-93,37],
          zoom: 3.8,
          preserveDrawingBuffer: true,
         minZoom:3.5//,
@@ -853,23 +865,33 @@ function drawMap(data,aiannh,prison){
      });     
       var hoveredStateId = null;
      
+     
      var firstMove = true
+         d3.select("#mapPopup").append("div").attr("id","popLabel")//.style("width","200px").style("height","200px")//.style('background-color',"red")
+         d3.select("#mapPopup").append("div").attr("id","popMap")//.style("width","200px").style("height","400px")//.style('background-color',"red")
+         
      map.on('mousemove', 'county_boundary', function(e) {
          var feature = e.features[0]
          map.getCanvas().style.cursor = 'pointer'; 
          if(feature["properties"].LOCATION!=undefined){
+             
+             var x = event.clientX;     // Get the horizontal coordinate
+             var y = event.clientY;
+             d3.select("#mapPopup").style("visibility","visible")
+             .style("left",x+"px")
+             .style("top",(y+20)+"px")
+             
+             
              var countyName = feature["properties"].LOCATION
              var population = feature["properties"]["E_TOTPOP"]
              var geometry = feature["geometry"]
              var countyId = feature["properties"]["FIPS"]
            //  var columnsToShow = ["hotspotSVI_priority","hotspot_priority","SVI_priority","highDemand_priority"]
 
-                  var columnsToShow = ["RPL_THEMES","highDemand_priority"]
+             var columnsToShow = ["RPL_THEMES","highDemand_priority"]
              var displayTextS = {highDemand_priority:"Number of New COVID Cases",hotspot_priority:"New Cases as % of Population",RPL_THEMES:"County Census Demographic Social Vulnerability Percentile",hotspotSVI_priority:"Census Demographic Social Vulnerability and New Cases as % of Population "}
-
-
              var displayString = "<span class=\"popupTitle\">"+countyName+"</span><br>"
-                     +"Population: "+population+"<br>"
+                     +"Population: "+numberWithCommas(population)+"<br>"
              
              for(var c in columnsToShow){
                  var label = displayTextS[columnsToShow[c]]
@@ -883,6 +905,8 @@ function drawMap(data,aiannh,prison){
                  displayString+="% of needs met: "+coverage+"<br>"
              }
              
+             d3.select("#popLabel").html(displayString)
+             
             // var coords = feature.geometry.coordinates[0][0]
              var coords = pub.centroids[feature.properties["FIPS"]]
              var formattedCoords =coords// {lat:coords[1],lng:coords[0]}
@@ -891,25 +915,59 @@ function drawMap(data,aiannh,prison){
                  formattedCoords[0] += e.lngLat.lng > formattedCoords[0] ? 360 : -360;
              }
 
+/*
              popup
              .setLngLat(formattedCoords)
              .setHTML(displayString)
              .addTo(map);
+*/
 
-         }         
+         }       
          
-         d3.select(".mapboxgl-popup-content").style("background-color","rgba(255,255,255,.9)")
-         d3.select(".mapboxgl-popup-content").append("div").attr("id","sMap").style("width","200px").style("height","200px")//.style('background-color',"red")
+         map.on("mouseleave",'county_boundary',function(){
+             d3.select("#mapPopup").style("visibility","hidden")
+
+         })  
          
-         subMap(firstMove,formattedCoords,geometry,countyId)
-         firstMove=false
+         
+       //  console.log(countyId)
+        // console.log([formattedCoords.lat,formattedCoords.lng])
+         var coordinates = geometry.coordinates[0]
+         
+         var bounds = coordinates.reduce(function(bounds, coord) {
+                 return bounds.extend(coord);
+             }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+             
+         if(firstMove==true){
+             //d3.select(".mapboxgl-popup-content").append("div").attr("id","sMap").style("width","200px").style("height","200px")
+             detailMap = new mapboxgl.Map({
+                        container: 'popMap',
+                		style: "mapbox://styles/sidl/ckc3ibioh0iza1iqiz0d3vnii",
+                		//style:"mapbox://styles/sidl/ckc4m2i9b0t931jl6o2wahxrp",                      
+                        preserveDrawingBuffer: true,
+                    });
+                             detailMap.fitBounds(bounds, {
+                                 padding: 5,
+                                 animate: false
+                             })
+                     firstMove=false
+         
+               
+         }else{
+                    
+             detailMap.fitBounds(bounds, {
+                 padding: 5,
+                 animate: false
+             })
+                    
+                     subMap(detailMap,formattedCoords,geometry,countyId)
+         }
+         
+      
 
      });
  
-      map.on('mouseleave','county_boundary', function(e) {
-          d3.selectAll(".mapboxgl-popup").remove()
-      })
-        
+           
       map.on("move",function(){
               var zoom = map.getZoom();
                   //showpopup(map)
@@ -929,29 +987,32 @@ function drawMap(data,aiannh,prison){
           })
     
 }
-function subMap(firstMove,center,geometry,countyId){
+function subMap(detailMap, center,geometry,countyId){
     var coordinates = geometry.coordinates[0]
     var bounds = coordinates.reduce(function(bounds, coord) {
             return bounds.extend(coord);
         }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+        
+        // detailMap.flyTo(
+   //          {
+   //
+   //              center:[center.lat,center.lng],
+   //              curve: 0,
+   //             // zoom: 9,
+   //              speed:10
+   //
+   //          }
+   //      )
+             detailMap.fitBounds(bounds, {
+                 padding: 5,
+                 animate: false
+             })
+         
+ 
     
-  //  console.log(center)
-    if(firstMove == false){
-        detailMap.remove()
-    }
-    detailMap = new mapboxgl.Map({
-         container: 'sMap',
- 		style: "mapbox://styles/sidl/ckc3ibioh0iza1iqiz0d3vnii",
- 		center:[center.lng,center.lat],
-         zoom: 8,
-         preserveDrawingBuffer: true,
-     });
-     detailMap.fitBounds(bounds, {
-         padding: 5
-     });
-/*
-     var filter = ['in',["get",'FIPS'],["literal",[countyId]]];
-     detailMap.setFilter("county",filter)*/
+     
+     // var filter = ['!=',["get",'FIPS'],["literal",[countyId]]];
+   //   detailMap.setFilter("county-small-4yr1gy",filter)
 
      
 }
@@ -959,7 +1020,7 @@ function subMap(firstMove,center,geometry,countyId){
 function placesMenus(map){
     var places = ["Contiguous 48","Alaska","Hawaii","Puerto_Rico"]
     var coords = {
-        "Contiguous 48":{coord:[39,-96],zoom:4},
+        "Contiguous 48":{coord:[37,-93],zoom:4},
         "Alaska":{coord:[63.739,-147.653],zoom:4},
         "Hawaii":{coord:[20.524,-157.063],zoom:7.1},
         "Puerto_Rico":{coord:[18.219,-66.338],zoom:8}
