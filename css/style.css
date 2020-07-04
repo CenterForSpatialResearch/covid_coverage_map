@@ -42,6 +42,7 @@ a{
     background-color:rgba(255,255,255,.9);
     color:#3983a8;
     visibility:hidden;
+    z-index:9999;
 }
 #popMap{
     width:200px;
@@ -97,7 +98,7 @@ a{
  #nav{
      width:200px;
      position:fixed;
-     right:0px;
+     left:0px;
      top:0px;
      margin-top:80px;
      background:rgba(255,255,255,0.8);
@@ -141,7 +142,7 @@ a{
  #geocoder{width:30px;}
  #histogram{
      position:absolute;
-     left:0px;
+     left:200px;
      bottom:0px;
      z-index:999;
      margin:10px;

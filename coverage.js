@@ -748,7 +748,7 @@ function drawMap(data,aiannh,prison){
          container: 'map',
  		style: "mapbox://styles/sidl/ckbsbi96q3mta1hplaopbjt9s",
  		//style:"mapbox://styles/c4sr-gsapp/ckc4s079z0z5q1ioiybc8u6zp",//new account
-        center:[-93,37],
+        center:[-100,37],
          zoom: 3.8,
          preserveDrawingBuffer: true,
         minZoom:3.5//,
@@ -865,7 +865,6 @@ function drawMap(data,aiannh,prison){
      });     
       var hoveredStateId = null;
      
-     
      var firstMove = true
          d3.select("#mapPopup").append("div").attr("id","popLabel")//.style("width","200px").style("height","200px")//.style('background-color',"red")
          d3.select("#mapPopup").append("div").attr("id","popMap")//.style("width","200px").style("height","400px")//.style('background-color',"red")
@@ -876,11 +875,12 @@ function drawMap(data,aiannh,prison){
          if(feature["properties"].LOCATION!=undefined){
              
              var x = event.clientX;     // Get the horizontal coordinate
-             var y = event.clientY;
-             d3.select("#mapPopup").style("visibility","visible")
-             .style("left",x+"px")
-             .style("top",(y+20)+"px")
-             
+             var y = event.clientY;             
+              d3.select("#mapPopup").style("visibility","visible")
+              .style("left",x+"px")
+              .style("top",(y+20)+"px")
+  
+ 
              
              var countyName = feature["properties"].LOCATION
              var population = feature["properties"]["E_TOTPOP"]
