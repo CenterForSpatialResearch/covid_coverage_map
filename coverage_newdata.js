@@ -98,9 +98,9 @@ var lineOpacity = {
     show_all:1
 }
 var lineWeight = {
-    base_case_capacity_high:{stops:[[-1,0],[-0.01,0],[0,2],[99,.1],[100,0]]},
-    base_case_capacity_mid:{stops:[[-1,0],[-0.01,0],[0,2],[99,.1],[100,0]]},
-    base_case_capacity_low:{stops:[[-1,0],[-0.01,0],[0,2],[99,.1],[100,0]]},
+    base_case_capacity_high:{stops:[[-1,0],[-0.01,0],[0,2],[99,.5],[100,0]]},
+    base_case_capacity_mid:{stops:[[-1,0],[-0.01,0],[0,2],[99,.5],[100,0]]},
+    base_case_capacity_low:{stops:[[-1,0],[-0.01,0],[0,2],[99,.5],[100,0]]},
     show_all:1
 }
 var fillOpacity = {
