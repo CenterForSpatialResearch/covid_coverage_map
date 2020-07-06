@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	  <meta charset="UTF-8">
+    <title>coverage</title>
+
+    <meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/dc.css"/>
+  <script src='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.js'></script>
+  <script src="https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.js"></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css' rel='stylesheet' />
+  
+  <link href='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.css' rel='stylesheet' />
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js"></script>
+<link
+rel="stylesheet"
+href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css"
+type="text/css"
+/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+
+<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
+<!--
+  <script type="text/javascript" src="js/mapbox-gl.js"></script>
+-->
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" 
+        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" 
+        crossorigin="anonymous">
+</script>
+<script src="js/jquery.mousefollow.js"></script>
+
+    <style>
+  
+    </style>
+
+</head>
+
+<body>
+
+<div id="head"><strong>POLITICS OF CARE :</strong> Community Health Worker Mapping
+<div id="subtitle">Map showing percent coverage at 30 CHW per 100,000 if Census Demographic Social Vulnerability and New Cases as % of Population is prioritized</div>
+</div>
+
+<div id="mainMenu"><a href="about.html">About</a> | <strong>Map</strong></div>
+<div id="byState"></div>
+<div id="nav">
+  <nav id="update" class="menu"><i>Model Last Updated on ##/##/##</i></nav>
+  
+  <nav id="strategiesMenu" class="menu">How do you want to measure the need for Community Health Workers?</nav>
+  <nav id="coverageMenu" class="menu">How many Community Health Workers can you pay for?</nav>
+<nav id = "geocoder"></nav>
+  <nav id="placesMenu" class="menu">Go To:</nav>
+  <nav id="layersMenu" class="menu">Show Layers:</nav>
+  <nav id="download" class="menu">Download the Data</nav>
+</div>
+  <div id="map"></div>
+  <div id="mapPopup"></div>
+<div id = "histogram"></div>
+
+
+<script type="text/javascript" src="js/d3.js"></script>
+<script type="text/javascript" src="js/crossfilter.js"></script>
+<script type="text/javascript" src="js/dc.js"></script>
+<script type="text/javascript" src="js/queue.v1.min.js"></script>
+<script type="text/javascript" src="dc-canvas-scatterplot.js"></script>
+<script type="text/javascript" src="fileSaver.js"></script>
+<script type="text/javascript" src="coverage_newdata.js"></script>
+
+
+</body>
+</html>

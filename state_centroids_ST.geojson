@@ -1,6 +1,5 @@
 {
 "type": "FeatureCollection",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::4269" } },
                                                                                 
 "features": [
 { "type": "Feature", "properties": { "REGION": "3", "DIVISION": "5", "STATEFP": "54", "STATENS": "01779805", "GEOID": "54", "STUSPS": "WV", "NAME": "West Virginia", "LSAD": "00", "MTFCC": "G4000", "FUNCSTAT": "A", "ALAND": -2147483648.0, "AWATER": 489840834.0, "INTPTLAT": "+38.6472854", "INTPTLON": "-080.6183274" }, "geometry": { "type": "Point", "coordinates": [ -80.613706888728458, 38.642567032901191 ] } },

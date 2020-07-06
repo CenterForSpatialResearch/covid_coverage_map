@@ -871,6 +871,7 @@ function drawMap(data,aiannh,prison){
          
      map.on('mousemove', 'county_boundary', function(e) {
          var feature = e.features[0]
+         console.log(feature)
          map.getCanvas().style.cursor = 'pointer'; 
          if(feature["properties"].LOCATION!=undefined){
              
