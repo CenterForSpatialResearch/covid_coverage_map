@@ -17,7 +17,7 @@ var themesDefinitions ={
 }
 var pub = {
     strategy:"percentage_scenario_SVI_hotspot",
-    coverage:"base_case_capacity_low",
+    coverage:"base_case_capacity_10",
     aiannh:false,
     prison:false,
     satellite:false,
@@ -53,36 +53,41 @@ var aiannh = d3.json("indian_reservations.geojson")
 //var usOutline = d3.json("us_outline.geojson")
 //var normalizedPriority = d3.csv("priority_normalized_for_policies.csv")
 
-var allData = d3.csv("County_level_coverage_for_all_policies_and_low_mid_high_base_case_capacity.csv")
-//var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
+//var allData = d3.csv("County_level_coverage_for_all_policies_and_low_mid_high_base_case_capacity.csv")
+var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
 
-var headers = ["County_FIPS","SVI_county","priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot",
-"percentage_scenario_high_demand_base_case_capacity_low","percentage_scenario_high_demand_base_case_capacity_mid",
-"percentage_scenario_high_demand_base_case_capacity_high",
-"percentage_scenario_SVI_hotspot_base_case_capacity_low","percentage_scenario_SVI_hotspot_base_case_capacity_mid",
-"percentage_scenario_SVI_hotspot_base_case_capacity_high",
-"percentage_scenario_SVI_pop_base_case_capacity_low",
-"percentage_scenario_SVI_pop_base_case_capacity_mid",
-"percentage_scenario_SVI_pop_base_case_capacity_high",
-"percentage_scenario_hotspot_base_case_capacity_low",
-"percentage_scenario_hotspot_base_case_capacity_mid",
-"percentage_scenario_hotspot_base_case_capacity_high"]
+// var headers = ["County_FIPS","SVI_county","priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot",
+// "percentage_scenario_high_demand_base_case_capacity_low","percentage_scenario_high_demand_base_case_capacity_mid",
+// "percentage_scenario_high_demand_base_case_capacity_high",
+// "percentage_scenario_SVI_hotspot_base_case_capacity_low","percentage_scenario_SVI_hotspot_base_case_capacity_mid",
+// "percentage_scenario_SVI_hotspot_base_case_capacity_high",
+// "percentage_scenario_SVI_pop_base_case_capacity_low",
+// "percentage_scenario_SVI_pop_base_case_capacity_mid",
+// "percentage_scenario_SVI_pop_base_case_capacity_high",
+// "percentage_scenario_hotspot_base_case_capacity_low",
+// "percentage_scenario_hotspot_base_case_capacity_mid",
+// "percentage_scenario_hotspot_base_case_capacity_high"]
 
 
 var prioritySet = ["priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot"]
-var coverageSet = ["base_case_capacity_low","base_case_capacity_mid","base_case_capacity_high","show_all"]
+//var coverageSet = ["base_case_capacity_low","base_case_capacity_mid","base_case_capacity_high","show_all"]
 
-// for(var c = 0, c<8,c++){
-//     console.log(c)
-// }
+var coverageSet = []
+var coverageDisplayText = {show_all:"Hide Coverage Info"}
+for(var c = 1; c<=8; c++){
+    var setTerm = "base_case_capacity_"+c*10
+     coverageSet.push(setTerm)
+    coverageDisplayText[setTerm] = c*10+' CHW per 100,000'
+ }
+ coverageSet.push("show_all")
+ console.log(coverageSet)
 //var coverageSet = ["base_case_capacity_10"]
-
-var coverageDisplayText = {
-    base_case_capacity_low:"30 CHW per 100,000",
-    base_case_capacity_mid:"50 CHW per 100,000",
-    base_case_capacity_high:"70 CHW per 100,000",
-    show_all:"Hide Coverage Info"
-}
+// var coverageDisplayText = {
+//     base_case_capacity_low:"30 CHW per 100,000",
+//     base_case_capacity_mid:"50 CHW per 100,000",
+//     base_case_capacity_high:"70 CHW per 100,000",
+//     show_all:"Hide Coverage Info"
+// }
 
 var measureSet = ["percentage_scenario_high_demand","percentage_scenario_hotspot","percentage_scenario_SVI_hotspot","percentage_scenario_SVI_pop"]
 var measureDisplayText = {
@@ -284,10 +289,10 @@ function drawMap(data,aiannh,prison){
          map.setPaintProperty("counties", 'fill-opacity',1)
          map.setPaintProperty("counties", 'fill-color',fillColor)
                  
-                 console.log(lineOpacity)
          map.setPaintProperty("county_outline", 'line-opacity',lineOpacity)
          map.setPaintProperty("county_outline", 'line-color',outlineColor)
          map.setPaintProperty("county_outline", 'line-width',lineWeight)
+         
          
         d3.select("."+pub.coverage+"_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
         d3.selectAll("."+pub.coverage).style("color",highlightColor)
@@ -407,16 +412,11 @@ function drawMap(data,aiannh,prison){
            
       map.on("move",function(){
               var zoom = map.getZoom();
-                  //showpopup(map)
-            
-              
               if(zoom<7){
                   d3.select("#layersMenu").style("display","none")
                   d3.select("#mapbox-satellite").style("opacity",.3)
                   //document.getElementById("tract_svi").disabled = true;
                   document.getElementById("mapbox-satellite").disabled = true;
-                  
-                 // map.setLayoutProperty("county_boundary", 'visibility', 'none')
               }else{
                   d3.select("#layersMenu").style("display","block")
                   d3.select("#mapbox-satellite").style("opacity",1)
@@ -737,9 +737,9 @@ function strategyMenu(map){
                   map.setPaintProperty("county_outline", 'line-color',"#fff")
                   map.setPaintProperty("county_outline", 'line-width',1)
               }else{
-                  map.setPaintProperty("county_outline", 'line-opacity',lineOpacity[pub.coverage])
+                  map.setPaintProperty("county_outline", 'line-opacity',lineOpacity)
                   map.setPaintProperty("county_outline", 'line-color',outlineColor)
-                  map.setPaintProperty("county_outline", 'line-width',lineWeight[pub.coverage])
+                  map.setPaintProperty("county_outline", 'line-width',lineWeight)
               }          
                  
           //    drawHistogram(pub.strategy)
@@ -799,8 +799,8 @@ function coverageMenu(map){
                   map.setPaintProperty("county_outline", 'line-color',"#fff")
                   map.setPaintProperty("county_outline", 'line-width',1)
               }else{
-                  map.setPaintProperty("county_outline", 'line-opacity',lineOpacity[pub.coverage])
-                  map.setPaintProperty("county_outline", 'line-width',lineWeight[pub.coverage])
+                  map.setPaintProperty("county_outline", 'line-opacity',lineOpacity)
+                  map.setPaintProperty("county_outline", 'line-width',lineWeight)
                   map.setPaintProperty("county_outline", 'line-color',outlineColor)
               }
               map.setPaintProperty("counties", 'fill-opacity',1)
