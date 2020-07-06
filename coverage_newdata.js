@@ -315,7 +315,7 @@ function drawMap(data,aiannh,prison){
      map.on('mousemove', 'counties', function(e) {
          var feature = e.features[0]
          map.getCanvas().style.cursor = 'pointer'; 
-         console.log(feature)
+        // console.log(feature)
          if(feature["properties"].FIPS!=undefined){
              
              var x = event.clientX;     // Get the horizontal coordinate
