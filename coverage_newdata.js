@@ -299,6 +299,12 @@ function drawMap(data,aiannh,prison){
          map.setPaintProperty("county_outline", 'line-opacity',lineOpacity[pub.coverage])
          map.setPaintProperty("county_outline", 'line-color',outlineColor)
          map.setPaintProperty("county_outline", 'line-width',lineWeight[pub.coverage])
+         
+        d3.select("."+pub.coverage+"_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
+        d3.selectAll("."+pub.coverage).style("color",highlightColor)
+        d3.selectAll("."+pub.strategy).style("color",highlightColor)
+        d3.selectAll("."+pub.strategy+"_radialS").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
+          
      })
 
     
