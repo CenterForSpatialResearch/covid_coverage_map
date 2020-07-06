@@ -54,6 +54,7 @@ var aiannh = d3.json("indian_reservations.geojson")
 //var normalizedPriority = d3.csv("priority_normalized_for_policies.csv")
 
 var allData = d3.csv("County_level_coverage_for_all_policies_and_low_mid_high_base_case_capacity.csv")
+//var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
 
 var headers = ["County_FIPS","SVI_county","priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot",
 "percentage_scenario_high_demand_base_case_capacity_low","percentage_scenario_high_demand_base_case_capacity_mid",
@@ -70,6 +71,12 @@ var headers = ["County_FIPS","SVI_county","priority_high_demand","priority_SVI_h
 
 var prioritySet = ["priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot"]
 var coverageSet = ["base_case_capacity_low","base_case_capacity_mid","base_case_capacity_high","show_all"]
+
+// for(var c = 0, c<8,c++){
+//     console.log(c)
+// }
+//var coverageSet = ["base_case_capacity_10"]
+
 var coverageDisplayText = {
     base_case_capacity_low:"30 CHW per 100,000",
     base_case_capacity_mid:"50 CHW per 100,000",
@@ -91,25 +98,8 @@ Promise.all([counties,aiannh,countyCentroids,allData])
     ready(data[0],data[1],data[2],data[3])
 })
 
-var lineOpacity = {
-    base_case_capacity_high:{stops:[[0,1],[100,0.3]]},
-    base_case_capacity_mid:{stops:[[0,1],[100,0.3]]},
-    base_case_capacity_low:{stops:[[0,1],[100,0.3]]},
-    show_all:1
-}
-var lineWeight = {
-    base_case_capacity_high:{stops:[[-1,0],[-0.01,0],[0,2],[99,.5],[100,0]]},
-    base_case_capacity_mid:{stops:[[-1,0],[-0.01,0],[0,2],[99,.5],[100,0]]},
-    base_case_capacity_low:{stops:[[-1,0],[-0.01,0],[0,2],[99,.5],[100,0]]},
-    show_all:1
-}
-var fillOpacity = {
-    base_case_capacity_high:{stops:[[0,0],[1,1]]},
-    base_case_capacity_mid:{stops:[[0,0],[1,1]]},
-    base_case_capacity_low:{stops:[[0,0],[1,1]]},
-    show_all:1
-}
-var gray = "#aaaaaa"
+var lineOpacity = {stops:[[0,1],[100,0.3]]}
+var lineWeight = {stops:[[-1,0],[-0.01,0],[0,2],[99,.5],[100,0]]}
 
 var fillColor = {
         property:null,
@@ -120,13 +110,11 @@ var fillColor = {
             [.1,"#02568B"]]
         }
 
-
 var centroids = null
 var latestDate = null
 
 function ready(counties,aiannh,centroids,modelData){
     //convert to geoid dict
-    
     var dataByFIPS = turnToDictFIPS(modelData,"County_FIPS")
     
     //pub.all = {"highDemand":highDemand,"hotspot":hotspot,"SVI":SVI,"hotspotSVI":hotspotSVI,"normal":normalizedP}
@@ -289,16 +277,17 @@ function drawMap(data,aiannh,prison){
          toggleLayers(map)
          placesMenus(map)
          
-        lineOpacity[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
-        lineWeight[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
+        lineOpacity["property"]=pub.strategy+"_"+pub.coverage
+        lineWeight["property"]=pub.strategy+"_"+pub.coverage
         fillColor["property"]="priority_"+pub.strategy.replace("percentage_scenario_","")
      
          map.setPaintProperty("counties", 'fill-opacity',1)
          map.setPaintProperty("counties", 'fill-color',fillColor)
                  
-         map.setPaintProperty("county_outline", 'line-opacity',lineOpacity[pub.coverage])
+                 console.log(lineOpacity)
+         map.setPaintProperty("county_outline", 'line-opacity',lineOpacity)
          map.setPaintProperty("county_outline", 'line-color',outlineColor)
-         map.setPaintProperty("county_outline", 'line-width',lineWeight[pub.coverage])
+         map.setPaintProperty("county_outline", 'line-width',lineWeight)
          
         d3.select("."+pub.coverage+"_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
         d3.selectAll("."+pub.coverage).style("color",highlightColor)
@@ -736,8 +725,8 @@ function strategyMenu(map){
            
               d3.select("#subtitle").html("Map showing percent coverage at " +coverageDisplayText[pub.coverage]+" if "+measureDisplayText[pub.strategy]+ " is prioritized")
               
-             lineOpacity[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
-             lineWeight[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
+             lineOpacity["property"]=pub.strategy+"_"+pub.coverage
+             lineWeight["property"]=pub.strategy+"_"+pub.coverage
              fillColor["property"]="priority_"+pub.strategy.replace("percentage_scenario_","")
              
               map.setPaintProperty("counties", 'fill-opacity',1)
@@ -799,8 +788,8 @@ function coverageMenu(map){
              d3.selectAll("."+clickedId).style("color",highlightColor)
              d3.selectAll("."+clickedId+"_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
            
-             lineOpacity[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
-             lineWeight[pub.coverage]["property"]=pub.strategy+"_"+pub.coverage
+             lineOpacity["property"]=pub.strategy+"_"+pub.coverage
+             lineWeight["property"]=pub.strategy+"_"+pub.coverage
              fillColor["property"]="priority_"+pub.strategy.replace("percentage_scenario_","")
               
                d3.select("#subtitle").html("Map showing percent coverage at " +coverageDisplayText[pub.coverage]+" if "+measureDisplayText[pub.strategy]+ " is prioritized")
