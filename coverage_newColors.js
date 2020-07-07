@@ -17,7 +17,7 @@ var themesDefinitions ={
 }
 var pub = {
     strategy:"percentage_scenario_SVI_hotspot",
-    coverage:"base_case_capacity_10",
+    coverage:"base_case_capacity_30",
     aiannh:false,
     prison:false,
     satellite:false,
@@ -38,13 +38,13 @@ highDemand:["#A7DCDF","#6EAFC3","#3983A8","#02568B"]}
 var colorGroups = ["#8DC63F","#9FCF8B","#B2D8D6","#47823B","#5A8B71","#6C93A7","#003E38","#134658","#274F78"]
 
 var colorGroups = ["#FF8608","#D8AF6F","#B2D8D6","#CA6C19","#9B8060","#6C93A7","#94512A","#5D5051","#274F78"]
-
-var pStops = [[0,.33],[.34,.66],[.67,1]]
-var cStops = [[0,33],[34,66],[67,100]]
+//
+// var pStops = [[0,.33],[.34,.66],[.67,1]]
+// var cStops = [[0,33],[34,66],[67,100]]
 
     
-var pStops = [[0,.005],[.005,.03],[.03,1]]
-var cStops = [[0,33],[34,66],[66,100]]
+var pStops = [[0,.001],[.001,.67],[.67,1]]
+var cStops = [[0,34],[34,67],[67,100]]
 
 var groupColorDict = []
 for(var g =0; g<colorGroups.length; g++){
@@ -151,6 +151,7 @@ function drawGrid(map,data){
         .attr("column",function(d,i){return i})
         .attr("cursor","pointer")
         .attr("text-anchor","middle")
+         .attr("text-decoration","underline")
         .attr("transform","translate(100,0)")
           .on("mouseover",function(d,i){
               var column = d3.select(this).attr("column")
@@ -175,6 +176,7 @@ function drawGrid(map,data){
         .append('text')
           .text(function(d,i){return pStops[i].join("-"); return d})
         .attr("y",function(d,i){return 130-i*gridSize})
+         .attr("text-decoration","underline")
         .attr("x",0)
           .attr("row",function(d,i){
               return i
@@ -529,7 +531,7 @@ function drawMap(data,aiannh,prison){
          
      map.on('mousemove', 'counties', function(e) {
          var feature = e.features[0]
-         console.log(feature)
+         //console.log(feature)
          map.getCanvas().style.cursor = 'pointer'; 
         // console.log(feature)
          if(feature["properties"].FIPS!=undefined){

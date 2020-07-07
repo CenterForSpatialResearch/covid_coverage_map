@@ -50,8 +50,9 @@ a{
     top:0px;
     margin-top:80px;
     width:250px;
-    height:200px;
+    height:250px;
     padding:5px;
+    background-color:rgba(255,255,255,.5);
 }
 #popMap{
     width:200px;
