@@ -49,9 +49,9 @@ a{
     right:0px;
     top:0px;
     margin-top:80px;
-    width:200px;
+    width:250px;
     height:200px;
-    border:1px solid #aaaaaa;
+    padding:5px;
 }
 #popMap{
     width:200px;

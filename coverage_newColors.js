@@ -34,20 +34,87 @@ SVI:["#A7DCDF","#6EAFC3","#3983A8","#02568B"],
 hotspotSVI:["#A7DCDF","#6EAFC3","#3983A8","#02568B"],
 highDemand:["#A7DCDF","#6EAFC3","#3983A8","#02568B"]}
 
-var colorGroups = ["#274F78","#134658","#003E38","#6C93A7","#5A8B71","#47823B","#B2D8D6","#9FCF8B","#8DC63F"]
+
+var colorGroups = ["#8DC63F","#9FCF8B","#B2D8D6","#47823B","#5A8B71","#6C93A7","#003E38","#134658","#274F78"]
+
 var pStops = [[0,.33],[.34,.66],[.67,1]]
 var cStops = [[0,33],[34,66],[67,100]]
+
+    
+var pStops = [[0,.005],[.005,.03],[.03,1]]
+var cStops = [[0,33],[34,66],[99,100]]
 
 var groupColorDict = []
 for(var g =0; g<9; g++){
     groupColorDict.push("_"+String(g+1))
     groupColorDict.push(colorGroups[g])
 }
-groupColorDict.push("#dddddd")
-console.log(groupColorDict)
+groupColorDict.push("#eee")
 
+function drawGrid(map){
 
-d3.select("#colorGrid").append("svg")
+    var gridHeight = 200
+    var gridWidth = 250
+
+    var colorGridSvg = d3.select("#colorGrid").append("svg").attr("width",gridWidth).attr("height",gridHeight)
+    var gridSize = 40
+    colorGridSvg
+        .selectAll(".grid")
+        .data(colorGroups)
+        .enter()
+        .append("rect")
+        .attr("x",function(d,i){
+            return i%3*(gridSize+2)
+        })
+        .attr("y",function(d,i){
+            return 150-Math.floor(i/3+1)*(gridSize+2)
+        })
+        .attr("width",gridSize)
+        .attr("height",gridSize)
+        .attr('fill',function(d){return d})
+        .attr("transform","translate(100,0)")
+
+    colorGridSvg
+        .selectAll(".gridText")
+        .data(colorGroups)
+        .enter()
+        .append("text")
+        .text(function(d,i){return i+1})
+        .attr("x",function(d,i){
+            return i%3*(gridSize+2)+20
+        })
+        .attr("y",function(d,i){
+            return 150 -(Math.floor(i/3))*(gridSize+2)-10
+        })
+        .attr('fill',"#ffffff")
+        .attr("text-anchor","middle")
+        .attr("transform","translate(100,0)")
+    
+    colorGridSvg.append("text").text("coverage").attr("x",130).attr("y",175)
+    colorGridSvg.append("text").text("priority").attr("x",20).attr("y",90)
+    var degree = ["low","med","high"]
+    colorGridSvg
+        .selectAll(".gridDegreeX")
+        .data(degree)
+        .enter()
+        .append('text')
+        .text(function(d){return d})
+        .attr("x",function(d,i){return i*gridSize})
+        .attr("y",160)
+        .attr("text-anchor","start")
+        .attr("transform","translate(100,0)")
+
+    colorGridSvg
+        .selectAll(".gridDegreeX")
+        .data(degree)
+        .enter()
+        .append('text')
+        .text(function(d){return d})
+        .attr("y",function(d,i){return 130-i*gridSize})
+        .attr("x",0)
+        .attr("text-anchor","end")
+        .attr("transform","translate(95,0)")
+}
 
 
 function toTitleCase(str){
@@ -178,9 +245,6 @@ function numberWithCommas(x) {
 
 function turnToDictFIPS(data,keyColumn){
     
-var pStops = [[0,.005],[.005,.03],[.03,1]]
-var cStops = [[0,33],[34,66],[99,100]]
-    
     var newDict = {}
     var maxPriority = 0
     var keys = Object.keys(data[0])
@@ -208,13 +272,18 @@ var cStops = [[0,33],[34,66],[99,100]]
             for(var k in coverageSet){
                 var coverageKey = "percentage_scenario_"+measureKey+"_"+coverageSet[k]
                 var coverage = parseFloat(data[i][coverageKey])
-                for(var cs in cStops){
-                    var cStop = cStops[cs]
-                    if(coverage>=cStop[0] && coverage<=cStop[1]){
-                        var cGroup = cs
-                        break
+                if(coverage==-1){
+                    var cGroup = "none"
+                }else{
+                    for(var cs in cStops){
+                        var cStop = cStops[cs]
+                        if(coverage>=cStop[0] && coverage<=cStop[1]){
+                            var cGroup = cs
+                            break
+                        }
                     }
                 }
+                
                 
                 var combinedGroup = "_"+(parseInt(parseInt(pGroup)*3)+parseInt(parseInt(cGroup)+1))
                 var combinedHeader = coverageKey+"_group"
@@ -302,7 +371,9 @@ function drawMap(data,aiannh,prison){
        // maxBounds: bounds    
      });
      
-     map.on("load",function(){         
+     map.on("load",function(){        
+         
+         drawGrid(map) 
          map.setLayoutProperty("mapbox-satellite", 'visibility', 'none');
          map.addSource("counties",{
              "type":"geojson",
@@ -315,7 +386,7 @@ function drawMap(data,aiannh,prison){
              'source': 'counties',
              'paint': {
                  'line-color':"white",
-                 'line-opacity':.3
+                 'line-opacity':.1
              },
              'filter': ['==', '$type', 'Polygon']
          },"mapbox-satellite");
