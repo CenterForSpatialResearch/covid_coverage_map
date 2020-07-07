@@ -53,25 +53,58 @@ for(var g =0; g<colorGroups.length; g++){
 }
 groupColorDict.push("#eee")
 
-function drawGrid(map){
+function drawGrid(map,data){
+    
+    var domainC = []
+    for(var g =0; g<colorGroups.length; g++){
+        domainC.push("_"+g)
+    }
+        
+    var histo = d3.histogram()
+        .value(function(d){
+            if(d.properties[pub.strategy+"_"+pub.coverage+"_group"]==undefined){
+                return 999
+            }else{
+                return d.properties[pub.strategy+"_"+pub.coverage+"_group"].replace("_","")
+            }
+        })
+        .domain([1,10])
+        .thresholds(9)
+            
+    var bins = histo(data.features)
+    console.log(bins)
+    
     var gridHeight = 200
     var gridWidth = 250
-
     var colorGridSvg = d3.select("#colorGrid").append("svg").attr("width",gridWidth).attr("height",gridHeight)
     var gridSize = 40
+        
+    var rScale = d3.scaleLinear().domain([0,800]).range([10,gridSize-5])
+        
     colorGridSvg
         .selectAll(".grid")
         .data(colorGroups)
         .enter()
         .append("rect")
+        .attr("class",function(d,i){
+            var cClass = i%3
+            var mClass = Math.floor(i/3)
+            return "c_"+cClass+" "+"m_"+mClass+" gridCell"
+        })
         .attr("x",function(d,i){
             return i%3*(gridSize)
         })
         .attr("y",function(d,i){
-            return 150-Math.floor(i/3+1)*(gridSize)
+            return 150-Math.floor(i/3+1)*(gridSize)//-rScale(bins[i].length)+gridSize/2
         })
-        .attr("width",gridSize)
-        .attr("height",gridSize)
+         .attr("width",function(d,i){
+             return gridSize//-20
+         })
+        .attr("height",function(d,i){
+            return gridSize
+           // console.log(rScale(bins[i].length))
+            return rScale(bins[i].length)
+        })
         .attr('fill',function(d){return d})
         .attr("transform","translate(100,0)")
         .attr("cursor","pointer")
@@ -85,25 +118,24 @@ function drawGrid(map){
             map.setFilter("counties",filter)
             
         })
-
-    // colorGridSvg
-  //       .selectAll(".gridText")
-  //       .data(colorGroups)
-  //       .enter()
-  //       .append("text")
-  //       .text(function(d,i){return i+1})
-  //       .attr("x",function(d,i){
-  //           return i%3*(gridSize+2)+20
-  //       })
-  //       .attr("y",function(d,i){
-  //           return 150 -(Math.floor(i/3))*(gridSize+2)-10
-  //       })
-  //       .attr('fill',"#ffffff")
-  //       .attr("text-anchor","middle")
-  //       .attr("transform","translate(100,0)")
+ // colorGridSvg
+ //         .selectAll(".gridText")
+ //         .data(colorGroups)
+ //         .enter()
+ //         .append("text")
+ //         .text(function(d,i){return i+1})
+ //         .attr("x",function(d,i){
+ //             return i%3*(gridSize+2)+20
+ //         })
+ //         .attr("y",function(d,i){
+ //             return 150 -(Math.floor(i/3))*(gridSize+2)-10
+ //         })
+ //         .attr('fill',"#ffffff")
+ //         .attr("text-anchor","middle")
+ //         .attr("transform","translate(100,0)")
     
     colorGridSvg.append("text").text("coverage").attr("x",130).attr("y",175)
-    colorGridSvg.append("text").text("priority").attr("x",60).attr("y",155)
+    colorGridSvg.append("text").text("priority").attr("x",60).attr("y",145)
         .attr("transform","rotate(90 80,90)")
       
       
@@ -114,21 +146,26 @@ function drawGrid(map){
         .enter()
         .append('text')
         .text(function(d,i){return cStops[i].join("-");})
-        .attr("x",function(d,i){return i*gridSize})
+        .attr("x",function(d,i){return i*gridSize+gridSize/2})
         .attr("y",160)
+        .attr("column",function(d,i){return i})
         .attr("cursor","pointer")
-        .attr("text-anchor","start")
+        .attr("text-anchor","middle")
         .attr("transform","translate(100,0)")
           .on("mouseover",function(d,i){
+              var column = d3.select(this).attr("column")
+              d3.selectAll(".gridCell").attr("opacity",.5)
+              d3.selectAll(".c_"+column).attr("opacity",1)
               var groupName = "_"+i            
               var filter = ["==",pub.strategy+"_"+pub.coverage+"_coverage_group",groupName]
             map.setFilter("counties",filter)
           
           })
           .on("mouseout",function(d,i){
+              d3.selectAll(".gridCell").attr("opacity",1)
+              
               var filter = ["!=",pub.strategy+"_"+pub.coverage+"_group","blahblah"]
               map.setFilter("counties",filter)
-            
           })
 
     colorGridSvg
@@ -139,16 +176,24 @@ function drawGrid(map){
           .text(function(d,i){return pStops[i].join("-"); return d})
         .attr("y",function(d,i){return 130-i*gridSize})
         .attr("x",0)
+          .attr("row",function(d,i){
+              return i
+          })
         .attr("text-anchor","end")
         .attr("transform","translate(95,0)")
         .attr("cursor","pointer")
           .on("mouseover",function(d,i){
+              var row = d3.select(this).attr('row')
+              
+              d3.selectAll(".gridCell").attr("opacity",.5)
+              d3.selectAll(".m_"+row).attr("opacity",1)
           var groupName = "_"+i            
           var filter = ["==",pub.strategy.replace("percentage_scenario_","")+"_group",groupName]
         map.setFilter("counties",filter)
           
       })
       .on("mouseout",function(d,i){
+              d3.selectAll(".gridCell").attr("opacity",1)
           var filter = ["!=",pub.strategy+"_"+pub.coverage+"_group","blahblah"]
           map.setFilter("counties",filter)
           
@@ -415,7 +460,7 @@ function drawMap(data,aiannh,prison){
      
      map.on("load",function(){        
          
-         drawGrid(map) 
+         drawGrid(map,data) 
          map.setLayoutProperty("mapbox-satellite", 'visibility', 'none');
          map.addSource("counties",{
              "type":"geojson",
