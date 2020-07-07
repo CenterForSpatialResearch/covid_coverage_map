@@ -65,15 +65,16 @@ function drawGrid(map){
         .enter()
         .append("rect")
         .attr("x",function(d,i){
-            return i%3*(gridSize+2)
+            return i%3*(gridSize)
         })
         .attr("y",function(d,i){
-            return 150-Math.floor(i/3+1)*(gridSize+2)
+            return 150-Math.floor(i/3+1)*(gridSize)
         })
         .attr("width",gridSize)
         .attr("height",gridSize)
         .attr('fill',function(d){return d})
         .attr("transform","translate(100,0)")
+        .attr("cursor","pointer")
         .on("mouseover",function(d,i){
             var groupName = "_"+(i+1)            
             var filter = ["==",pub.strategy+"_"+pub.coverage+"_group",groupName]
@@ -112,8 +113,20 @@ function drawGrid(map){
         .text(function(d){return d})
         .attr("x",function(d,i){return i*gridSize})
         .attr("y",160)
+        .attr("cursor","pointer")
         .attr("text-anchor","start")
         .attr("transform","translate(100,0)")
+          .on("mouseover",function(d,i){
+              var groupName = "_"+i            
+              var filter = ["==",pub.strategy+"_"+pub.coverage+"_coverage_group",groupName]
+            map.setFilter("counties",filter)
+          
+          })
+          .on("mouseout",function(d,i){
+              var filter = ["!=",pub.strategy+"_"+pub.coverage+"_group","blahblah"]
+              map.setFilter("counties",filter)
+            
+          })
 
     colorGridSvg
         .selectAll(".gridDegreeX")
@@ -125,6 +138,18 @@ function drawGrid(map){
         .attr("x",0)
         .attr("text-anchor","end")
         .attr("transform","translate(95,0)")
+        .attr("cursor","pointer")
+          .on("mouseover",function(d,i){
+          var groupName = "_"+i            
+          var filter = ["==",pub.strategy.replace("percentage_scenario_","")+"_group",groupName]
+        map.setFilter("counties",filter)
+          
+      })
+      .on("mouseout",function(d,i){
+          var filter = ["!=",pub.strategy+"_"+pub.coverage+"_group","blahblah"]
+          map.setFilter("counties",filter)
+          
+      })
 }
 
 
@@ -300,10 +325,13 @@ function turnToDictFIPS(data,keyColumn){
                 var combinedHeader = coverageKey+"_group"
                 //console.log([cGroup,pGroup,combinedGroup,combinedHeader])
                 values[combinedHeader]=combinedGroup
+                values[measureKey+"_group"]="_"+pGroup
+                values[coverageKey+"_coverage_group"]="_"+cGroup
             }
             
         }
         //console.log(values)
+       // console.log(values)
        // break
         newDict[key]=values
     }
