@@ -37,6 +37,8 @@ highDemand:["#A7DCDF","#6EAFC3","#3983A8","#02568B"]}
 
 var colorGroups = ["#8DC63F","#9FCF8B","#B2D8D6","#47823B","#5A8B71","#6C93A7","#003E38","#134658","#274F78"]
 
+var colorGroups = ["#FF8608","#D8AF6F","#B2D8D6","#CA6C19","#9B8060","#6C93A7","#94512A","#5D5051","#274F78"]
+
 var pStops = [[0,.33],[.34,.66],[.67,1]]
 var cStops = [[0,33],[34,66],[67,100]]
 
@@ -45,7 +47,7 @@ var pStops = [[0,.005],[.005,.03],[.03,1]]
 var cStops = [[0,33],[34,66],[99,100]]
 
 var groupColorDict = []
-for(var g =0; g<9; g++){
+for(var g =0; g<colorGroups.length; g++){
     groupColorDict.push("_"+String(g+1))
     groupColorDict.push(colorGroups[g])
 }
@@ -385,8 +387,8 @@ function drawMap(data,aiannh,prison){
              'type': 'line',
              'source': 'counties',
              'paint': {
-                 'line-color':"white",
-                 'line-opacity':.1
+                 'line-color':"#fff",
+                 'line-opacity':.3
              },
              'filter': ['==', '$type', 'Polygon']
          },"mapbox-satellite");
