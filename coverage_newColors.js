@@ -44,7 +44,7 @@ var cStops = [[0,33],[34,66],[67,100]]
 
     
 var pStops = [[0,.005],[.005,.03],[.03,1]]
-var cStops = [[0,33],[34,66],[99,100]]
+var cStops = [[0,33],[34,66],[66,100]]
 
 var groupColorDict = []
 for(var g =0; g<colorGroups.length; g++){
@@ -103,14 +103,17 @@ function drawGrid(map){
   //       .attr("transform","translate(100,0)")
     
     colorGridSvg.append("text").text("coverage").attr("x",130).attr("y",175)
-    colorGridSvg.append("text").text("priority").attr("x",20).attr("y",90)
+    colorGridSvg.append("text").text("priority").attr("x",60).attr("y",155)
+        .attr("transform","rotate(90 80,90)")
+      
+      
     var degree = ["low","med","high"]
     colorGridSvg
         .selectAll(".gridDegreeX")
         .data(degree)
         .enter()
         .append('text')
-        .text(function(d){return d})
+        .text(function(d,i){return cStops[i].join("-");})
         .attr("x",function(d,i){return i*gridSize})
         .attr("y",160)
         .attr("cursor","pointer")
@@ -133,7 +136,7 @@ function drawGrid(map){
         .data(degree)
         .enter()
         .append('text')
-        .text(function(d){return d})
+          .text(function(d,i){return pStops[i].join("-"); return d})
         .attr("y",function(d,i){return 130-i*gridSize})
         .attr("x",0)
         .attr("text-anchor","end")
