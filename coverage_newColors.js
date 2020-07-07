@@ -54,7 +54,6 @@ for(var g =0; g<colorGroups.length; g++){
 groupColorDict.push("#eee")
 
 function drawGrid(map){
-
     var gridHeight = 200
     var gridWidth = 250
 
@@ -75,22 +74,32 @@ function drawGrid(map){
         .attr("height",gridSize)
         .attr('fill',function(d){return d})
         .attr("transform","translate(100,0)")
+        .on("mouseover",function(d,i){
+            var groupName = "_"+(i+1)            
+            var filter = ["==",pub.strategy+"_"+pub.coverage+"_group",groupName]
+            map.setFilter("counties",filter)
+        })
+        .on("mouseout",function(d,i){
+            var filter = ["!=",pub.strategy+"_"+pub.coverage+"_group","blahblah"]
+            map.setFilter("counties",filter)
+            
+        })
 
-    colorGridSvg
-        .selectAll(".gridText")
-        .data(colorGroups)
-        .enter()
-        .append("text")
-        .text(function(d,i){return i+1})
-        .attr("x",function(d,i){
-            return i%3*(gridSize+2)+20
-        })
-        .attr("y",function(d,i){
-            return 150 -(Math.floor(i/3))*(gridSize+2)-10
-        })
-        .attr('fill',"#ffffff")
-        .attr("text-anchor","middle")
-        .attr("transform","translate(100,0)")
+    // colorGridSvg
+  //       .selectAll(".gridText")
+  //       .data(colorGroups)
+  //       .enter()
+  //       .append("text")
+  //       .text(function(d,i){return i+1})
+  //       .attr("x",function(d,i){
+  //           return i%3*(gridSize+2)+20
+  //       })
+  //       .attr("y",function(d,i){
+  //           return 150 -(Math.floor(i/3))*(gridSize+2)-10
+  //       })
+  //       .attr('fill',"#ffffff")
+  //       .attr("text-anchor","middle")
+  //       .attr("transform","translate(100,0)")
     
     colorGridSvg.append("text").text("coverage").attr("x",130).attr("y",175)
     colorGridSvg.append("text").text("priority").attr("x",20).attr("y",90)
