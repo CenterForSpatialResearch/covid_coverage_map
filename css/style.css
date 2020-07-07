@@ -44,6 +44,15 @@ a{
     visibility:hidden;
     z-index:9999;
 }
+#colorGrid{
+    position:absolute;
+    right:0px;
+    top:0px;
+    margin-top:80px;
+    width:200px;
+    height:200px;
+    border:1px solid #aaaaaa;
+}
 #popMap{
     width:200px;
     height:200px;
