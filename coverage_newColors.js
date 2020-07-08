@@ -23,7 +23,8 @@ var pub = {
     satellite:false,
     tract_svi:false,
     all:null,
-    centroids:null
+    centroids:null,
+    histo:null
 }
 var highlightColor = "#008954"
 var bghighlightColor = "#ffcc67"
@@ -52,7 +53,7 @@ var colorGroups = ["#DDDDD7","#91B3C4","#4488B2","#EED66C","#88B078","#228983","
 // var cStops = [[0,33],[34,66],[67,100]]
 
     
-var pStops = [[0,.001],[.001,.67],[.67,1]]
+var pStops = [[0,.34],[.34,.67],[.67,1]]
 var cStops = [[0,34],[34,67],[67,100]]
 
 var groupColorDict = []
@@ -62,8 +63,23 @@ for(var g =0; g<colorGroups.length; g++){
 }
 groupColorDict.push("#eee")
 
+function histo(){
+var histo = d3.histogram()
+    .value(function(d){
+        if(d.properties[pub.strategy+"_"+pub.coverage+"_group"]==undefined){
+            return 999
+        }else{
+            return d.properties[pub.strategy+"_"+pub.coverage+"_group"].replace("_","")
+        }
+    })
+    .domain([1,10])
+    .thresholds(9)
+        
+var bins = histo(pub.all.features)
+    return bins
+}
 function drawGrid(map,data){
-    
+    var currentFilter = null
     var domainC = []
     for(var g =0; g<colorGroups.length; g++){
         domainC.push("_"+g)
@@ -81,7 +97,8 @@ function drawGrid(map,data){
         .thresholds(9)
             
     var bins = histo(data.features)
-    console.log(bins)
+    pub.histo = bins
+        
     
     var gridHeight = 200
     var gridWidth = 250
@@ -121,27 +138,46 @@ function drawGrid(map,data){
             var groupName = "_"+(i+1)            
             var filter = ["==",pub.strategy+"_"+pub.coverage+"_group",groupName]
             map.setFilter("counties",filter)
+                d3.selectAll(".gridCell").attr("opacity",.5)
+                d3.select(this).attr("opacity",1)
+            
+            var x = event.clientX;     // Get the horizontal coordinate
+            var y = event.clientY;             
+             d3.select("#gridHover").style("visibility","visible")
+             .style("left",(x+20)+"px")
+             .style("top",y+"px") 
+            d3.select("#gridHover").html(pub.histo[i].length+ " counties")
         })
         .on("mouseout",function(d,i){
-            var filter = ["!=",pub.strategy+"_"+pub.coverage+"_group","blahblah"]
-            map.setFilter("counties",filter)
+            //var filter = ["!=",pub.strategy+"_"+pub.coverage+"_group","blahblah"]
+            map.setFilter("counties",currentFilter)
+                d3.selectAll(".gridCell").attr("opacity",1)
+             d3.select("#gridHover").style("visibility","hidden")
             
         })
-  colorGridSvg
-          .selectAll(".gridText")
-          .data(colorGroups)
-          .enter()
-          .append("text")
-          .text(function(d,i){return i+1})
-          .attr("x",function(d,i){
-              return i%3*(gridSize+2)+20
-          })
-          .attr("y",function(d,i){
-              return 150 -(Math.floor(i/3))*(gridSize+2)-10
-          })
-          .attr('fill',"#ffffff")
-          .attr("text-anchor","middle")
-          .attr("transform","translate(100,0)")
+        .on("click",function(d,i){
+            var groupName = "_"+(i+1)            
+            var filter = ["==",pub.strategy+"_"+pub.coverage+"_group",groupName]
+            map.setFilter("counties",filter)
+            currentFilter = filter
+            d3.selectAll(".gridCell").attr("stroke","none")
+            d3.select(this).attr("stroke","#000")
+        })
+  // colorGridSvg
+  //         .selectAll(".gridText")
+  //         .data(colorGroups)
+  //         .enter()
+  //         .append("text")
+  //         .text(function(d,i){return i+1})
+  //         .attr("x",function(d,i){
+  //             return i%3*(gridSize+2)+20
+  //         })
+  //         .attr("y",function(d,i){
+  //             return 150 -(Math.floor(i/3))*(gridSize+2)-10
+  //         })
+  //         .attr('fill',"#ffffff")
+  //         .attr("text-anchor","middle")
+  //         .attr("transform","translate(100,0)")
     
     colorGridSvg.append("text").text("coverage").attr("x",130).attr("y",175)
     colorGridSvg.append("text").text("priority").attr("x",60).attr("y",145)
@@ -169,13 +205,17 @@ function drawGrid(map,data){
               var groupName = "_"+i            
               var filter = ["==",pub.strategy+"_"+pub.coverage+"_coverage_group",groupName]
             map.setFilter("counties",filter)
-          
+              
+            var ids = map.querySourceFeatures("counties",  { filter:filter} )
+              
+              console.log(ids)
           })
           .on("mouseout",function(d,i){
               d3.selectAll(".gridCell").attr("opacity",1)
               
               var filter = ["!=",pub.strategy+"_"+pub.coverage+"_group","blahblah"]
               map.setFilter("counties",filter)
+              
           })
 
     colorGridSvg
@@ -234,7 +274,7 @@ var aiannh = d3.json("indian_reservations.geojson")
 
 //var allData = d3.csv("County_level_coverage_for_all_policies_and_low_mid_high_base_case_capacity.csv")
 var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
-
+var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity (1).csv")
 // var headers = ["County_FIPS","SVI_county","priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot",
 // "percentage_scenario_high_demand_base_case_capacity_low","percentage_scenario_high_demand_base_case_capacity_mid",
 // "percentage_scenario_high_demand_base_case_capacity_high",
@@ -307,6 +347,8 @@ function ready(counties,aiannh,centroids,modelData){
     pub.centroids = formatCentroids(centroids.features)
     //add to geojson of counties
     var combinedGeojson = combineGeojson(dataByFIPS,counties)
+    pub.all = combinedGeojson
+    
 //    console.log(combinedGeojson)
     
     drawMap(combinedGeojson)
@@ -571,7 +613,7 @@ function drawMap(data,aiannh,prison){
              var displayString = "<span class=\"popupTitle\">"+countyName+"</span><br>"
                      +"Population: "+numberWithCommas(population)+"<br>"
                      +"SVI: "+SVI+"<br><strong>"
-                     +"Total number of new cases in the past 14 days: "+"####PLACEHOLDER"+"<br>"
+                     +"Total number of new cases in the past 14 days: "+"####"+"<br>"
                      +"Prioritizing large socially vulnerable populations, if "
                      +" CT per 100,000 are available for [State name] then [XX] contact tracers should be assigned to [County name]. "
                      +"This leaves [XX]% of the estimated total demand for contact tracers unmet."
@@ -968,6 +1010,8 @@ function strategyMenu(map){
                map.setPaintProperty("counties", 'fill-color', matchString)             
                
                  
+                pub.histo = histo(pub.all)
+                 
           //    drawHistogram(pub.strategy)
         })
      }
@@ -1027,6 +1071,8 @@ function coverageMenu(map){
               
                map.setPaintProperty("counties", 'fill-color', matchString)
             //  drawHistogram(pub.strategy)
+                pub.histo = histo(pub.all)
+              
          })
 
     }

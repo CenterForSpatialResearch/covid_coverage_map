@@ -57,7 +57,9 @@ a{
     font-size:24px;
     line-height:150%;
 }
-
+#gridHover{
+    background-color:rgba(255,255,255,.9);
+}
 #mapPopup{
     margin:0px;
     width:200px;
@@ -65,7 +67,6 @@ a{
     padding:10px;
     position:absolute;
     background-color:rgba(255,255,255,.9);
-    color:#3983a8;
     visibility:hidden;
     z-index:9999;
 }
@@ -77,6 +78,7 @@ a{
 }
 #currentState{
     color:#008954;
+    line-height:165%;
 }
 #popMap{
     width:200px;
@@ -85,6 +87,12 @@ a{
 #popLabel{
     width:200px;
 }
+#gridHover{
+    position:absolute;
+    top:100px;
+    left:350px;
+}
+
 #about{
     position:absolute;
     top:40px;
@@ -121,7 +129,7 @@ a{
      left:0px;
      top:0px;
      margin-top:80px;
-     background:rgba(255,255,255,0.8);
+     background:rgba(255,255,255,0.9);
      height:100%;
      overflow:auto;
      
@@ -181,7 +189,6 @@ a{
      font-family: 'Open Sans', sans-serif;
      background:rgba(0,0,0,0);
      font-size:16px;
-     font-weight:400;
  }
  .labelS{
      font-size:11px;
