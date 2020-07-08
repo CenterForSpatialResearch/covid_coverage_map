@@ -58,24 +58,15 @@ type="text/css"
   
   <div id = "colorGrid"></div>
 
-<select id="aa" name="aa"> 
-  <option value="">Please select</option>
-  <option value="daily">daily</option>
-  <option value="monthly">monthly</option>
-</select>
+
 
 </div>
 
-<script>
-  document.getElementById("aa").onchange=function() {
-     var period = this.value;
-     console.log(this.value)
-   } 
-</script>
 
 
 <div id = "nav2">
-  <nav id="placesMenu" >Go To:</nav>
+  <nav id="placesMenu" >Go To:
+  </nav>
     <nav id="layersMenu">Show Layers: </nav>
     <nav id="download">Download the Data</nav>
 </div>
@@ -90,7 +81,7 @@ type="text/css"
 <script type="text/javascript" src="js/queue.v1.min.js"></script>
 <script type="text/javascript" src="dc-canvas-scatterplot.js"></script>
 <script type="text/javascript" src="fileSaver.js"></script>
-<script type="text/javascript" src="coverage_newColors.js"></script>
+<script type="text/javascript" src="coverage_dropdown.js"></script>
 
 
 </body>
