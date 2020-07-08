@@ -41,28 +41,36 @@ type="text/css"
 
 <body>
 
-<div id="head"><strong>MAPPING THE NEW POLITICS OF CARE :</strong> Community Health Worker
-<div id="subtitle">Map showing percent coverage at 30 CHW per 100,000 if Census Demographic Social Vulnerability and New Cases as % of Population is prioritized</div>
+<div id="head">
+  <span id="brand">MAPPING THE NEW POLITICS OF CARE</span><br>
+  <span id="title">Allocating Community Health Workers to Accommodate Different Resource Levels</span>
+  
+
 </div>
 
 <div id="mainMenu"><a href="about.html">About</a> | <strong>Map</strong></div>
 <div id="byState"></div>
 <div id="nav">
-  <nav id="update" class="menu"><i>Model Last Updated on ##/##/##</i></nav>
-  
+  <!-- <nav id="update" class="menu"><i>Model Last Updated on ##/##/##</i></nav> -->
+  <nav id="currentState" class="menu">Currently Showing percent of unmet need by county when there are 30 contact tracers per 100,000 people in each state and Census Demographic Social Vulnerability and New Cases as % of Population are prioritized</nav> 
   <nav id="strategiesMenu" class="menu">How do you want to measure the need for Community Health Workers?</nav>
   <nav id="coverageMenu" class="menu">How many Community Health Workers can you pay for?</nav>
-<nav id = "geocoder"></nav>
-  <nav id="placesMenu" class="menu">Go To:</nav>
-  <nav id="layersMenu" class="menu">Show Layers:</nav>
-  <nav id="download" class="menu">Download the Data</nav>
+  
+  <div id = "colorGrid"></div>
+
+
+</div>
+
+
+<div id = "nav2">
+  <nav id="placesMenu" >Go To:</nav>
+    <nav id="layersMenu">Show Layers: </nav>
+    <nav id="download">Download the Data</nav>
 </div>
   <div id="map"></div>
   <div id="mapPopup"></div>
 <div id = "histogram"></div>
-<div id = "colorGrid">Map Legend<br>Rollover to filter map</div>
-
-
+  
 
 <script type="text/javascript" src="js/d3.js"></script>
 <script type="text/javascript" src="js/crossfilter.js"></script>

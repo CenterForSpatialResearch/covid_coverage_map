@@ -33,10 +33,35 @@ a{
 .popupTitle{
     font-size:14px;
 }
+#head{
+    padding:10px;
+    letter-spacing:1px;
+    position:fixed;
+    left:0px;
+    top:0px;
+    background-color:rgba(255,255,255,0.8);
+    border-bottom:1px solid #dddddd;
+    height:50px;
+    width:100%;
+    overflow:hidden;
+    z-index:9;
+}
+#brand{
+    background-color:#008954;
+    font-size:10px;
+    font-weight:800;
+    color:#fff;
+    padding:5px;
+}
+#title{
+    font-size:24px;
+    line-height:150%;
+}
+
 #mapPopup{
     margin:0px;
     width:200px;
-    border:1px solid #3983a8;
+    border:1px solid #000;
     padding:10px;
     position:absolute;
     background-color:rgba(255,255,255,.9);
@@ -45,14 +70,13 @@ a{
     z-index:9999;
 }
 #colorGrid{
-    position:absolute;
-    right:0px;
-    top:0px;
-    margin-top:80px;
     width:250px;
-    height:250px;
+    height:200px;
     padding:5px;
     background-color:rgba(255,255,255,.5);
+}
+#currentState{
+    color:#008954;
 }
 #popMap{
     width:200px;
@@ -60,7 +84,6 @@ a{
 }
 #popLabel{
     width:200px;
-    height:100px;
 }
 #about{
     position:absolute;
@@ -81,20 +104,7 @@ a{
 .answer{
     padding-left:20px;
 }
-#head{
-    padding:20px;
-    letter-spacing:1px;
-    font-size:24px;
-    position:fixed;
-    left:0px;
-    top:0px;
-    background-color:rgba(255,255,255,0.8);
-    border-bottom:1px solid #dddddd;
-    height:40px;
-    width:100%;
-    overflow:hidden;
-    z-index:9;
-}
+
 /* for charts and maps */
  #map{
 	 position:absolute;
@@ -106,7 +116,7 @@ a{
      overflow:hidden;
  }
  #nav{
-     width:200px;
+     width:280px;
      position:fixed;
      left:0px;
      top:0px;
@@ -115,6 +125,14 @@ a{
      height:100%;
      overflow:auto;
      
+ }
+ #nav2{
+     position:fixed;
+     right:0px;
+     top:80px;
+     font-size:12px;
+     text-align:right;
+     padding:10px;
  }
  #subtitle{
      top:50px;
@@ -158,13 +176,11 @@ a{
      margin:10px;
  }
  .menu{
-     background: #fff;
      padding-bottom:10px;
      margin:10px;
      font-family: 'Open Sans', sans-serif;
      background:rgba(0,0,0,0);
-     border-bottom:1px solid black;
-     font-size:14px;
+     font-size:16px;
      font-weight:400;
  }
  .labelS{
@@ -175,7 +191,7 @@ a{
  }
  .menu a{
      font-size: 11px;
-     color: #000;
+     color: #000000;
      display: block;
      padding: 5px;
      margin:5px;

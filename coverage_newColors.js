@@ -25,7 +25,7 @@ var pub = {
     all:null,
     centroids:null
 }
-var highlightColor = "#3983a8"
+var highlightColor = "#008954"
 var bghighlightColor = "#ffcc67"
 var outlineColor = "#ffcc67"
 var colors = {
@@ -37,7 +37,16 @@ highDemand:["#A7DCDF","#6EAFC3","#3983A8","#02568B"]}
 
 var colorGroups = ["#8DC63F","#9FCF8B","#B2D8D6","#47823B","#5A8B71","#6C93A7","#003E38","#134658","#274F78"]
 
+var colorGroups = ["#B2D8D6","#6C93A7","#274F78","#9FCF8B","#5A8B71","#134658","#8DC63F","#47823B","#003E38"]
+var colorGroups = ["#003E38","#134658","#274F78","#47823B","#5A8B71","#6C93A7","#8DC63F","#9FCF8B","#B2D8D6"]
+
 var colorGroups = ["#FF8608","#D8AF6F","#B2D8D6","#CA6C19","#9B8060","#6C93A7","#94512A","#5D5051","#274F78"]
+
+
+var colorGroups = ["#DDDDD7","#91B3C4","#4488B2","#EED66C","#88B078","#228983","#FFCE00","#80AC2A","#008954"]
+
+
+//var colorGroups = ["#FDD6B9","#DBCEC5","#B8C5D1","#FCAE74","#B79D8C","#718BA4","#F77A26","#91664E","#2A5176"]
 //
 // var pStops = [[0,.33],[.34,.66],[.67,1]]
 // var cStops = [[0,33],[34,66],[67,100]]
@@ -118,21 +127,21 @@ function drawGrid(map,data){
             map.setFilter("counties",filter)
             
         })
- // colorGridSvg
- //         .selectAll(".gridText")
- //         .data(colorGroups)
- //         .enter()
- //         .append("text")
- //         .text(function(d,i){return i+1})
- //         .attr("x",function(d,i){
- //             return i%3*(gridSize+2)+20
- //         })
- //         .attr("y",function(d,i){
- //             return 150 -(Math.floor(i/3))*(gridSize+2)-10
- //         })
- //         .attr('fill',"#ffffff")
- //         .attr("text-anchor","middle")
- //         .attr("transform","translate(100,0)")
+  colorGridSvg
+          .selectAll(".gridText")
+          .data(colorGroups)
+          .enter()
+          .append("text")
+          .text(function(d,i){return i+1})
+          .attr("x",function(d,i){
+              return i%3*(gridSize+2)+20
+          })
+          .attr("y",function(d,i){
+              return 150 -(Math.floor(i/3))*(gridSize+2)-10
+          })
+          .attr('fill',"#ffffff")
+          .attr("text-anchor","middle")
+          .attr("transform","translate(100,0)")
     
     colorGridSvg.append("text").text("coverage").attr("x",130).attr("y",175)
     colorGridSvg.append("text").text("priority").attr("x",60).attr("y",145)
@@ -259,12 +268,14 @@ for(var c = 1; c<=8; c++){
 //     show_all:"Hide Coverage Info"
 // }
 
-var measureSet = ["percentage_scenario_high_demand","percentage_scenario_hotspot","percentage_scenario_SVI_hotspot","percentage_scenario_SVI_pop"]
+
+
+var measureSet = ["percentage_scenario_SVI_pop","percentage_scenario_SVI_hotspot","percentage_scenario_hotspot","percentage_scenario_high_demand"]
 var measureDisplayText = {
-    percentage_scenario_high_demand:"Number of New COVID Cases",
-    percentage_scenario_hotspot:"New Cases as % of Population",
-    percentage_scenario_SVI_pop:"County Census Demographic Social Vulnerability Percentile",
-    percentage_scenario_SVI_hotspot:"Census Demographic Social Vulnerability and New Cases as % of Population"
+    percentage_scenario_high_demand:"only new cases within the last 14 days",
+    percentage_scenario_hotspot:"new cases within the last 14 days as a percent of population",
+    percentage_scenario_SVI_pop:"large socially vulnerable populations",
+    percentage_scenario_SVI_hotspot:"large socially vulnerable populations and cases as a percent of population"
 }
 
 
@@ -560,6 +571,10 @@ function drawMap(data,aiannh,prison){
              var displayString = "<span class=\"popupTitle\">"+countyName+"</span><br>"
                      +"Population: "+numberWithCommas(population)+"<br>"
                      +"SVI: "+SVI+"<br><strong>"
+                     +"Total number of new cases in the past 14 days: "+"####PLACEHOLDER"+"<br>"
+                     +"Prioritizing large socially vulnerable populations, if "
+                     +" CT per 100,000 are available for [State name] then [XX] contact tracers should be assigned to [County name]. "
+                     +"This leaves [XX]% of the estimated total demand for contact tracers unmet."
              //    +measureDisplayText[pub.strategy]+", "+coverageDisplayText[pub.coverage]+": "
              +needsMetString
                      
@@ -915,7 +930,7 @@ function strategyMenu(map){
             .style("border-radius","5px").attr("class",id+"_radialS radialS "+id)
             .style("display","inline-block")
             .style("vertical-align","top")
-        var label = row.append("div").html(displayText).attr("class",id+"_labelS labelS "+id).style("width","160px").style("display","inline-block")
+        var label = row.append("div").html(displayText).attr("class",id+"_labelS labelS "+id).style("display","inline-block").style("width","200px")
              
          row.on("mouseover",function(){
              d3.select(this).style("background-color",bghighlightColor)
@@ -941,7 +956,8 @@ function strategyMenu(map){
             d3.selectAll("."+clickedId).style("color",highlightColor)
             d3.selectAll("."+clickedId+"_radialS").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
            
-              d3.select("#subtitle").html("Map showing percent coverage at " +coverageDisplayText[pub.coverage]+" if "+measureDisplayText[pub.strategy]+ " is prioritized")
+              d3.select("#subtitle").html("Percent of unmet need by county when there are " +coverageDisplayText[pub.coverage]+" contact tracers per 100,000 people in each state and "+measureDisplayText[pub.strategy]+ " are prioritized.")
+              
               
              lineOpacity["property"]=pub.strategy+"_"+pub.coverage
              lineWeight["property"]=pub.strategy+"_"+pub.coverage
@@ -1002,7 +1018,7 @@ function coverageMenu(map){
              lineWeight["property"]=pub.strategy+"_"+pub.coverage
              fillColor["property"]="priority_"+pub.strategy.replace("percentage_scenario_","")
               
-               d3.select("#subtitle").html("Map showing percent coverage at " +coverageDisplayText[pub.coverage]+" if "+measureDisplayText[pub.strategy]+ " is prioritized")
+              d3.select("#subtitle").html("Percent of unmet need by county when there are " +coverageDisplayText[pub.coverage]+" contact tracers per 100,000 people in each state and "+measureDisplayText[pub.strategy]+ " are prioritized.")
             
               map.setPaintProperty("counties", 'fill-opacity',1)
               
