@@ -186,6 +186,9 @@ a{
      z-index:999;
      margin:10px;
  }
+ .coverageOption{
+     padding:20px;
+ }
  .menu{
      padding-bottom:10px;
      margin:10px;
@@ -207,11 +210,15 @@ a{
      margin:5px;
      text-decoration: none;
      background:#fff;
+     font-style:none;
  }
  .labelS{
      padding-bottom:10px;
      line-height:125%;
-     font-size:12px;     
+     font-size:12px; 
+     width:100px;    
+     font-style:none;
+     
  }
  #mapbox-satellite{
      background-color:rgba(0,0,0,0);

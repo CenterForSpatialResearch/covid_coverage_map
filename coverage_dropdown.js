@@ -198,7 +198,7 @@ function drawGrid(map,data){
   //         .attr("text-anchor","middle")
   //         .attr("transform","translate(100,0)")
     
-    colorGridSvg.append("text").text("% of needs met").attr("x",120).attr("y",195).attr("fill",highlightColor)
+    colorGridSvg.append("text").text("% of needs met").attr("x",120).attr("y",195).style("font-weight","bold")
     colorGridSvg.append("text").text("low").attr("x",100).attr("y",180)
     colorGridSvg.append("text").text("high").attr("x",200).attr("y",180)
       
@@ -206,7 +206,7 @@ function drawGrid(map,data){
     colorGridSvg.append("text").text("low").attr("x",60).attr("y",150).attr("text-anchor","end")
      
     colorGridSvg.append("text").text("priority").attr("x",60).attr("y",145)
-        .attr("transform","rotate(-90 30,140)").attr("fill",highlightColor)
+        .attr("transform","rotate(-90 30,140)").style("font-weight","bold")
       
       
     var degree = ["low","med","high"]
@@ -983,40 +983,40 @@ function drawKey(demandType){
 
 function strategyMenu(map){
     
-    var buttons = d3.select("#strategiesMenu").append("div").attr("class",id)
-    for (var i = 0; i < measureSet.length; i++) {
-        var id = measureSet[i];
-        var displayText = measureDisplayText[id]
-        var row = d3.select("#strategiesMenu").append("div").attr("class",id+"_radialMenuS radialMenuS").attr("id",id).style("cursor","pointer")
-        // var radial = row.append("div")
- //            .style("width","9px").style("height","9px")
- //            .style("border","1px solid black")
- //            .style("margin","4px")
- //            .style("border-radius","5px").attr("class",id+"_radialS radialS "+id)
- //            .style("display","inline-block")
- //            .style("vertical-align","top")
-        var label = row.append("div").html(displayText).attr("class",id+"_labelS labelS "+id).style("display","inline-block").style("width","200px")
-             
-         row.on("mouseover",function(){
-             d3.select(this).style("background-color",bghighlightColor)
-         })
-         row.on("mouseout",function(){
-             d3.select(this).style("background-color","rgba(0,0,0,0)")
-         })
+  // var buttons = d3.select("#strategiesMenu").append("div").attr("class",id)
+     for (var i = 0; i < measureSet.length; i++) {
+         var id = measureSet[i];
+         var displayText = measureDisplayText[id]
+         var row = d3.select("#strategiesMenu").append("div").attr("class",id+"_radialMenuS radialMenuS").attr("id",id).style("cursor","pointer")
+         // var radial = row.append("div")
+  //            .style("width","9px").style("height","9px")
+  //            .style("border","1px solid black")
+  //            .style("margin","4px")
+  //            .style("border-radius","5px").attr("class",id+"_radialS radialS "+id)
+  //            .style("display","inline-block")
+  //            .style("vertical-align","top")
+         var label = row.append("div").html(displayText).attr("class",id+"_labelS labelS "+id).style("display","inline-block").style("width","200px")
+ 
+          row.on("mouseover",function(){
+              d3.select(this).style("background-color",bghighlightColor)
+          })
+          row.on("mouseout",function(){
+              d3.select(this).style("background-color","rgba(0,0,0,0)")
+          })
          
                   //
-         // var menu = d3.select("#strategiesMenu").append("select").attr("id","coverageDropdown")
+          // var menu = d3.select("#strategiesMenu").append("select").attr("id","coverageDropdown")
          //
-         // for (var i = 0; i < measureSet.length; i++) {
+         //  for (var i = 0; i < measureSet.length; i++) {
          //
-         //     var id = measureSet[i];
-         //     var displayText = measureDisplayText[id]
-         //     var row = menu.append("option").attr("value",id).style("cursor","pointer")
-         //     .html(displayText)
+         //      var id = measureSet[i];
+         //      var displayText = measureDisplayText[id]
+         //      var row = menu.append("option").attr("value",id).style("cursor","pointer").attr("class","coverageOption")
+         //      .html(displayText)
          //
-         //     if(id=="priority_SVI_hotspot"){
-         //         row.attr("selected","selected")
-         //     }
+         //      if(id=="priority_SVI_hotspot"){
+         //          row.attr("selected","selected")
+         //      }
          //
          //
          
