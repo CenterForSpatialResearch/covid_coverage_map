@@ -33,6 +33,9 @@ a{
 .popupTitle{
     font-size:14px;
 }
+option{
+    height:40px;
+}
 #head{
     padding:10px;
     letter-spacing:1px;
@@ -78,7 +81,8 @@ a{
 }
 #currentState{
     color:#DF6D2A;
-    line-height:165%;
+    line-height:150%;
+    height:180px;
 }
 #popMap{
     width:200px;
@@ -154,13 +158,6 @@ a{
      font-style:italic;
      color:#DF6D2A;
  }
- #layerControl{
-     z-index:999;
-     width:500px;
-     height:180px;
-     background-color:none;
-     margin:10px;
- }
  #key{
      z-index:999;
      width:400px;
@@ -211,6 +208,7 @@ a{
      text-decoration: none;
      background:#fff;
      font-style:none;
+     border-top:1px solid black;
  }
  .labelS{
      padding-bottom:10px;
@@ -218,7 +216,6 @@ a{
      font-size:12px; 
      width:100px;    
      font-style:none;
-     
  }
  #mapbox-satellite{
      background-color:rgba(0,0,0,0);
@@ -231,5 +228,23 @@ a{
      background-color:rgba(0,0,0,0);
      
  }
-
+ #strategiesSelected{
+     border:1px solid #DF6D2A;
+     padding:10px;
+     font-size:12px;
+     height:50px;
+     width:200px;
+     color:#DF6D2A;
+ }
+ #strategiesMenu{
+     border:1px solid black;
+     padding:10px;
+     position:absolute;
+     left:10px;
+     background-color:#fff;
+     z-index:99999;
+ }
+ .dropdown{
+     z-index:99999;
+ }
  

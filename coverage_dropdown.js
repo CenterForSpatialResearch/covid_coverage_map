@@ -1,4 +1,6 @@
-
+$(document).ready(function() {
+    $('.js-example-basic-single').select2();
+});
 
 //"F_THEME1","F_THEME2", "F_THEME3", "F_THEME4"
 var map;
@@ -298,7 +300,7 @@ var aiannh = d3.json("indian_reservations.geojson")
 //var allData = d3.csv("County_level_coverage_for_all_policies_and_low_mid_high_base_case_capacity.csv")
 var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
 var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity (1).csv")
-// var headers = ["County_FIPS","SVI_county","priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot",
+//var allData = d3.csv("https://media.githubusercontent.com/media/suzaniloglu/Mapping_the_politics_of_care_Covid_2020/master/Output/Census_tract_level_coverage_for_all_policies_and_different_base_case_capacity.csv?token=AAMQV2XBLK5L5EARQO2KJ6K7AYJX6")// var headers = ["County_FIPS","SVI_county","priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot",
 // "percentage_scenario_high_demand_base_case_capacity_low","percentage_scenario_high_demand_base_case_capacity_mid",
 // "percentage_scenario_high_demand_base_case_capacity_high",
 // "percentage_scenario_SVI_hotspot_base_case_capacity_low","percentage_scenario_SVI_hotspot_base_case_capacity_mid",
@@ -363,6 +365,7 @@ var centroids = null
 var latestDate = null
 
 function ready(counties,aiannh,centroids,modelData){
+    console.log(modelData)
     //convert to geoid dict
     var dataByFIPS = turnToDictFIPS(modelData,"County_FIPS")
     
@@ -982,28 +985,52 @@ function drawKey(demandType){
 }
 
 function strategyMenu(map){
+    var onMenu= true
+    var onMenuItem = true
+    var onLabel = true
     
+    document.getElementById("nav").onmousemove = function(){
+        if(onMenu==false && onMenuItem==false && onLabel == false){
+           d3.select("#strategiesMenu").style("visibility","hidden")
+        }
+    
+    };
+    
+    
+    d3.select("#strategiesMenu").style("visibility","hidden")
+    .on("mouseover",function(){
+       onMenu = true
+    })
+    .on("mouseout",function(){
+        onMenu = false
+    })
+    
+    d3.select("#strategiesSelected").html(measureDisplayText[pub.strategy])
+    .on("click",function(){
+        d3.select("#strategiesMenu").style("visibility","visible")
+        onMenu= true
+        onMenuItem = true
+        onLabel = true
+    })
   // var buttons = d3.select("#strategiesMenu").append("div").attr("class",id)
      for (var i = 0; i < measureSet.length; i++) {
          var id = measureSet[i];
          var displayText = measureDisplayText[id]
+         
          var row = d3.select("#strategiesMenu").append("div").attr("class",id+"_radialMenuS radialMenuS").attr("id",id).style("cursor","pointer")
-         // var radial = row.append("div")
-  //            .style("width","9px").style("height","9px")
-  //            .style("border","1px solid black")
-  //            .style("margin","4px")
-  //            .style("border-radius","5px").attr("class",id+"_radialS radialS "+id)
-  //            .style("display","inline-block")
-  //            .style("vertical-align","top")
-         var label = row.append("div").html(displayText).attr("class",id+"_labelS labelS "+id).style("display","inline-block").style("width","200px")
  
+         var label = row.append("div").html(displayText).attr("class",id+"_labelS labelS "+id).style("display","inline-block").style("width","200px")
+         label.on('mouseover',function(){onLabel=true})              
+                .on('mouseout',function(){onLabel=false})   
+         
           row.on("mouseover",function(){
               d3.select(this).style("background-color",bghighlightColor)
+              onMenuItem=true
           })
           row.on("mouseout",function(){
               d3.select(this).style("background-color","rgba(0,0,0,0)")
+                  onMenuItem=false
           })
-         
                   //
           // var menu = d3.select("#strategiesMenu").append("select").attr("id","coverageDropdown")
          //
@@ -1025,6 +1052,7 @@ function strategyMenu(map){
         row.on("click",function(){
             var clickedId = d3.select(this).attr("id")
             pub.strategy = clickedId
+             d3.select("#strategiesSelected").html(measureDisplayText[pub.strategy])
             if(pub.coverage==undefined){
                  pub.coverage = "show_all"
                  d3.select(".show_all_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
@@ -1057,9 +1085,21 @@ function strategyMenu(map){
         })
      }
 }
+function formatSearch(item) {
+    var selectionText = item.text.split("|");
+    var $returnString = $('<span>' + selectionText[0] + '</br><b>' + selectionText[1] + '</b></br>' + selectionText[2] +'</span>');
+    return $returnString;
+};
+function formatSelected(item) {
+    var selectionText = item.text.split("|");
+    var $returnString = $('<span>' + selectionText[0].substring(0, 21) +'</span>');
+    return $returnString;
+};
 function coverageMenu(map){
     
     var menu = d3.select("#coverageMenu").append("select").attr("id","coverageDropdown")
+    
+  //  style="background-image:url('images/en.png');">
     
     for (var i = 0; i < coverageSet.length; i++) {
         
@@ -1067,6 +1107,8 @@ function coverageMenu(map){
         var displayText = coverageDisplayText[id]
         var row = menu.append("option").attr("value",id).style("cursor","pointer")
         .html(displayText)
+        
+        row.append("img").attr("src","stripe_tmep.png")
         
         if(id=="base_case_capacity_30"){
             row.attr("selected","selected")
