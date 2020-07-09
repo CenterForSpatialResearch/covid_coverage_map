@@ -147,7 +147,7 @@ function drawGrid(map,data){
             var groupName = "_"+(i+1)            
             var filter = ["==",pub.strategy+"_"+pub.coverage+"_group",groupName]
             map.setFilter("counties",filter)
-                d3.selectAll(".gridCell").attr("opacity",.5)
+                d3.selectAll(".gridCell").attr("opacity",.3)
                 d3.select(this).attr("opacity",1)
             
             var x = event.clientX;     // Get the horizontal coordinate
@@ -227,7 +227,7 @@ function drawGrid(map,data){
         .attr("transform","translate(100,0)")
           .on("mouseover",function(d,i){
               var column = d3.select(this).attr("column")
-              d3.selectAll(".gridCell").attr("opacity",.5)
+              d3.selectAll(".gridCell").attr("opacity",.3)
               d3.selectAll(".c_"+column).attr("opacity",1)
               var groupName = "_"+i            
               var filter = ["==",pub.strategy+"_"+pub.coverage+"_coverage_group",groupName]
@@ -261,7 +261,7 @@ function drawGrid(map,data){
           .on("mouseover",function(d,i){
               var row = d3.select(this).attr('row')
               
-              d3.selectAll(".gridCell").attr("opacity",.5)
+              d3.selectAll(".gridCell").attr("opacity",.3)
               d3.selectAll(".m_"+row).attr("opacity",1)
           var groupName = "_"+i            
           var filter = ["==",pub.strategy.replace("percentage_scenario_","")+"_group",groupName]
@@ -612,7 +612,7 @@ function drawMap(data,aiannh,prison){
          
      map.on('mousemove', 'counties', function(e) {
          var feature = e.features[0]
-        // console.log(feature["properties"])
+         console.log(feature["properties"])
          //console.log(feature)
          map.getCanvas().style.cursor = 'pointer'; 
         // console.log(feature)
@@ -637,8 +637,13 @@ function drawMap(data,aiannh,prison){
              
              
              var currentSelectionCoverage = Math.round(feature["properties"][currentSelection]*100)/100
-             var currentSelectionUnmet = 100-currentSelectionCoverage
+             if(currentSelectionCoverage==-1){
+                 var currentSelectionUnmet = "There are no cases in this dataset currently."
+             }else{
+                 var currentSelectionUnmet = "This leaves "+(100-currentSelectionCoverage)+"% of the estimated total demand for contact tracers unmet."
+             }
              var needsMetString = currentSelectionCoverage+"% of needs met</strong>"
+             
              if(currentSelectionCoverage ==-1){
                  needsMetString = "Currently No Cases Reported"
              }
@@ -651,7 +656,7 @@ function drawMap(data,aiannh,prison){
                      +" CT per 100,000 are available for "+feature["properties"]["state"]
                      +" then [XX] contact tracers should be assigned to "
                      +feature["properties"]["county"]+". "
-                     +"This leaves "+currentSelectionUnmet+"% of the estimated total demand for contact tracers unmet."
+                     +currentSelectionUnmet
              //    +measureDisplayText[pub.strategy]+", "+coverageDisplayText[pub.coverage]+": "
                      
            
