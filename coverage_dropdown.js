@@ -301,6 +301,8 @@ var aiannh = d3.json("indian_reservations.geojson")
 var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
 var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity (1).csv")
 //var allData = d3.csv("https://media.githubusercontent.com/media/suzaniloglu/Mapping_the_politics_of_care_Covid_2020/master/Output/Census_tract_level_coverage_for_all_policies_and_different_base_case_capacity.csv?token=AAMQV2XBLK5L5EARQO2KJ6K7AYJX6")// var headers = ["County_FIPS","SVI_county","priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot",
+
+//var allData = d3.csv("https://media.githubusercontent.com/media/CenterForSpatialResearch/allocating_covid/master/Output/Census_tract_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
 // "percentage_scenario_high_demand_base_case_capacity_low","percentage_scenario_high_demand_base_case_capacity_mid",
 // "percentage_scenario_high_demand_base_case_capacity_high",
 // "percentage_scenario_SVI_hotspot_base_case_capacity_low","percentage_scenario_SVI_hotspot_base_case_capacity_mid",
@@ -346,6 +348,7 @@ var measureDisplayText = {
 
 Promise.all([counties,aiannh,countyCentroids,allData])
 .then(function(data){
+    console.log(data[3])
     ready(data[0],data[1],data[2],data[3])
 })
 
@@ -424,7 +427,7 @@ function turnToDictFIPS(data,keyColumn){
             var measureKey = measureSet[j].replace("percentage_scenario_","")
             var priorityKey = "priority_"+measureKey
             var priority = parseFloat(data[i][priorityKey])
-            
+           // console.log(data[i][priorityKey])
             for(var ps in pStops){
                 var pStop = pStops[ps]
                 if(priority>=pStop[0] && priority<=pStop[1]){
@@ -1247,6 +1250,8 @@ function toggleLayers(map){
         link.id = id;
         
         link.onclick = function(e) {//TODO toggle click 
+              
+              
          
             var clickedLayer = this.id;
             e.preventDefault();
@@ -1256,11 +1261,13 @@ function toggleLayers(map){
 
             // toggle layer visibility by changing the layout object's visibility property
             if (visibility === 'visible') {
-            map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+              map.setPaintProperty("county-centroids-dnxdon", 'text-color',"#000000")
+                map.setLayoutProperty(clickedLayer, 'visibility', 'none');
                 d3.select(this).style("background-color","white")
                 link.textContent = "Satellite Only"
                 this.className = '';
             } else {
+              map.setPaintProperty("county-centroids-dnxdon", 'text-color',"#ffffff")
                 this.className = 'active';
                 map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
                     d3.select(this).style("background-color","yellow")
