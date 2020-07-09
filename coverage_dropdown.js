@@ -300,7 +300,7 @@ var aiannh = d3.json("indian_reservations.geojson")
 //var allData = d3.csv("County_level_coverage_for_all_policies_and_low_mid_high_base_case_capacity.csv")
 var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
 var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity (1).csv")
-//var allData = d3.csv("https://media.githubusercontent.com/media/suzaniloglu/Mapping_the_politics_of_care_Covid_2020/master/Output/Census_tract_level_coverage_for_all_policies_and_different_base_case_capacity.csv?token=AAMQV2XBLK5L5EARQO2KJ6K7AYJX6")// var headers = ["County_FIPS","SVI_county","priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot",
+var allData = d3.csv("https://media.githubusercontent.com/media/CenterForSpatialResearch/allocating_covid/master/Output/County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")// var headers = ["County_FIPS","SVI_county","priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot",
 
 //var allData = d3.csv("https://media.githubusercontent.com/media/CenterForSpatialResearch/allocating_covid/master/Output/Census_tract_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
 // "percentage_scenario_high_demand_base_case_capacity_low","percentage_scenario_high_demand_base_case_capacity_mid",

@@ -59,13 +59,13 @@ option{
 }
 #brand{
     background-color:#000;
-    font-size:14px;
+    font-size:12px;
     font-weight:800;
     color:#fff;
-    padding:5px;
+    padding:10px;
 }
 #title{
-    font-size:18px;
+    font-size:16px;
     line-height:200%;
 }
 #gridHover{
