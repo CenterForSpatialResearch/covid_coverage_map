@@ -77,7 +77,7 @@ var histo = d3.histogram()
         if(d.properties[pub.strategy+"_"+pub.coverage+"_group"]==undefined){
             return 999
         }else{
-            return d.properties[pub.strategy+"_"+pub.coverage+"_group"].replace("_","")
+            return d.properties[pub.strategy+"_"+pub.coverage+"_group"]//.replace("_","")
         }
     })
     .domain([1,10])
@@ -1145,6 +1145,7 @@ function coverageMenu(map){
              
             var clickedId = d3.select(this).attr("id")
              
+             console.log([pub.coverage,pub.strategy])
              pub.coverage = clickedId
             d3.select("#coverageSelectecLabel").html(coverageDisplayText[pub.coverage])
              if(pub.strategy==undefined){
