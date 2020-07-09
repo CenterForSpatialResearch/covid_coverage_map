@@ -32,7 +32,8 @@ type="text/css"
         crossorigin="anonymous">
 </script>
 <script src="js/jquery.mousefollow.js"></script>
-
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
     <style>
   
     </style>
@@ -41,26 +42,58 @@ type="text/css"
 
 <body>
 
-<div id="head"><strong>MAPPING THE POLITICS OF CARE :</strong> Community Health Workers
-<div id="subtitle"></div>
-</div>
+<div id="head">
+  <span id="brand">MAPPING THE NEW POLITICS OF CARE</span><br>
+  <span id="title">Allocating Community Health Workers to Accommodate Different Resource Levels</span>  
 
-<div id="mainMenu"><a href="about.html">About</a> | <strong>Map</strong></div>
+</div>
+  <div id="date">07/07/2020</div>
+
+<div id="mainMenu"><a href="about.html">ABOUT</a> | <strong>MAP</strong></div>
 <div id="byState"></div>
 <div id="nav">
-  <nav id="update" class="menu"><i>Model Last Updated on ##/##/##</i></nav>
-  
-  <nav id="strategiesMenu" class="menu">How do you want to measure the need for Community Health Workers?</nav>
-  <nav id="coverageMenu" class="menu">How many Community Health Workers can you pay for?</nav>
-<nav id = "geocoder"></nav>
-  <nav id="placesMenu" class="menu">Go To:</nav>
-  <nav id="layersMenu" class="menu">Show Layers:</nav>
-  <nav id="download" class="menu">Download the Data</nav>
+  <!-- <nav id="update" class="menu"><i>Model Last Updated on ##/##/##</i></nav> -->
+   <nav id="currentState" class="menu">Currently Showing percent of unmet need by county when there are <strong>30</strong> contact tracers per 100,000 people in each state and <strong>Census Demographic Social Vulnerability and New Cases as % of Population</strong> are prioritized</nav>
+   
+  <div id = "strategies">
+       <nav id="strategiesQuestion" class="menu">How do you want to measure the need for Community Health Workers?</nav>
+      <nav id="strategiesSelected" class="menu">
+        <div id="strategiesSelectecLabel"></div>
+        <div id="strategiesarrow"><img src="dropdown.png" style="width:10px;"></div>
+      </nav>
+      <nav id="strategiesMenu" class="dropdown" ></nav>
+      
+      <div id = "coverage">
+      <nav id="coverageQuestion" class="menu">How many Community Health Workers can you pay for?</nav>
+      <nav id="coverageSelected" class="menu">
+        <div id="coverageSelectecLabel"></div>
+        <div id="coveragearrow"><img src="dropdown.png" style="width:10px;"></div>
+      </nav>
+      
+      <nav id="coverageMenu" class="dropdown"></nav>
+      
+      </div>
+ </div>
+ 
+ 
+  <div id = "colorGrid"></div>
+
+
+
+</div>
+
+
+
+<div id = "nav2">
+  <nav id="placesMenu" >Go To:
+  </nav>
+    <nav id="layersMenu">Show Layers: </nav>
+    <nav id="download">Download the Data</nav>
 </div>
   <div id="map"></div>
   <div id="mapPopup"></div>
-<div id = "histogram"></div>
-
+<div id = "gridHover"></div>
+  
 
 <script type="text/javascript" src="js/d3.js"></script>
 <script type="text/javascript" src="js/crossfilter.js"></script>
@@ -68,7 +101,7 @@ type="text/css"
 <script type="text/javascript" src="js/queue.v1.min.js"></script>
 <script type="text/javascript" src="dc-canvas-scatterplot.js"></script>
 <script type="text/javascript" src="fileSaver.js"></script>
-<script type="text/javascript" src="coverage.js"></script>
+<script type="text/javascript" src="coverage_dropdown.js"></script>
 
 
 </body>

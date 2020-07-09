@@ -49,6 +49,14 @@ option{
     overflow:hidden;
     z-index:9;
 }
+#date{
+    position:absolute;
+    right:0px;
+    top:0px;
+    color:black;
+    z-index:999;
+    padding-right:5px;
+}
 #brand{
     background-color:#DF6D2A;
     font-size:14px;
