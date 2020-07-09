@@ -201,8 +201,8 @@ function drawGrid(map,data){
   //         .attr("transform","translate(100,0)")
     
     colorGridSvg.append("text").text("% of needs met").attr("x",120).attr("y",195).style("font-weight","bold")
-    colorGridSvg.append("text").text("low").attr("x",100).attr("y",180)
-    colorGridSvg.append("text").text("high").attr("x",200).attr("y",180)
+    colorGridSvg.append("text").text("less").attr("x",100).attr("y",180)
+    colorGridSvg.append("text").text("more").attr("x",190).attr("y",180)
       
     colorGridSvg.append("text").text("high").attr("x",60).attr("y",40).attr("text-anchor","end")
     colorGridSvg.append("text").text("low").attr("x",60).attr("y",150).attr("text-anchor","end")
@@ -989,7 +989,7 @@ function strategyMenu(map){
     var onMenuItem = true
     var onLabel = true
     
-    document.getElementById("nav").onmousemove = function(){
+    document.getElementById("strategies").onmousemove = function(){
         if(onMenu==false && onMenuItem==false && onLabel == false){
            d3.select("#strategiesMenu").style("visibility","hidden")
         }
@@ -1005,13 +1005,16 @@ function strategyMenu(map){
         onMenu = false
     })
     
-    d3.select("#strategiesSelected").html(measureDisplayText[pub.strategy])
+    d3.select("#strategiesSelectecLabel").html(measureDisplayText[pub.strategy])
+    
+    d3.select("#strategiesSelected")
     .on("click",function(){
         d3.select("#strategiesMenu").style("visibility","visible")
         onMenu= true
         onMenuItem = true
         onLabel = true
     })
+    
   // var buttons = d3.select("#strategiesMenu").append("div").attr("class",id)
      for (var i = 0; i < measureSet.length; i++) {
          var id = measureSet[i];
@@ -1032,27 +1035,11 @@ function strategyMenu(map){
                   onMenuItem=false
           })
                   //
-          // var menu = d3.select("#strategiesMenu").append("select").attr("id","coverageDropdown")
-         //
-         //  for (var i = 0; i < measureSet.length; i++) {
-         //
-         //      var id = measureSet[i];
-         //      var displayText = measureDisplayText[id]
-         //      var row = menu.append("option").attr("value",id).style("cursor","pointer").attr("class","coverageOption")
-         //      .html(displayText)
-         //
-         //      if(id=="priority_SVI_hotspot"){
-         //          row.attr("selected","selected")
-         //      }
-         //
-         //
-         
-         
          
         row.on("click",function(){
             var clickedId = d3.select(this).attr("id")
             pub.strategy = clickedId
-             d3.select("#strategiesSelected").html(measureDisplayText[pub.strategy])
+             d3.select("#strategiesSelectecLabel").html(measureDisplayText[pub.strategy])
             if(pub.coverage==undefined){
                  pub.coverage = "show_all"
                  d3.select(".show_all_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
@@ -1096,29 +1083,65 @@ function formatSelected(item) {
     return $returnString;
 };
 function coverageMenu(map){
+    d3.select("#coverageSelectecLabel").html(coverageDisplayText[pub.coverage])
     
-    var menu = d3.select("#coverageMenu").append("select").attr("id","coverageDropdown")
+    var onMenuC= true
+    var onMenuItemC = true
+    var onLabelC = true
     
-  //  style="background-image:url('images/en.png');">
+    document.getElementById("coverage").onmousemove = function(){
+        if(onMenuC==false && onMenuItemC==false && onLabelC == false){
+           d3.select("#coverageMenu").style("visibility","hidden")
+        }
     
+    };
+    
+    
+    d3.select("#coverageMenu").style("visibility","hidden")
+    // .on("mouseover",function(){
+ //       onMenuC = true
+ //    })
+    .on("mouseout",function(){
+        onMenuC = false
+    })
+        
+    d3.select("#coverageSelected")
+    .on("click",function(){
+        d3.select("#coverageMenu").style("visibility","visible")
+        onMenuC= true
+        onMenuItemC = true
+        onLabelC = true
+    })
+    
+    //var menu = d3.select("#coverageMenu").append("select").attr("id","coverageDropdown")
     for (var i = 0; i < coverageSet.length; i++) {
         
         var id = coverageSet[i];
         var displayText = coverageDisplayText[id]
-        var row = menu.append("option").attr("value",id).style("cursor","pointer")
-        .html(displayText)
+       
+        var row = d3.select("#coverageMenu").append("div").attr("class",id+"_radialMenuC radialMenuC").attr("id",id).style("cursor","pointer")
         
-        row.append("img").attr("src","stripe_tmep.png")
+        var labelC = row.append("div").html(displayText).attr("class",id+"_labelC labelC "+id).style("width","160px").style("display","inline-block")
+       labelC.on('mouseover',function(){onLabelC=true})              
+              .on('mouseout',function(){
+                  onLabelC=false})   
+       
+        row.on("mouseover",function(){
+            d3.select(this).style("background-color",bghighlightColor)
+            onMenuItemC=true
+        })
+        row.on("mouseout",function(){
+            d3.select(this).style("background-color","rgba(0,0,0,0)")
+                onMenuItemC=false
+        })
         
-        if(id=="base_case_capacity_30"){
-            row.attr("selected","selected")
-        }
 
-         document.getElementById("coverageDropdown").onchange=function() {
+ row.on("click",function(){
              
-            var clickedId = this.value
+            var clickedId = d3.select(this).attr("id")
              
              pub.coverage = clickedId
+            d3.select("#coverageSelectecLabel").html(coverageDisplayText[pub.coverage])
              if(pub.strategy==undefined){
                   pub.strategy = measureSet[0]
                   d3.select("."+measureSet[0]+"_radialS").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
@@ -1148,7 +1171,7 @@ function coverageMenu(map){
             //  drawHistogram(pub.strategy)
                 pub.histo = histo(pub.all)
               
-         }
+         })
 
     }
 }

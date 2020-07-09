@@ -232,9 +232,33 @@ option{
      border:1px solid #DF6D2A;
      padding:10px;
      font-size:12px;
-     height:50px;
+     height:60px;
      width:200px;
      color:#DF6D2A;
+ }
+ #coverageSelected{
+     border:1px solid #DF6D2A;
+     padding:10px;
+     font-size:12px;
+     height:20px;
+     width:200px;
+     color:#DF6D2A;
+ }
+ #strategiesSelectecLabel{
+     width:85%;
+     display:inline-block;
+ }
+ #coverageSelectecLabel{
+     width:85%;
+     display:inline-block;
+ }
+ #strategiesarrow{
+     display:inline-block;
+     vertical-align: top;
+ }
+ #coveragearrow{
+     display:inline-block;
+     vertical-align: top;
  }
  #strategiesMenu{
      border:1px solid black;
@@ -243,6 +267,16 @@ option{
      left:10px;
      background-color:#fff;
      z-index:99999;
+     visibility:hidden;
+ }
+ #coverageMenu{
+     border:1px solid black;
+     padding:10px;
+     position:absolute;
+     left:10px;
+     background-color:#fff;
+     z-index:99999;
+     visibility:hidden;
  }
  .dropdown{
      z-index:99999;
