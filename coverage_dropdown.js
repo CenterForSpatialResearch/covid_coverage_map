@@ -321,7 +321,7 @@ var coverageDisplayText = {show_all:"Hide Coverage Info"}
 for(var c = 1; c<=8; c++){
     var setTerm = "base_case_capacity_"+c*10
      coverageSet.push(setTerm)
-    coverageDisplayText[setTerm] = c*10+' CHW per 100,000'
+    coverageDisplayText[setTerm] = c*10+' CHW per 100,000 People'
  }
 // coverageSet.push("show_all")
 // console.log(coverageSet)
@@ -365,7 +365,6 @@ var centroids = null
 var latestDate = null
 
 function ready(counties,aiannh,centroids,modelData){
-    console.log(modelData)
     //convert to geoid dict
     var dataByFIPS = turnToDictFIPS(modelData,"County_FIPS")
     
@@ -610,6 +609,7 @@ function drawMap(data,aiannh,prison){
          
      map.on('mousemove', 'counties', function(e) {
          var feature = e.features[0]
+        // console.log(feature["properties"])
          //console.log(feature)
          map.getCanvas().style.cursor = 'pointer'; 
         // console.log(feature)
@@ -625,12 +625,16 @@ function drawMap(data,aiannh,prison){
              var population = feature["properties"]["totalPopulation"]
              var geometry = feature["geometry"]
              
+             
              var countyId = feature["properties"]["FIPS"]
              var SVI = Math.round(feature["properties"]["SVI_county"]*100)/100
            //  var columnsToShow = ["hotspotSVI_priority","hotspot_priority","SVI_priority","highDemand_priority"]             
              
             var currentSelection = pub.strategy+"_"+pub.coverage
+             
+             
              var currentSelectionCoverage = Math.round(feature["properties"][currentSelection]*100)/100
+             var currentSelectionUnmet = 100-currentSelectionCoverage
              var needsMetString = currentSelectionCoverage+"% of needs met</strong>"
              if(currentSelectionCoverage ==-1){
                  needsMetString = "Currently No Cases Reported"
@@ -640,11 +644,12 @@ function drawMap(data,aiannh,prison){
                      +"Population: "+numberWithCommas(population)+"<br>"
                      +"SVI: "+SVI+"<br><strong>"
                      +"Total number of new cases in the past 14 days: "+"####"+"<br>"
-                     +"Prioritizing large socially vulnerable populations, if "
-                     +" CT per 100,000 are available for [State name] then [XX] contact tracers should be assigned to [County name]. "
-                     +"This leaves [XX]% of the estimated total demand for contact tracers unmet."
+                     +"Prioritizing large socially vulnerable populations, if "+pub.coverage
+                     +" CT per 100,000 are available for "+feature["properties"]["state"]
+                     +" then [XX] contact tracers should be assigned to "
+                     +feature["properties"]["county"]+". "
+                     +"This leaves "+currentSelectionUnmet+"% of the estimated total demand for contact tracers unmet."
              //    +measureDisplayText[pub.strategy]+", "+coverageDisplayText[pub.coverage]+": "
-             +needsMetString
                      
            
           
