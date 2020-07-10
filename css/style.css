@@ -49,6 +49,12 @@ option{
     overflow:hidden;
     z-index:9;
 }
+#comparisonKey{
+    z-index:99999;
+    position:absolute;
+    top:100px;
+    right:20px;
+}
 #date{
     position:absolute;
     right:0px;

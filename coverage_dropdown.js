@@ -542,6 +542,14 @@ function drawMap(data,aiannh,prison){
      });
      
      map.on("load",function(){        
+         map.addControl(
+         new mapboxgl.GeolocateControl({
+         positionOptions: {
+         enableHighAccuracy: true
+         },
+         trackUserLocation: true
+         })
+         );
          
          drawGrid(map,data) 
          map.setLayoutProperty("mapbox-satellite", 'visibility', 'none');
@@ -612,7 +620,7 @@ function drawMap(data,aiannh,prison){
          
      map.on('mousemove', 'counties', function(e) {
          var feature = e.features[0]
-         console.log(feature["properties"])
+         //console.log(feature["properties"])
          //console.log(feature)
          map.getCanvas().style.cursor = 'pointer'; 
         // console.log(feature)
