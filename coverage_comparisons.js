@@ -17,9 +17,10 @@ var themesDefinitions ={
     "SPL_THEMES":"Sum of series themes", 
     "RPL_THEMES":"Overall percentile ranking for themes"
 }
+var currentCapacity = 30
 var pub = {
     strategy:"percentage_scenario_SVI_hotspot",
-    coverage:"base_case_capacity_30",
+    coverage:"base_case_capacity_"+currentCapacity,
     aiannh:false,
     prison:false,
     satellite:false,
@@ -48,9 +49,9 @@ var keyColors = {high_demand:"#604F23",SVI_hotspot:"#FBD33C",SVI_pop:"#E27C3B",h
 
 var measureDisplayText = {
     high_demand:"14 day cases",
-    hotspot:"14 day cases as % of population",
-    SVI_pop:"SVI*population",
-    SVI_hotspot:"SVI*population & 14 day cases as % of population"
+    hotspot:"14 day as % pop",
+    SVI_pop:"SVI*pop",
+    SVI_hotspot:"SVI & 14 day as % pop"
 }
 
 
@@ -180,12 +181,12 @@ function turnToDictFIPS(data,keyColumn){
         
        // var values = data[i]
         for(var j in prioritySet){
-            var k1 = (prioritySet[j]+"_base_case_capacity_30").replace("priority_","percentage_scenario_")
+            var k1 = (prioritySet[j]+"_base_case_capacity_"+currentCapacity).replace("priority_","percentage_scenario_")
             var v1 = parseFloat(data[i][k1])
             newDict[key][k1]=v1
             
             for(var k in prioritySet){
-                var k2 = (prioritySet[k]+"_base_case_capacity_30").replace("priority_","percentage_scenario_")
+                var k2 = (prioritySet[k]+"_base_case_capacity_"+currentCapacity).replace("priority_","percentage_scenario_")
                 var v2 = parseFloat(data[i][k2])
                 var index1 = j
                 var index2 = k
@@ -240,7 +241,7 @@ function drawGrid(map,comparisonsSet){
     var gridSize = 30
     for(var i in prioritySet){
                 svg.append("text")
-                .text(prioritySet[i].replace("priority_",""))
+                .text(measureDisplayText[prioritySet[i].replace("priority_","")])
                 .attr("x",i*gridSize+40)
                 .attr("y",130)
                 .attr("transform","rotate(-45 "+(i*gridSize+40)+",0)")
@@ -248,7 +249,7 @@ function drawGrid(map,comparisonsSet){
         for(var j in prioritySet){
             if(i==0){
                 svg.append("text")
-                .text(prioritySet[j].replace("priority_",""))
+                .text(measureDisplayText[prioritySet[j].replace("priority_","")])
                 .attr("x",i)
                 .attr("y",j*gridSize+gridSize/2)
                 .attr("transform","translate(110,100)")
@@ -258,10 +259,9 @@ function drawGrid(map,comparisonsSet){
             if(j!=i){
                 if(i<j){
                     
-                    
-                    var key = "compare_"+(prioritySet[i]+"_base_case_capacity_30").replace("priority_","percentage_scenario_")+"_"+(prioritySet[j]+"_base_case_capacity_30").replace("priority_","percentage_scenario_")
+                    var key = "compare_"+(prioritySet[i]+"_base_case_capacity_"+currentCapacity).replace("priority_","percentage_scenario_")+"_"+(prioritySet[j]+"_base_case_capacity_30").replace("priority_","percentage_scenario_")
                 }else{
-                    var key = "compare_"+(prioritySet[j]+"_base_case_capacity_30").replace("priority_","percentage_scenario_")+"_"+(prioritySet[i]+"_base_case_capacity_30").replace("priority_","percentage_scenario_")
+                    var key = "compare_"+(prioritySet[j]+"_base_case_capacity_"+currentCapacity).replace("priority_","percentage_scenario_")+"_"+(prioritySet[i]+"_base_case_capacity_30").replace("priority_","percentage_scenario_")
                 }
                 
                 if(comparisonsSet.indexOf(key)>-1 && drawn.indexOf(key)==-1){
@@ -312,10 +312,10 @@ function drawKey(key){
   //   SVI_pop
   //   _base_case_capacity_30
     
-    var k1 = key.split("_percentage_scenario_")[1].replace("_base_case_capacity_30","")
-    var k2 = key.split("_percentage_scenario_")[2].replace("_base_case_capacity_30","")
+    var k1 = key.split("_percentage_scenario_")[1].replace("_base_case_capacity_"+currentCapacity,"")
+    var k2 = key.split("_percentage_scenario_")[2].replace("_base_case_capacity_"+currentCapacity,"")
     var svg = d3.select("#comparisonKey").append("svg")
-        .attr("width",800).attr('height',200)
+        .attr("width",800).attr('height',100)
     var defs = svg.append("defs");
 
     var gradient = defs.append("linearGradient")
@@ -357,8 +357,8 @@ function drawKey(key){
     
 }
 function colorMap(map,key){
-    var colorStart = keyColors[key.split("_percentage_scenario_")[1].replace("_base_case_capacity_30","")]
-    var colorEnd = keyColors[key.split("_percentage_scenario_")[2].replace("_base_case_capacity_30","")]
+    var colorStart = keyColors[key.split("_percentage_scenario_")[1].replace("_base_case_capacity_"+currentCapacity,"")]
+    var colorEnd = keyColors[key.split("_percentage_scenario_")[2].replace("_base_case_capacity_"+currentCapacity,"")]
     var color = {property:key,stops:[[-1,colorEnd],[0,"#fff"],[1,colorStart]]}
     map.setPaintProperty("counties", 'fill-color', color)  
     
@@ -396,7 +396,7 @@ function drawMap(data,comparisonsKeys){
              'type': 'line',
              'source': 'counties',
              'paint': {
-                 'line-color':"#fff",
+                 'line-color':"#aaa",
                  'line-opacity':.3
              },
              'filter': ['==', '$type', 'Polygon']
@@ -420,7 +420,7 @@ function drawMap(data,comparisonsKeys){
          
          //map.setPaintProperty("counties","fill-opacity",{property:"percentage_scenario_hotspot_base_case_capacity_30",stops:[[-1,0],[0,1]]})
          
-         var filter = ["!=","percentage_scenario_SVI_hotspot_base_case_capacity_30",-1]
+         var filter = ["!=","percentage_scenario_SVI_hotspot_base_case_capacity_"+currentCapacity,-1]
          map.setFilter("counties",filter)
          
         lineOpacity["property"]=pub.strategy+"_"+pub.coverage
@@ -471,12 +471,12 @@ function drawMap(data,comparisonsKeys){
              var chartData = []
                          //
               for(var p in measureSet){
-                  var pk = measureSet[p]+"_base_case_capacity_30"
+                  var pk = measureSet[p]+"_base_case_capacity_"+currentCapacity
                   var pv = feature["properties"][pk]
                  // displayString+=pk+": "+pv+"<br>"
                   chartData.push({axis:pk,value:pv})
               }
-             d3.select("#mapPopup").html(displayString)
+             d3.select("#mapPopup").html(displayString+"<br><br> % Coverage for County under each policy: ")
              drawChart(chartData)
          }       
          
@@ -507,9 +507,9 @@ function drawChart(data){
     })
     .attr("height",10)
     .attr("x",10)
-    .attr("y",function(d,i){return i*30+40})
+    .attr("y",function(d,i){return i*40+40})
     .attr("fill", function (d,i){
-        return keyColors[d.axis.replace("percentage_scenario_","").replace("_base_case_capacity_30","")]
+        return keyColors[d.axis.replace("percentage_scenario_","").replace("_base_case_capacity_"+currentCapacity,"")]
     })
     
     svg.selectAll("text")
@@ -517,10 +517,10 @@ function drawChart(data){
         .enter()
         .append("text")
         .text(function (d,i){
-            return measureDisplayText[d.axis.replace("percentage_scenario_","").replace("_base_case_capacity_30","")]
+            return measureDisplayText[d.axis.replace("percentage_scenario_","").replace("_base_case_capacity_"+currentCapacity,"")]
         })
         .attr("x",10)
-        .attr("y",function(d,i){return i*30+30})
+        .attr("y",function(d,i){return i*40+30})
     
     svg.selectAll(".textValue")
         .data(data)
@@ -530,7 +530,7 @@ function drawChart(data){
             return d.value
         })
         .attr("x",10)
-        .attr("y",function(d,i){return i*30+40})
+        .attr("y",function(d,i){return i*40+40})
 }
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
