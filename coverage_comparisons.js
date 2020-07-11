@@ -341,7 +341,11 @@ function drawKey(key){
        .attr("offset", "100%")
        .attr("stop-color", keyColors[k2])
        .attr("stop-opacity", 1);
-    svg.append("text").text("Higher coverage when prioritizing by: ").attr("y",18).attr("x",20).attr("fill","#000").style("font-size","24px")
+    svg.append("text").text("Higher coverage when prioritizing by").attr("y",18).attr("x",20)
+       .attr("fill","#000").style("font-size","16px")
+       
+    svg.append("text").text("Higher coverage when prioritizing by").attr("y",18).attr("x",720)
+       .attr("fill","#000").style("font-size","16px").attr("text-anchor","end")
 
     svg.append("text").text(measureDisplayText[k1]).attr("y",40).attr("x",20).style("font-size","16px")//.attr("fill",keyColors[k1])
     svg.append("text").text(measureDisplayText[k2]).attr("y",40).attr("x",720).style("font-size","16px").attr("text-anchor","end")//.attr("fill",keyColors[k2])
