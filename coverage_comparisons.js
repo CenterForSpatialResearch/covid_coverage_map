@@ -452,7 +452,6 @@ function drawMap(data,comparisonsKeys){
                   
      map.on('mousemove', 'counties', function(e) {
          var feature = e.features[0]
-         console.log(feature["properties"])
          map.getCanvas().style.cursor = 'pointer'; 
          if(feature["properties"].FIPS!=undefined){
              
@@ -508,7 +507,7 @@ function drawChart(data){
     })
     .attr("height",10)
     .attr("x",10)
-    .attr("y",function(d,i){return i*30+20})
+    .attr("y",function(d,i){return i*30+40})
     .attr("fill", function (d,i){
         return keyColors[d.axis.replace("percentage_scenario_","").replace("_base_case_capacity_30","")]
     })
@@ -518,10 +517,20 @@ function drawChart(data){
         .enter()
         .append("text")
         .text(function (d,i){
-            return d.axis.replace("percentage_scenario_","").replace("_base_case_capacity_30","")+": "+d.value
+            return measureDisplayText[d.axis.replace("percentage_scenario_","").replace("_base_case_capacity_30","")]
         })
         .attr("x",10)
-        .attr("y",function(d,i){return i*30+19})
+        .attr("y",function(d,i){return i*30+30})
+    
+    svg.selectAll(".textValue")
+        .data(data)
+        .enter()
+        .append("text")
+        .text(function (d,i){
+            return d.value
+        })
+        .attr("x",10)
+        .attr("y",function(d,i){return i*30+40})
 }
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
