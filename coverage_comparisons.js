@@ -37,6 +37,22 @@ SVI:["#A7DCDF","#6EAFC3","#3983A8","#02568B"],
 hotspotSVI:["#A7DCDF","#6EAFC3","#3983A8","#02568B"],
 highDemand:["#A7DCDF","#6EAFC3","#3983A8","#02568B"]}
 
+var colorEnd = "#6FAFC4"
+var colorStart = "#E27C3B"
+//var colorStart = "#FBD33C"
+var colorStart = "#604F23"
+
+//"priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot"
+
+var keyColors = {high_demand:"#604F23",SVI_hotspot:"#FBD33C",SVI_pop:"#E27C3B",hotspot:"#6FAFC4"}
+
+var measureDisplayText = {
+    high_demand:"only new cases within the last 14 days",
+    hotspot:"new cases within the last 14 days as a percent of population",
+    SVI_pop:"large socially vulnerable populations",
+    SVI_hotspot:"large socially vulnerable populations and cases as a percent of population"
+}
+
 
 var colorGroups = ["#8DC63F","#9FCF8B","#B2D8D6","#47823B","#5A8B71","#6C93A7","#003E38","#134658","#274F78"]
 
@@ -107,12 +123,6 @@ for(var c = 1; c<=8; c++){
  }
 
 var measureSet = ["percentage_scenario_SVI_pop","percentage_scenario_SVI_hotspot","percentage_scenario_hotspot","percentage_scenario_high_demand"]
-var measureDisplayText = {
-    percentage_scenario_high_demand:"only new cases within the last 14 days",
-    percentage_scenario_hotspot:"new cases within the last 14 days as a percent of population",
-    percentage_scenario_SVI_pop:"large socially vulnerable populations",
-    percentage_scenario_SVI_hotspot:"large socially vulnerable populations and cases as a percent of population"
-}
 
 Promise.all([counties,aiannh,countyCentroids,allData])
 .then(function(data){
@@ -296,10 +306,16 @@ function drawGrid(map,comparisonsSet){
 }
 function drawKey(key){
     d3.select("#comparisonKey svg").remove()
-    var k1 = key.split("percentage_scenario_")[1].replace("base_case_capacity_","")
-    var k2 = key.split("percentage_scenario_")[2].replace("base_case_capacity_","")
+    // compare_percentage_scenario_
+  //   high_demand
+  //   _base_case_capacity_30_percentage_scenario_
+  //   SVI_pop
+  //   _base_case_capacity_30
+    
+    var k1 = key.split("_percentage_scenario_")[1].replace("_base_case_capacity_30","")
+    var k2 = key.split("_percentage_scenario_")[2].replace("_base_case_capacity_30","")
     var svg = d3.select("#comparisonKey").append("svg")
-        .attr("width",500).attr('height',200)
+        .attr("width",800).attr('height',200)
     var defs = svg.append("defs");
 
     var gradient = defs.append("linearGradient")
@@ -312,7 +328,7 @@ function drawKey(key){
     gradient.append("stop")
        .attr('class', 'start')
        .attr("offset", "0%")
-       .attr("stop-color", "green")
+       .attr("stop-color", keyColors[k1])
        .attr("stop-opacity", 1);
 
     gradient.append("stop")
@@ -323,25 +339,27 @@ function drawKey(key){
     gradient.append("stop")
        .attr('class', 'end')
        .attr("offset", "100%")
-       .attr("stop-color", "red")
+       .attr("stop-color", keyColors[k2])
        .attr("stop-opacity", 1);
+    svg.append("text").text("Higher coverage when measured by: ").attr("y",18).attr("x",20).attr("fill","#000")
 
-
-    svg.append("text").text("higher coverage for"+k1).attr("y",18).attr("x",20)
-    svg.append("text").text("higher coverage for"+k2).attr("y",18).attr("x",420).attr("text-anchor","end")
-    svg.append("text").text("no difference").attr("y",48).attr("x",220).attr("text-anchor","middle")
+    svg.append("text").text(measureDisplayText[k1]).attr("y",40).attr("x",20)//.attr("fill",keyColors[k1])
+    svg.append("text").text(measureDisplayText[k2]).attr("y",40).attr("x",720).attr("text-anchor","end")//.attr("fill",keyColors[k2])
+    svg.append("text").text("no difference").attr("y",70).attr("x",370).attr("text-anchor","middle")
     svg.append("rect")
     .attr("class","key")
-    .attr('width',400)
-    .attr('height',20)
+    .attr('width',700)
+    .attr('height',10)
     .attr("x",20)
-    .attr("y",20)
+    .attr("y",50)
     .attr("fill","url(#svgGradient)")
     
     
 }
 function colorMap(map,key){
-    var color = {property:key,stops:[[-1,"red"],[0,"#fff"],[1,"green"]]}
+    var colorStart = keyColors[key.split("_percentage_scenario_")[1].replace("_base_case_capacity_30","")]
+    var colorEnd = keyColors[key.split("_percentage_scenario_")[2].replace("_base_case_capacity_30","")]
+    var color = {property:key,stops:[[-1,colorEnd],[0,"#fff"],[1,colorStart]]}
     map.setPaintProperty("counties", 'fill-color', color)  
     
 }
@@ -472,7 +490,7 @@ function drawMap(data,comparisonsKeys){
     
 }
 function drawChart(data){
-    var xScale = d3.scaleLinear().domain([0,100]).range([0,200])
+    var xScale = d3.scaleLinear().domain([0,100]).range([2,200])
     var svg = d3.select("#mapPopup").append("svg").attr("class","chart").attr("width",200).attr("height",200)
     svg.selectAll("rect")
     .data(data)
@@ -484,6 +502,9 @@ function drawChart(data){
     .attr("height",10)
     .attr("x",10)
     .attr("y",function(d,i){return i*30+20})
+    .attr("fill", function (d,i){
+        return keyColors[d.axis.replace("percentage_scenario_","").replace("_base_case_capacity_30","")]
+    })
     
     svg.selectAll("text")
         .data(data)
