@@ -144,6 +144,7 @@ function ready(counties,aiannh,centroids,modelData){
    
 };
 
+
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
@@ -169,12 +170,12 @@ function turnToDictFIPS(data,keyColumn){
         
        // var values = data[i]
         for(var j in prioritySet){
-            var k1 = prioritySet[j]
+            var k1 = (prioritySet[j]+"_base_case_capacity_30").replace("priority_","percentage_scenario_")
             var v1 = parseFloat(data[i][k1])
             newDict[key][k1]=v1
             
             for(var k in prioritySet){
-                var k2 = prioritySet[k]
+                var k2 = (prioritySet[k]+"_base_case_capacity_30").replace("priority_","percentage_scenario_")
                 var v2 = parseFloat(data[i][k2])
                 var index1 = j
                 var index2 = k
@@ -242,14 +243,15 @@ function drawGrid(map,comparisonsSet){
                 .attr("y",j*gridSize+gridSize/2)
                 .attr("transform","translate(110,100)")
                 .attr("text-anchor","end")
-                
             }
             
             if(j!=i){
                 if(i<j){
-                    var key = "compare_"+prioritySet[i]+"_"+prioritySet[j]
+                    
+                    
+                    var key = "compare_"+(prioritySet[i]+"_base_case_capacity_30").replace("priority_","percentage_scenario_")+"_"+(prioritySet[j]+"_base_case_capacity_30").replace("priority_","percentage_scenario_")
                 }else{
-                    var key = "compare_"+prioritySet[j]+"_"+prioritySet[i]
+                    var key = "compare_"+(prioritySet[j]+"_base_case_capacity_30").replace("priority_","percentage_scenario_")+"_"+(prioritySet[i]+"_base_case_capacity_30").replace("priority_","percentage_scenario_")
                 }
                 
                 if(comparisonsSet.indexOf(key)>-1 && drawn.indexOf(key)==-1){
@@ -294,9 +296,8 @@ function drawGrid(map,comparisonsSet){
 }
 function drawKey(key){
     d3.select("#comparisonKey svg").remove()
-    
-    var k1 = key.split("_priority_")[1]
-    var k2 = key.split("_priority_")[2]
+    var k1 = key.split("percentage_scenario_")[1].replace("base_case_capacity_","")
+    var k2 = key.split("percentage_scenario_")[2].replace("base_case_capacity_","")
     var svg = d3.select("#comparisonKey").append("svg")
         .attr("width",500).attr('height',200)
     var defs = svg.append("defs");
@@ -326,9 +327,9 @@ function drawKey(key){
        .attr("stop-opacity", 1);
 
 
-    svg.append("text").text("higher "+k1).attr("y",18).attr("x",20)
-    svg.append("text").text("higher "+k2).attr("y",18).attr("x",420).attr("text-anchor","end")
-    svg.append("text").text("no difference").attr("y",18).attr("x",220).attr("text-anchor","middle")
+    svg.append("text").text("higher coverage for"+k1).attr("y",18).attr("x",20)
+    svg.append("text").text("higher coverage for"+k2).attr("y",18).attr("x",420).attr("text-anchor","end")
+    svg.append("text").text("no difference").attr("y",48).attr("x",220).attr("text-anchor","middle")
     svg.append("rect")
     .attr("class","key")
     .attr('width',400)
@@ -426,6 +427,7 @@ function drawMap(data,comparisonsKeys){
                   
      map.on('mousemove', 'counties', function(e) {
          var feature = e.features[0]
+        // console.log(feature["properties"])
          map.getCanvas().style.cursor = 'pointer'; 
          if(feature["properties"].FIPS!=undefined){
              
@@ -444,8 +446,8 @@ function drawMap(data,comparisonsKeys){
              
              var chartData = []
                          //
-              for(var p in prioritySet){
-                  var pk = prioritySet[p]
+              for(var p in measureSet){
+                  var pk = measureSet[p]+"_base_case_capacity_30"
                   var pv = feature["properties"][pk]
                  // displayString+=pk+": "+pv+"<br>"
                   chartData.push({axis:pk,value:pv})
@@ -470,7 +472,7 @@ function drawMap(data,comparisonsKeys){
     
 }
 function drawChart(data){
-    var xScale = d3.scaleLinear().domain([0,1]).range([0,200])
+    var xScale = d3.scaleLinear().domain([0,100]).range([0,200])
     var svg = d3.select("#mapPopup").append("svg").attr("class","chart").attr("width",200).attr("height",200)
     svg.selectAll("rect")
     .data(data)
@@ -488,7 +490,7 @@ function drawChart(data){
         .enter()
         .append("text")
         .text(function (d,i){
-            return d.axis+": "+d.value
+            return d.axis.replace("percentage_scenario_","").replace("_base_case_capacity_30","")+": "+d.value
         })
         .attr("x",10)
         .attr("y",function(d,i){return i*30+19})
