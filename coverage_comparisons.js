@@ -47,10 +47,10 @@ var colorStart = "#604F23"
 var keyColors = {high_demand:"#604F23",SVI_hotspot:"#FBD33C",SVI_pop:"#E27C3B",hotspot:"#6FAFC4"}
 
 var measureDisplayText = {
-    high_demand:"only new cases within the last 14 days",
-    hotspot:"new cases within the last 14 days as a percent of population",
-    SVI_pop:"large socially vulnerable populations",
-    SVI_hotspot:"large socially vulnerable populations and cases as a percent of population"
+    high_demand:"14 day cases",
+    hotspot:"14 day cases as % of population",
+    SVI_pop:"SVI*population",
+    SVI_hotspot:"SVI*population & 14 day cases as % of population"
 }
 
 
@@ -240,7 +240,7 @@ function drawGrid(map,comparisonsSet){
     var gridSize = 30
     for(var i in prioritySet){
                 svg.append("text")
-                .text(prioritySet[i])
+                .text(prioritySet[i].replace("priority_",""))
                 .attr("x",i*gridSize+40)
                 .attr("y",130)
                 .attr("transform","rotate(-45 "+(i*gridSize+40)+",0)")
@@ -248,7 +248,7 @@ function drawGrid(map,comparisonsSet){
         for(var j in prioritySet){
             if(i==0){
                 svg.append("text")
-                .text(prioritySet[j])
+                .text(prioritySet[j].replace("priority_",""))
                 .attr("x",i)
                 .attr("y",j*gridSize+gridSize/2)
                 .attr("transform","translate(110,100)")
@@ -277,7 +277,7 @@ function drawGrid(map,comparisonsSet){
                         .on("click",function(){
                             colorMap(map,d3.select(this).attr("id"))
                             d3.selectAll(".grid").attr("fill","black")
-                            d3.select(this).attr("fill","red")
+                            d3.select(this).attr("fill","gold")
                             drawKey(d3.select(this).attr("id"))
                         })
                         drawn.push(key)
@@ -289,7 +289,7 @@ function drawGrid(map,comparisonsSet){
                         .attr("y",gridSize*i)
                         .attr("transform","translate(120,100)")
                         .attr("fill","none")
-                        .attr("stroke","#aaa")
+                        .attr("stroke","#ddd")
                     }
             }else{
                     svg.append("rect")
@@ -299,7 +299,7 @@ function drawGrid(map,comparisonsSet){
                         .attr("y",gridSize*i)
                         .attr("transform","translate(120,100)")
                         .attr("fill","none")
-                        .attr("stroke","#aaa")
+                        .attr("stroke","#ddd")
             }
         }
     }
@@ -341,10 +341,10 @@ function drawKey(key){
        .attr("offset", "100%")
        .attr("stop-color", keyColors[k2])
        .attr("stop-opacity", 1);
-    svg.append("text").text("Higher coverage when measured by: ").attr("y",18).attr("x",20).attr("fill","#000")
+    svg.append("text").text("Higher coverage when prioritizing by: ").attr("y",18).attr("x",20).attr("fill","#000").style("font-size","24px")
 
-    svg.append("text").text(measureDisplayText[k1]).attr("y",40).attr("x",20)//.attr("fill",keyColors[k1])
-    svg.append("text").text(measureDisplayText[k2]).attr("y",40).attr("x",720).attr("text-anchor","end")//.attr("fill",keyColors[k2])
+    svg.append("text").text(measureDisplayText[k1]).attr("y",40).attr("x",20).style("font-size","16px")//.attr("fill",keyColors[k1])
+    svg.append("text").text(measureDisplayText[k2]).attr("y",40).attr("x",720).style("font-size","16px").attr("text-anchor","end")//.attr("fill",keyColors[k2])
     svg.append("text").text("no difference").attr("y",70).attr("x",370).attr("text-anchor","middle")
     svg.append("rect")
     .attr("class","key")
@@ -382,6 +382,7 @@ function drawMap(data,comparisonsKeys){
        // maxBounds: bounds    
      });
      
+    
      map.on("load",function(){        
          
          map.setLayoutProperty("mapbox-satellite", 'visibility', 'none');
@@ -406,8 +407,8 @@ function drawMap(data,comparisonsKeys){
              'type': 'fill',
              'source': 'counties',
              'paint': {
-             'fill-color': "white",
-                 'fill-opacity':0
+             'fill-color': "#fff",
+                 'fill-opacity':1
              },
              'filter': ['==', '$type', 'Polygon']
          },"county_outline");
@@ -415,6 +416,12 @@ function drawMap(data,comparisonsKeys){
          
          drawGrid(map,comparisonsKeys)
          
+         //var color = {property:"priority_high_demand",stops:[[-1,0],[0,1]]}
+         
+         map.setPaintProperty("counties","fill-opacity",{property:"percentage_scenario_hotspot_base_case_capacity_30",stops:[[-1,0],[0,1]]})
+         
+         var filter = ["!=","percentage_scenario_SVI_hotspot_base_case_capacity_30",-1]
+         map.setFilter("counties",filter)
          
         lineOpacity["property"]=pub.strategy+"_"+pub.coverage
         lineWeight["property"]=pub.strategy+"_"+pub.coverage
@@ -425,7 +432,7 @@ function drawMap(data,comparisonsKeys){
               var matchString = ["match",["get",pub.strategy+"_"+pub.coverage+"_group"]].concat(groupColorDict)
               //console.log(matchString)
               
-               map.setPaintProperty("counties", 'fill-color', matchString)  
+             //  map.setPaintProperty("counties", 'fill-color', matchString)  
          
         d3.select("."+pub.coverage+"_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
         d3.selectAll("."+pub.coverage).style("color",highlightColor)
@@ -445,7 +452,7 @@ function drawMap(data,comparisonsKeys){
                   
      map.on('mousemove', 'counties', function(e) {
          var feature = e.features[0]
-        // console.log(feature["properties"])
+         console.log(feature["properties"])
          map.getCanvas().style.cursor = 'pointer'; 
          if(feature["properties"].FIPS!=undefined){
              
