@@ -418,7 +418,7 @@ function drawMap(data,comparisonsKeys){
          
          //var color = {property:"priority_high_demand",stops:[[-1,0],[0,1]]}
          
-         map.setPaintProperty("counties","fill-opacity",{property:"percentage_scenario_hotspot_base_case_capacity_30",stops:[[-1,0],[0,1]]})
+         //map.setPaintProperty("counties","fill-opacity",{property:"percentage_scenario_hotspot_base_case_capacity_30",stops:[[-1,0],[0,1]]})
          
          var filter = ["!=","percentage_scenario_SVI_hotspot_base_case_capacity_30",-1]
          map.setFilter("counties",filter)
