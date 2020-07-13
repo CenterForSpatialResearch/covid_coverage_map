@@ -17,7 +17,7 @@ var themesDefinitions ={
     "SPL_THEMES":"Sum of series themes", 
     "RPL_THEMES":"Overall percentile ranking for themes"
 }
-var currentCapacity = 30
+var currentCapacity = 50
 var pub = {
     strategy:"percentage_scenario_SVI_hotspot",
     coverage:"base_case_capacity_"+currentCapacity,
@@ -259,9 +259,9 @@ function drawGrid(map,comparisonsSet){
             if(j!=i){
                 if(i<j){
                     
-                    var key = "compare_"+(prioritySet[i]+"_base_case_capacity_"+currentCapacity).replace("priority_","percentage_scenario_")+"_"+(prioritySet[j]+"_base_case_capacity_30").replace("priority_","percentage_scenario_")
+                    var key = "compare_"+(prioritySet[i]+"_base_case_capacity_"+currentCapacity).replace("priority_","percentage_scenario_")+"_"+(prioritySet[j]+"_base_case_capacity_"+currentCapacity).replace("priority_","percentage_scenario_")
                 }else{
-                    var key = "compare_"+(prioritySet[j]+"_base_case_capacity_"+currentCapacity).replace("priority_","percentage_scenario_")+"_"+(prioritySet[i]+"_base_case_capacity_30").replace("priority_","percentage_scenario_")
+                    var key = "compare_"+(prioritySet[j]+"_base_case_capacity_"+currentCapacity).replace("priority_","percentage_scenario_")+"_"+(prioritySet[i]+"_base_case_capacity_"+currentCapacity).replace("priority_","percentage_scenario_")
                 }
                 
                 if(comparisonsSet.indexOf(key)>-1 && drawn.indexOf(key)==-1){
@@ -341,10 +341,10 @@ function drawKey(key){
        .attr("offset", "100%")
        .attr("stop-color", keyColors[k2])
        .attr("stop-opacity", 1);
-    svg.append("text").text("Higher coverage when prioritizing by").attr("y",18).attr("x",20)
+    svg.append("text").text("Higher % of needs met when prioritizing by").attr("y",18).attr("x",20)
        .attr("fill","#000").style("font-size","16px")
        
-    svg.append("text").text("Higher coverage when prioritizing by").attr("y",18).attr("x",720)
+    svg.append("text").text("Higher % of needs met when prioritizing by").attr("y",18).attr("x",720)
        .attr("fill","#000").style("font-size","16px").attr("text-anchor","end")
 
     svg.append("text").text(measureDisplayText[k1]).attr("y",40).attr("x",20).style("font-size","16px")//.attr("fill",keyColors[k1])
@@ -380,7 +380,7 @@ function drawMap(data,comparisonsKeys){
  		style: "mapbox://styles/sidl/ckbsbi96q3mta1hplaopbjt9s",
  		//style:"mapbox://styles/c4sr-gsapp/ckc4s079z0z5q1ioiybc8u6zp",//new account
         center:[-100,37],
-         zoom: 3.8,
+         zoom: 3.5,
          preserveDrawingBuffer: true,
         minZoom:3.5//,
        // maxBounds: bounds    
