@@ -20,7 +20,7 @@ rel="stylesheet"
 href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css"
 type="text/css"
 />
-    <link rel="stylesheet" type="text/css" href="css/coverage_style.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
 
 <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
@@ -43,43 +43,65 @@ type="text/css"
 <body>
 
 <div id="head">
-  <span id="brand"><strong>MAPPING THE NEW POLITICS OF CARE :</strong></span>
-  <span id="title">comparisons between the <strong>% of needs met</strong> of <u>different measures</u> at <u>30 per 100,000</u> </span>  
+  <span id="brand">MAPPING THE NEW POLITICS OF CARE :</span><br>
+  <span id="title">Allocating Community Health Workers to Accommodate Different Resource Levels</span>  
 
 </div>
+  <div id="date">07/07/2020</div>
 
+<div id="mainMenu"><a href="about.html">ABOUT</a> | <strong>MAP</strong></div>
 <div id="byState"></div>
 <div id="nav">
   <!-- <nav id="update" class="menu"><i>Model Last Updated on ##/##/##</i></nav> -->
+   <nav id="currentState" class="menu">Currently Showing percent of unmet need by county when there are <strong>30</strong> contact tracers per 100,000 people in each state and <strong>Census Demographic Social Vulnerability and New Cases as % of Population</strong> are prioritized</nav>
    
   <div id = "strategies">
-  <div id="compareSubtitle">Click black squares below to compare policies - see differences in % needs met at 30 CHW per 100,000 Residents</div>
-       <!-- <nav id="strategiesQuestion" class="menu">How do you want to measure the need for Community Health Workers?</nav> -->
-   
-      <nav id="comparisonGrid"></div>
+       <nav id="strategiesQuestion" class="menu">How do you want to measure the need for Community Health Workers?</nav>
+      <nav id="strategiesSelected" class="menu">
+        <div id="strategiesSelectecLabel"></div>
+        <div id="strategiesarrow"><img src="dropdown.png" style="width:10px;"></div>
+      </nav>
+      <nav id="strategiesMenu" class="dropdown" ></nav>
       
-      *temp issue: grayed out areas in map have -1 value in data, it can be no cases or no data<br>
-      ** temp issue: black areas in map are currently missing from dataset because of nyt inconsistency
+      <div id = "coverage">
+      <nav id="coverageQuestion" class="menu">How many Community Health Workers can you pay for?</nav>
+      <nav id="coverageSelected" class="menu">
+        <div id="coverageSelectecLabel"></div>
+        <div id="coveragearrow"><img src="dropdown.png" style="width:10px;"></div>
+      </nav>
+      
+      <nav id="coverageMenu" class="dropdown"></nav>
+      
       </div>
  </div>
+ 
+ 
+  <div id = "colorGrid"></div>
+
+
+
 </div>
 
- <div id="comparisonKey"></div>
-   
-    <div id="map"></div>
+
+
+<div id = "nav2">
+  <nav id="placesMenu" >Go To:
+  </nav>
+    <nav id="layersMenu">Show Layers: </nav>
+    <nav id="download">Download the Data</nav>
+</div>
+  <div id="map"></div>
   <div id="mapPopup"></div>
 <div id = "gridHover"></div>
   
 
 <script type="text/javascript" src="js/d3.js"></script>
-
 <script type="text/javascript" src="js/crossfilter.js"></script>
 <script type="text/javascript" src="js/dc.js"></script>
 <script type="text/javascript" src="js/queue.v1.min.js"></script>
-<script type="text/javascript" src="js/radar.js"></script>
 <script type="text/javascript" src="dc-canvas-scatterplot.js"></script>
 <script type="text/javascript" src="fileSaver.js"></script>
-<script type="text/javascript" src="coverage_comparisons.js"></script>
+<script type="text/javascript" src="coverage_dropdown.js"></script>
 
 
 </body>

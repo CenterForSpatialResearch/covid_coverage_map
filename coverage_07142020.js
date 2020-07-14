@@ -60,7 +60,39 @@ var colorGroups = [
    "rgba(128, 172, 42,1)", "rgba(128, 172, 42,.7)", "rgba(128, 172, 42,.4)",
     "rgba(255, 206, 0,1)","rgba(255, 206, 0,.7)","rgba(255, 206, 0,.4)"
 ]
-//var colorGroups = ["#FDD6B9","#DBCEC5","#B8C5D1","#FCAE74","#B79D8C","#718BA4","#F77A26","#91664E","#2A5176"]
+
+var colorGroups =[
+"rgba(255, 161, 0, .4)","rgba(255, 161, 0, .7)","rgba(255, 161, 0, 1)",
+"rgba(244, 81, 128, .4)","rgba(244, 81, 128, .7)","rgba(244, 81, 128, 1)",
+"rgba(234, 0, 255, .4)","rgba(234, 0, 255, .7)","rgba(234, 0, 255, 1)"
+
+]
+
+
+ // var colorGroups =[
+ // "rgba(19,182,163, .3)","rgba(19,182,163, .6)","rgba(19,182,163, 1)",
+ // "rgba(162,211,82, .3)","rgba(162,211,82, .6)","rgba(162,211,82, 1)",
+ // "rgba(255, 241, 0, .3)","rgba(255, 241, 0, .6)","rgba(255, 241, 0, 1)"
+ //
+ // ]
+
+// var colorGroups =[
+// "rgba(113, 191, 77, .4)","rgba(113, 191, 77, .7)","rgba(113, 191, 77, 1)",
+// "rgba(184, 216, 38, .4)","rgba(184, 216, 38, .7)","rgba(184, 216, 38, 1)",
+// "rgba(255, 241, 0, .4)","rgba(255, 241, 0, .7)","rgba(255, 241, 0, 1)"
+// ]
+//
+// var colorGroups =[
+//     "rgba(23, 220, 255, .4)", "rgba(23, 220, 255, .7)", "rgba(23, 220, 255, 1)",
+//     "rgba(126, 110, 255, .4)","rgba(126, 110, 255, .7)","rgba(126, 110, 255, 1)",v -ho
+// ]
+//
+// var colorGroups = [
+//     "rgba(72, 174, 237, .4)","rgba(72, 174, 237, .7)","rgba(72, 174, 237, 1)",
+//     "rgba(255, 255, 255, 4)", "rgba(255, 255, 255, .7)", "rgba(255, 255, 255, 1)",
+//     "rgba(255, 241, 0, .4)","rgba(255, 241, 0, .7)","rgba(255, 241, 0, 1)"
+// ]
+//var colorGroups = ["#FDD6B9","#DBCEC5",/-======p[,/]"#B8C5D1","#FCAE74","#B79D8C","#718BA4","#F77A26","#91664E","#2A5176"]
 //
 // var pStops = [[0,.33],[.34,.66],[.67,1]]
 // var cStops = [[0,33],[34,66],[67,100]]
@@ -205,7 +237,7 @@ function drawGrid(map,data){
   //         .attr("text-anchor","middle")
   //         .attr("transform","translate(100,0)")
     
-    colorGridSvg.append("text").text("% of needs met").attr("x",120).attr("y",195).style("font-weight","bold")
+    colorGridSvg.append("text").text("% of unmet need").attr("x",120).attr("y",195).style("font-weight","bold")
     colorGridSvg.append("text").text("less").attr("x",100).attr("y",180)
     colorGridSvg.append("text").text("more").attr("x",190).attr("y",180)
       
@@ -304,7 +336,6 @@ var aiannh = d3.json("indian_reservations.geojson")
 
 //var allData = d3.csv("County_level_coverage_for_all_policies_and_low_mid_high_base_case_capacity.csv")
 var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
-var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity (1).csv")
 var allData = d3.csv("https://media.githubusercontent.com/media/CenterForSpatialResearch/allocating_covid/master/Output/County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")// var headers = ["County_FIPS","SVI_county","priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot",
 
 //var allData = d3.csv("https://media.githubusercontent.com/media/CenterForSpatialResearch/allocating_covid/master/Output/Census_tract_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
@@ -443,7 +474,7 @@ function turnToDictFIPS(data,keyColumn){
             
             for(var k in coverageSet){
                 var coverageKey = "percentage_scenario_"+measureKey+"_"+coverageSet[k]
-                var coverage = parseFloat(data[i][coverageKey])
+                var coverage = 100-parseFloat(data[i][coverageKey])
                 if(coverage==-1){
                     var cGroup = "none"
                 }else{
@@ -528,8 +559,8 @@ function drawReservations(data,map){
 }
 
 function drawMap(data,aiannh,prison){
-	mapboxgl.accessToken = 'pk.eyJ1Ijoic2lkbCIsImEiOiJkOGM1ZDc0ZTc5NGY0ZGM4MmNkNWIyMmIzNDBkMmZkNiJ9.Qn36nbIqgMc4V0KEhb4iEw';    
-    //mapboxgl.accessToken = "pk.eyJ1IjoiYzRzci1nc2FwcCIsImEiOiJja2J0ajRtNzMwOHBnMnNvNnM3Ymw5MnJzIn0.fsTNczOFZG8Ik3EtO9LdNQ"//new account
+	//mapboxgl.accessToken = 'pk.eyJ1Ijoic2lkbCIsImEiOiJkOGM1ZDc0ZTc5NGY0ZGM4MmNkNWIyMmIzNDBkMmZkNiJ9.Qn36nbIqgMc4V0KEhb4iEw';    
+    mapboxgl.accessToken = "pk.eyJ1IjoiYzRzci1nc2FwcCIsImEiOiJja2J0ajRtNzMwOHBnMnNvNnM3Ymw5MnJzIn0.fsTNczOFZG8Ik3EtO9LdNQ"//new account
     var bounds = [
     [-74.1, 40.6], // Southwest coordinates
     [-73.6, 40.9] // Northeast coordinates
@@ -537,7 +568,8 @@ function drawMap(data,aiannh,prison){
    
     map = new mapboxgl.Map({
          container: 'map',
- 		style: "mapbox://styles/sidl/ckbsbi96q3mta1hplaopbjt9s",
+        style:"mapbox://styles/c4sr-gsapp/ckcl1av4c083d1irpftb75l6j",
+ 		//style: "mapbox://styles/sidl/ckbsbi96q3mta1hplaopbjt9s",
  		//style:"mapbox://styles/c4sr-gsapp/ckc4s079z0z5q1ioiybc8u6zp",//new account
         center:[-100,37],
          zoom: 3.8,
@@ -546,7 +578,10 @@ function drawMap(data,aiannh,prison){
        // maxBounds: bounds    
      });
      
-     map.on("load",function(){        
+     //us-outline
+     
+     map.on("load",function(){
+         console.log(map.getStyle().layers)        
          map.addControl(
          new mapboxgl.GeolocateControl({
          positionOptions: {
@@ -568,11 +603,11 @@ function drawMap(data,aiannh,prison){
              'type': 'line',
              'source': 'counties',
              'paint': {
-                 'line-color':"#fff",
-                 'line-opacity':.3
+                 'line-color':"#000",
+                 'line-opacity':.05
              },
              'filter': ['==', '$type', 'Polygon']
-         },"mapbox-satellite");
+         },"country-label");
                   
          map.addLayer({
              'id': 'counties',
@@ -594,6 +629,7 @@ function drawMap(data,aiannh,prison){
         lineWeight["property"]=pub.strategy+"_"+pub.coverage
         fillColor["property"]="priority_"+pub.strategy.replace("percentage_scenario_","")
      
+map.setPaintProperty("us_background","fill-color","#ffffff")     
          map.setPaintProperty("counties", 'fill-opacity',1)
         // map.setPaintProperty("counties", 'fill-color',fillColor)
               var matchString = ["match",["get",pub.strategy+"_"+pub.coverage+"_group"]].concat(groupColorDict)

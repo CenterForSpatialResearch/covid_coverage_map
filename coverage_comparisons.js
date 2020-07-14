@@ -45,7 +45,7 @@ var colorStart = "#604F23"
 
 //"priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot"
 
-var keyColors = {high_demand:"#604F23",SVI_hotspot:"#FBD33C",SVI_pop:"#E27C3B",hotspot:"#6FAFC4"}
+var keyColors = {high_demand:"#604F23",SVI_hotspot:"#48AEED",SVI_pop:"#E27C3B",hotspot:"#FFF100"}
 
 var measureDisplayText = {
     high_demand:"14 day cases",

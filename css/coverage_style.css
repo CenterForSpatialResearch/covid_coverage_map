@@ -42,7 +42,7 @@ option{
     position:fixed;
     left:0px;
     top:0px;
-    background-color:rgba(255,255,255,1);
+    background-color:rgba(255,255,255,0.8);
     border-bottom:1px solid #dddddd;
     height:50px;
     width:100%;
@@ -102,7 +102,7 @@ option{
     background-color:rgba(255,255,255,.5);
 }
 #currentState{
-    color:#000000;
+    color:#DF6D2A;
     line-height:150%;
     height:180px;
 }
@@ -157,7 +157,7 @@ option{
      position:fixed;
      left:0px;
      top:0px;
-     margin-top:90px;
+     margin-top:70px;
      background:rgba(255,255,255,0.9);
      height:100%;
      overflow:auto;
@@ -251,20 +251,20 @@ option{
      
  }
  #strategiesSelected{
-     border:1px solid #000000;
+     border:1px solid #DF6D2A;
      padding:10px;
      font-size:12px;
      height:60px;
      width:200px;
-     color:#000000;
+     color:#DF6D2A;
  }
  #coverageSelected{
-     border:1px solid #000000;
+     border:1px solid #DF6D2A;
      padding:10px;
      font-size:12px;
      height:20px;
      width:200px;
-     color:#000000;
+     color:#DF6D2A;
  }
  #strategiesSelectecLabel{
      width:85%;
