@@ -592,7 +592,7 @@ function drawMap(data,aiannh,prison){
          );
          
          drawGrid(map,data) 
-         map.setLayoutProperty("mapbox-satellite", 'visibility', 'none');
+         //map.setLayoutProperty("mapbox-satellite", 'visibility', 'none');
          map.addSource("counties",{
              "type":"geojson",
              "data":data
@@ -607,7 +607,7 @@ function drawMap(data,aiannh,prison){
                  'line-opacity':.05
              },
              'filter': ['==', '$type', 'Polygon']
-         },"country-label");
+         },"ST-OUTLINE");
                   
          map.addLayer({
              'id': 'counties',
@@ -622,14 +622,14 @@ function drawMap(data,aiannh,prison){
          
          strategyMenu(map)
          coverageMenu(map)
-         toggleLayers(map)
-         placesMenus(map)
+         //toggleLayers(map)
+        // placesMenus(map)
          
         lineOpacity["property"]=pub.strategy+"_"+pub.coverage
         lineWeight["property"]=pub.strategy+"_"+pub.coverage
         fillColor["property"]="priority_"+pub.strategy.replace("percentage_scenario_","")
      
-map.setPaintProperty("us_background","fill-color","#ffffff")     
+//map.setPaintProperty("us_background","fill-color","#ffffff")     
          map.setPaintProperty("counties", 'fill-opacity',1)
         // map.setPaintProperty("counties", 'fill-color',fillColor)
               var matchString = ["match",["get",pub.strategy+"_"+pub.coverage+"_group"]].concat(groupColorDict)

@@ -100,6 +100,9 @@ option{
     height:200px;
     padding:5px;
     background-color:rgba(255,255,255,.5);
+    position:absolute;
+    right:20px;
+    top:100px;
 }
 #currentState{
     color:#000000;
