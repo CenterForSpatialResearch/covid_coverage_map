@@ -20,7 +20,7 @@ rel="stylesheet"
 href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css"
 type="text/css"
 />
-    <link rel="stylesheet" type="text/css" href="css/coverage_style.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style_07142020.css"/>
 
 <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
@@ -41,27 +41,37 @@ type="text/css"
 </head>
 
 <body>
-
 <div id="head">
-  <span id="brand"><strong>MAPPING THE NEW POLITICS OF CARE :</strong></span>
-  <span id="title">comparisons between the <strong>% of needs met</strong> of <u>different measures</u> at <u>30 per 100,000</u> </span>  
+  <span id="brand">MAPPING THE NEW POLITICS OF CARE :</span><br>
+  <span id="title">Compare Between the % of Needs Met Resulting From Different Policies
 
 </div>
+  <div id="date">07/07/2020</div>
 
+<div id="mainMenu">
+  <a href="index.html"><strong>POLICY ALLOCATIONS</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="compare.html">POLICY COMPARISONS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="caseStudies.html">CASE STUDIES</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="about.html">ABOUT</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</div>
 <div id="byState"></div>
 <div id="nav">
   <!-- <nav id="update" class="menu"><i>Model Last Updated on ##/##/##</i></nav> -->
    
   <div id = "strategies">
-  <div id="compareSubtitle">Click black squares below to compare policies - see differences in % needs met at 30 CHW per 100,000 Residents</div>
+  <div id="strategiesQuestion" class="menu">How do different policies effect the % of needs met in areas? Click on squares to compare pairs of policies</div>
        <!-- <nav id="strategiesQuestion" class="menu">How do you want to measure the need for Community Health Workers?</nav> -->
-   
-      <nav id="comparisonGrid"></div>
-      
+      <nav id="comparisonGrid"></nav>
+     
+  </div>
+ <div id = "coverage">
+ <nav id="coverageQuestion" class="menu">How many Community Health Workers can you pay for?</nav>      
+ <nav id="coverageMenu" class="menu"></nav>    
+
       *temp issue: grayed out areas in map have -1 value in data, it can be no cases or no data<br>
       ** temp issue: black areas in map are currently missing from dataset because of nyt inconsistency
-      </div>
  </div>
+
 </div>
 
  <div id="comparisonKey"></div>

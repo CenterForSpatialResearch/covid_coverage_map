@@ -237,14 +237,14 @@ function drawGrid(map,data){
   //         .attr("text-anchor","middle")
   //         .attr("transform","translate(100,0)")
     
-    colorGridSvg.append("text").text("% of unmet need").attr("x",80).attr("y",200).style("font-weight","bold").style("font-size","14px")
+    colorGridSvg.append("text").text("% OF UNMET NEED").attr("x",75).attr("y",200).style("font-weight","bold").style("font-size","12px")
     colorGridSvg.append("text").text("less").attr("x",80).attr("y",180)
     colorGridSvg.append("text").text("more").attr("x",170).attr("y",180)
       
     colorGridSvg.append("text").text("high").attr("x",40).attr("y",40).attr("text-anchor","end")
     colorGridSvg.append("text").text("low").attr("x",40).attr("y",150).attr("text-anchor","end")
      
-    colorGridSvg.append("text").text("priority").attr("x",10).attr("y",120).style("font-size","14px")
+    colorGridSvg.append("text").text("PRIORITY").attr("x",10).attr("y",120).style("font-size","12px")
         .attr("transform","rotate(-90 10,120)").style("font-weight","bold")
       
       
@@ -335,8 +335,8 @@ var usOutline = d3.json("simple_contiguous.geojson")
 //var normalizedPriority = d3.csv("priority_normalized_for_policies.csv")
 
 //var allData = d3.csv("County_level_coverage_for_all_policies_and_low_mid_high_base_case_capacity.csv")
-//var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
-var allData = d3.csv("https://media.githubusercontent.com/media/CenterForSpatialResearch/allocating_covid/master/Output/County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")// var headers = ["County_FIPS","SVI_county","priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot",
+var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity_07152020.csv")
+//var allData = d3.csv("https://media.githubusercontent.com/media/CenterForSpatialResearch/allocating_covid/master/Output/County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")// var headers = ["County_FIPS","SVI_county","priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot",
 
 //var allData = d3.csv("https://media.githubusercontent.com/media/CenterForSpatialResearch/allocating_covid/master/Output/Census_tract_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
 // "percentage_scenario_high_demand_base_case_capacity_low","percentage_scenario_high_demand_base_case_capacity_mid",
@@ -620,11 +620,7 @@ function drawMap(data,outline){
          },"county_outline");
          
          console.log(map.getStyle().layers)        
-         
-         console.log(outline)
-         zoomToBounds(map,outline)
-         
-         
+         zoomToBounds(map)
          strategyMenu(map)
          coverageMenu(map)
          //toggleLayers(map)
@@ -1178,79 +1174,13 @@ function coverageMenu(map){
     
     svg.append("text").text("CHW per 100,000 Residents").style("font-size","12px").attr("x",30).attr("y",120)
   
-    
-  //   var menu = d3.select("#coverageMenu").append("select").attr("id","coverageDropdown")
- //     for (var i = 0; i < coverageSet.length; i++) {
- //
- //         var id = coverageSet[i];
- //         var displayText = coverageDisplayText[id]
- //
- //         var row = d3.select("#coverageMenu").append("div").attr("class",id+"_radialMenuC radialMenuC").attr("id",id).style("cursor","pointer")
- //
- //         var labelC = row.append("div").html(displayText).attr("class",id+"_labelC labelC "+id).style("width","160px").style("display","inline-block")
- //        labelC.on('mouseover',function(){onLabelC=true})
- //               .on('mouseout',function(){
- //                   onLabelC=false})
- //
- //         row.on("mouseover",function(){
- //             d3.select(this).style("background-color",bghighlightColor)
- //             onMenuItemC=true
- //         })
- //         row.on("mouseout",function(){
- //             d3.select(this).style("background-color","rgba(0,0,0,0)")
- //                 onMenuItemC=false
- //         })
- //
- //
- // row.on("click",function(){
- //            var clickedId = d3.select(this).attr("id")
- //             pub.coverage = clickedId
- //            d3.select("#coverageSelectecLabel").html(coverageDisplayText[pub.coverage])
- //             if(pub.strategy==undefined){
- //                  pub.strategy = measureSet[0]
- //                  d3.select("."+measureSet[0]+"_radialS").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
- //                 d3.selectAll(".SVI").style("color",highlightColor)
- //              }
- //
- //
- //            d3.selectAll(".radialC").style("background-color","white").style("border","1px solid black")
- //            d3.selectAll(".labelC").style("background-color","white").style("color","#000")
- //
- //
- //             d3.selectAll("."+clickedId).style("color","#fff").style("background-color","#000")
- //             d3.selectAll("."+clickedId+"_radialC").style("background-color",highlightColor)//.style("border","1px solid "+ highlightColor)
- //
- //             lineOpacity["property"]=pub.strategy+"_"+pub.coverage
- //             lineWeight["property"]=pub.strategy+"_"+pub.coverage
- //             fillColor["property"]="priority_"+pub.strategy.replace("percentage_scenario_","")
- //
- //              d3.select("#currentState").html("Percent of unmet need by county when there are <strong>" +coverageDisplayText[pub.coverage]
- //              +"</strong> contact tracers per 100,000 people in each state and <strong>"+measureDisplayText[pub.strategy]+ "</strong> are prioritized.")
- //
- //              map.setPaintProperty("counties", 'fill-opacity',1)
- //
- //              var matchString = ["match",["get",pub.strategy+"_"+pub.coverage+"_group"]].concat(groupColorDict)
- //              //console.log(matchString)
- //
- //               map.setPaintProperty("counties", 'fill-color', matchString)
- //            //  drawHistogram(pub.strategy)
- //                pub.histo = histo(pub.all)
- //
- //         })
- //
- //    }
 }
 
-function zoomToBounds(map,outline){
+function zoomToBounds(mapS){
     //https://docs.mapbox.com/mapbox-gl-js/example/zoomto-linestring/
-    //49.500739, -63.994022
-    //26.829656, -123.232303
-
     var bounds =  new mapboxgl.LngLatBounds([-130, 26.829656], 
         [-50, 49.500739]);
     map.fitBounds(bounds,{padding:20},{bearing:0})
-  //  map.fitBounds(bounds,{padding:20})
-	//zoomToBounds(map,boundary)
 }
 function placesMenus(map){
     var places = ["Contiguous 48","Alaska","Hawaii","Puerto_Rico"]

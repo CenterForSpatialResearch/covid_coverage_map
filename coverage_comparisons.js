@@ -111,7 +111,7 @@ function toTitleCase(str){
 var countyCentroids = d3.json("county_centroids.geojson")
 var counties = d3.json("counties.geojson")
 var aiannh = d3.json("indian_reservations.geojson")
-var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity (1).csv")
+var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity_07152020.csv")
 //var allData = d3.csv("https://media.githubusercontent.com/media/CenterForSpatialResearch/allocating_covid/master/Output/County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
 var prioritySet = ["priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot"]
 
@@ -237,14 +237,17 @@ function combineGeojson(all,counties){
 
 function drawGrid(map,comparisonsSet){
     var drawn = []
-    var svg = d3.select("#comparisonGrid").append("svg").attr("width",280).attr("height",300)
+    var svg = d3.select("#comparisonGrid").append("svg").attr("width",250).attr("height",220)
     var gridSize = 30
     for(var i in prioritySet){
+        
+            var x = i*gridSize+140
+        var y = 90
                 svg.append("text")
                 .text(measureDisplayText[prioritySet[i].replace("priority_","")])
-                .attr("x",i*gridSize+40)
-                .attr("y",130)
-                .attr("transform","rotate(-45 "+(i*gridSize+40)+",0)")
+                .attr("x",x)
+                .attr("y",y)
+                .attr("transform","rotate(-90 "+x+","+y+")")
         
         for(var j in prioritySet){
             if(i==0){
@@ -252,7 +255,7 @@ function drawGrid(map,comparisonsSet){
                 .text(measureDisplayText[prioritySet[j].replace("priority_","")])
                 .attr("x",i)
                 .attr("y",j*gridSize+gridSize/2)
-                .attr("transform","translate(110,100)")
+                .attr("transform","translate(115,100)")
                 .attr("text-anchor","end")
             }
             
@@ -315,7 +318,7 @@ function drawKey(key){
     var k1 = key.split("_percentage_scenario_")[1].replace("_base_case_capacity_"+currentCapacity,"")
     var k2 = key.split("_percentage_scenario_")[2].replace("_base_case_capacity_"+currentCapacity,"")
     var svg = d3.select("#comparisonKey").append("svg")
-        .attr("width",800).attr('height',100)
+        .attr("width",750).attr('height',80)
     var defs = svg.append("defs");
 
     var gradient = defs.append("linearGradient")
@@ -342,13 +345,13 @@ function drawKey(key){
        .attr("stop-color", keyColors[k2])
        .attr("stop-opacity", 1);
     svg.append("text").text("Higher % of needs met when prioritizing by").attr("y",18).attr("x",20)
-       .attr("fill","#000").style("font-size","16px")
+       .attr("fill","#000").style("font-size","12px").style("font-weight","bold")
        
     svg.append("text").text("Higher % of needs met when prioritizing by").attr("y",18).attr("x",720)
-       .attr("fill","#000").style("font-size","16px").attr("text-anchor","end")
+       .attr("fill","#000").style("font-size","12px").attr("text-anchor","end").style("font-weight","bold")
 
-    svg.append("text").text(measureDisplayText[k1]).attr("y",40).attr("x",20).style("font-size","16px")//.attr("fill",keyColors[k1])
-    svg.append("text").text(measureDisplayText[k2]).attr("y",40).attr("x",720).style("font-size","16px").attr("text-anchor","end")//.attr("fill",keyColors[k2])
+    svg.append("text").text(measureDisplayText[k1]).attr("y",40).attr("x",20).style("font-size","12px").style("font-weight","bold")//.attr("fill",keyColors[k1])
+    svg.append("text").text(measureDisplayText[k2]).attr("y",40).attr("x",720).style("font-size","12px").style("font-weight","bold").attr("text-anchor","end")//.attr("fill",keyColors[k2])
     svg.append("text").text("no difference").attr("y",70).attr("x",370).attr("text-anchor","middle")
     svg.append("rect")
     .attr("class","key")
@@ -368,8 +371,8 @@ function colorMap(map,key){
     
 }
 function drawMap(data,comparisonsKeys){
-	mapboxgl.accessToken = 'pk.eyJ1Ijoic2lkbCIsImEiOiJkOGM1ZDc0ZTc5NGY0ZGM4MmNkNWIyMmIzNDBkMmZkNiJ9.Qn36nbIqgMc4V0KEhb4iEw';    
-    //mapboxgl.accessToken = "pk.eyJ1IjoiYzRzci1nc2FwcCIsImEiOiJja2J0ajRtNzMwOHBnMnNvNnM3Ymw5MnJzIn0.fsTNczOFZG8Ik3EtO9LdNQ"//new account
+//	mapboxgl.accessToken = 'pk.eyJ1Ijoic2lkbCIsImEiOiJkOGM1ZDc0ZTc5NGY0ZGM4MmNkNWIyMmIzNDBkMmZkNiJ9.Qn36nbIqgMc4V0KEhb4iEw';    
+    mapboxgl.accessToken = "pk.eyJ1IjoiYzRzci1nc2FwcCIsImEiOiJja2J0ajRtNzMwOHBnMnNvNnM3Ymw5MnJzIn0.fsTNczOFZG8Ik3EtO9LdNQ"//new account
     var bounds = [
     [-74.1, 40.6], // Southwest coordinates
     [-73.6, 40.9] // Northeast coordinates
@@ -377,7 +380,9 @@ function drawMap(data,comparisonsKeys){
    
     map = new mapboxgl.Map({
          container: 'map',
- 		style: "mapbox://styles/sidl/ckbsbi96q3mta1hplaopbjt9s",
+ 		//style: "mapbox://styles/sidl/ckbsbi96q3mta1hplaopbjt9s",
+        style:"mapbox://styles/c4sr-gsapp/ckcl1av4c083d1irpftb75l6j",//dare
+        
  		//style:"mapbox://styles/c4sr-gsapp/ckc4s079z0z5q1ioiybc8u6zp",//new account
         center:[-100,37],
          zoom: 3.5,
@@ -388,7 +393,7 @@ function drawMap(data,comparisonsKeys){
      
     
      map.on("load",function(){        
-         
+         zoomToBounds(map)
          map.setLayoutProperty("mapbox-satellite", 'visibility', 'none');
          map.addSource("counties",{
              "type":"geojson",
@@ -404,7 +409,7 @@ function drawMap(data,comparisonsKeys){
                  'line-opacity':.3
              },
              'filter': ['==', '$type', 'Polygon']
-         },"mapbox-satellite");
+         },"ST-OUTLINE");
                   
          map.addLayer({
              'id': 'counties',
@@ -539,7 +544,12 @@ function drawChart(data){
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
-
+function zoomToBounds(mapS){
+    //https://docs.mapbox.com/mapbox-gl-js/example/zoomto-linestring/
+    var bounds =  new mapboxgl.LngLatBounds([-130, 26.829656], 
+        [-50, 49.500739]);
+    map.fitBounds(bounds,{padding:20},{bearing:0})
+}
 
 function filterMap(gids){
   //  console.log(gids)

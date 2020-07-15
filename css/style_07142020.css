@@ -7,8 +7,11 @@ body{
     overflow:hidden;
 }
 a{
-	color:#aaaaaa;
+	color:#000000;
     text-decoration:none;
+}
+a :hover{
+	color:#000000;
 }
 .mapboxgl-ctrl-top-right{
     margin-top:40px;
@@ -49,14 +52,7 @@ option{
     overflow:hidden;
     z-index:9;
 }
-#comparisonKey{
-    z-index:99999;
-    position:absolute;
-    top:100px;
-    right:20px;
-    background-color:rgba(255,255,255,.8);
-    padding:20px;
-}
+
 #date{
     position:absolute;
     right:0px;
@@ -66,10 +62,11 @@ option{
     padding-right:5px;
 }
 #brand{
-    font-size:20px;
+    font-size:26px;
     font-weight:bold;
     color:#000;
-    
+font-family: 'Josefin Sans', sans-serif;
+font-family: 'Raleway', sans-serif;
 }
 
 #title{
@@ -98,6 +95,15 @@ option{
     right:20px;
     top:150px;
     filter: drop-shadow(3px 3px 4px rgba(0,0,0,.1));
+}
+#comparisonKey{
+    z-index:99999;
+    position:absolute;
+    right:20px;
+    top:150px;
+    background-color:rgba(255,255,255,1);
+    filter: drop-shadow(3px 3px 4px rgba(0,0,0,.1));
+    padding:15px;
 }
 #colorTitle{
     font-size:16px;
