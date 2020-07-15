@@ -384,7 +384,6 @@ var measureDisplayText = {
 
 Promise.all([counties,usOutline,countyCentroids,allData])
 .then(function(data){
-    console.log(data[3])
     ready(data[0],data[1],data[2],data[3])
 })
 
@@ -559,8 +558,8 @@ function drawReservations(data,map){
 }
 
 function drawMap(data,outline){
-	mapboxgl.accessToken = 'pk.eyJ1Ijoic2lkbCIsImEiOiJkOGM1ZDc0ZTc5NGY0ZGM4MmNkNWIyMmIzNDBkMmZkNiJ9.Qn36nbIqgMc4V0KEhb4iEw';    
-  ////  mapboxgl.accessToken = "pk.eyJ1IjoiYzRzci1nc2FwcCIsImEiOiJja2J0ajRtNzMwOHBnMnNvNnM3Ymw5MnJzIn0.fsTNczOFZG8Ik3EtO9LdNQ"//new account
+//	mapboxgl.accessToken = 'pk.eyJ1Ijoic2lkbCIsImEiOiJkOGM1ZDc0ZTc5NGY0ZGM4MmNkNWIyMmIzNDBkMmZkNiJ9.Qn36nbIqgMc4V0KEhb4iEw';    
+    mapboxgl.accessToken = "pk.eyJ1IjoiYzRzci1nc2FwcCIsImEiOiJja2J0ajRtNzMwOHBnMnNvNnM3Ymw5MnJzIn0.fsTNczOFZG8Ik3EtO9LdNQ"//new account
     var bounds = [
     [-74.1, 40.6], // Southwest coordinates
     [-73.6, 40.9] // Northeast coordinates
@@ -568,8 +567,8 @@ function drawMap(data,outline){
    
     map = new mapboxgl.Map({
          container: 'map',
-        //style:"mapbox://styles/c4sr-gsapp/ckcl1av4c083d1irpftb75l6j",//dare
- 		style: "mapbox://styles/sidl/ckbsbi96q3mta1hplaopbjt9s",
+        style:"mapbox://styles/c4sr-gsapp/ckcl1av4c083d1irpftb75l6j",//dare
+ 		//style: "mapbox://styles/sidl/ckbsbi96q3mta1hplaopbjt9s",
  		//style:"mapbox://styles/c4sr-gsapp/ckc4s079z0z5q1ioiybc8u6zp",//new account
         center:[-100,37],
          zoom: 3.8,
@@ -607,7 +606,7 @@ function drawMap(data,outline){
                  'line-opacity':.05
              },
              'filter': ['==', '$type', 'Polygon']
-         },"poi-label");
+         },"ST-OUTLINE");
                   
          map.addLayer({
              'id': 'counties',
@@ -683,8 +682,8 @@ function drawMap(data,outline){
              var countyName = feature["properties"]["county"]+" County, "+feature["properties"]["stateAbbr"]
              var population = feature["properties"]["totalPopulation"]
              var geometry = feature["geometry"]
-             
-             
+             var chwNeed = feature["properties"]["CHW_need"]
+             var cases = feature["properties"]["Covid_cases"]             
              var countyId = feature["properties"]["FIPS"]
              var SVI = Math.round(feature["properties"]["SVI_county"]*100)/100
            //  var columnsToShow = ["hotspotSVI_priority","hotspot_priority","SVI_priority","highDemand_priority"]             
@@ -694,9 +693,19 @@ function drawMap(data,outline){
              
              var currentSelectionCoverage = Math.round(feature["properties"][currentSelection]*100)/100
              if(currentSelectionCoverage==-1){
-                 var currentSelectionUnmet = "There are no cases in this dataset currently."
+             var displayString = "<span class=\"popupTitle\">"+countyName+"</span><br>"
+                     +"Population: "+numberWithCommas(population)+"<br>"
+                     +"There are no cases for this county in this dataset currently."
              }else{
-                 var currentSelectionUnmet = "This leaves "+(100-currentSelectionCoverage)+"% of the estimated total demand for contact tracers unmet."
+                 var displayString = "<span class=\"popupTitle\">"+countyName+"</span><br>"
+                         +"Population: "+numberWithCommas(population)+"<br>"
+                         +"SVI: "+SVI+"<br><strong>"
+                         +"Total number of new cases in the past 14 days: "+cases+"<br>"
+                         + "Total Contact Tracer Need: "+chwNeed+"<br>"
+                         +" Prioritizing "+measureDisplayText[pub.strategy]+", and allocating "+pub.coverage.split("_")[3]
+                         +" CT per 100,000 for "+feature["properties"]["state"]
+                         +" would leave "+(100-currentSelectionCoverage)+"% of the estimated total demand for contact tracers unmet."
+                     
              }
              var needsMetString = currentSelectionCoverage+"% of needs met</strong>"
              
@@ -704,17 +713,7 @@ function drawMap(data,outline){
                  needsMetString = "Currently No Cases Reported"
              }
             
-             var displayString = "<span class=\"popupTitle\">"+countyName+"</span><br>"
-                     +"Population: "+numberWithCommas(population)+"<br>"
-                     +"SVI: "+SVI+"<br><strong>"
-                     +"Total number of new cases in the past 14 days: "+"####"+"<br>"
-                     +"Prioritizing large socially vulnerable populations, if "+pub.coverage
-                     +" CT per 100,000 are available for "+feature["properties"]["state"]
-                     +" then [XX] contact tracers should be assigned to "
-                     +feature["properties"]["county"]+". "
-                     +currentSelectionUnmet
-             //    +measureDisplayText[pub.strategy]+", "+coverageDisplayText[pub.coverage]+": "
-                     
+             
            
           
              d3.select("#popLabel").html(displayString)
@@ -752,6 +751,8 @@ function drawMap(data,outline){
              
          if(firstMove==true){
              //d3.select(".mapboxgl-popup-content").append("div").attr("id","sMap").style("width","200px").style("height","200px")
+             	mapboxgl.accessToken = 'pk.eyJ1Ijoic2lkbCIsImEiOiJkOGM1ZDc0ZTc5NGY0ZGM4MmNkNWIyMmIzNDBkMmZkNiJ9.Qn36nbIqgMc4V0KEhb4iEw';    
+             
              detailMap = new mapboxgl.Map({
                         container: 'popMap',
                 		style: "mapbox://styles/sidl/ckc3ibioh0iza1iqiz0d3vnii",
@@ -763,8 +764,6 @@ function drawMap(data,outline){
                                  animate: false
                              })
                      firstMove=false
-         
-               
          }else{
                     
              detailMap.fitBounds(bounds, {
