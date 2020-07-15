@@ -45,7 +45,7 @@ var colorStart = "#604F23"
 
 //"priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot"
 
-var keyColors = {high_demand:"#604F23",SVI_hotspot:"#48AEED",SVI_pop:"#E27C3B",hotspot:"#FFF100",SVI_high_demand:"red"}
+var keyColors = {high_demand:"#EA00FF",SVI_hotspot:"#F45180",SVI_pop:"#45B6A3",hotspot:"#7E6EFF",SVI_high_demand:"#71BF4D"}
 
 var measureDisplayText = {
     high_demand:"14 day cases",
@@ -113,6 +113,8 @@ var counties = d3.json("counties.geojson")
 var aiannh = d3.json("indian_reservations.geojson")
 var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity_07152020.csv")
 //var allData = d3.csv("https://media.githubusercontent.com/media/CenterForSpatialResearch/allocating_covid/master/Output/County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
+
+//var allData ="https://github.com/CenterForSpatialResearch/allocation_chw/blob/master/Output/County_level_coverage_for_all_policies_and_different_base_case_capacity.csv"
 //var prioritySet = ["priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot"]
 
 var coverageSet = []
