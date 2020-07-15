@@ -351,7 +351,7 @@ var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_
 // "percentage_scenario_hotspot_base_case_capacity_high"]
 
 
-var prioritySet = ["priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot"]
+var prioritySet = ["priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot","priority_SVI_high_demand"]
 //var coverageSet = ["base_case_capacity_low","base_case_capacity_mid","base_case_capacity_high","show_all"]
 
 var coverageSet = []
@@ -373,9 +373,10 @@ for(var c = 1; c<=8; c++){
 
 
 
-var measureSet = ["percentage_scenario_SVI_pop","percentage_scenario_SVI_hotspot","percentage_scenario_hotspot","percentage_scenario_high_demand"]
+var measureSet = ["percentage_scenario_SVI_high_demand","percentage_scenario_SVI_pop","percentage_scenario_SVI_hotspot","percentage_scenario_hotspot","percentage_scenario_high_demand"]
 var measureDisplayText = {
     percentage_scenario_high_demand:"only new cases within the last 14 days",
+    percentage_scenario_SVI_high_demand:"socially vulnerable population and new cases within the last 14 days",
     percentage_scenario_hotspot:"new cases within the last 14 days as a percent of population",
     percentage_scenario_SVI_pop:"large socially vulnerable populations",
     percentage_scenario_SVI_hotspot:"large socially vulnerable populations and cases as a percent of population"

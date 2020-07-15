@@ -4,7 +4,6 @@ body{
 	color:#000000;
     font-size:11px;
     padding:10px;
-    overflow:hidden;
 }
 a{
 	color:#000000;
@@ -132,13 +131,13 @@ font-family: 'Raleway', sans-serif;
 
 #about{
     position:absolute;
-    top:40px;
+    top:80px;
     width:30%;
     padding:80px;
 }
 #FAQ{
     position:absolute;
-    top:40px;
+    top:80px;
     left:40%;
     width:30%;
     padding:80px;
@@ -199,7 +198,7 @@ font-family: 'Raleway', sans-serif;
      
  }
  #mainMenu{
-     position:absolute;
+     position:fixed;
      right:0px;
      top:80px;
      padding:10px;

@@ -172,9 +172,7 @@ function turnToDictFIPS(data,keyColumn){
         if(key.length==4){
             key= "0"+key
         }
-        if(key=="30085"){
-            console.log(data[i])
-        }
+     
     var newKeys = []
         
         newDict[key]={}
@@ -394,7 +392,8 @@ function drawMap(data,comparisonsKeys){
     
      map.on("load",function(){        
          zoomToBounds(map)
-         map.setLayoutProperty("mapbox-satellite", 'visibility', 'none');
+         console.log(map.getStyle().layers)
+         //map.setLayoutProperty("mapbox-satellite", 'visibility', 'none');
          map.addSource("counties",{
              "type":"geojson",
              "data":data
@@ -424,7 +423,7 @@ function drawMap(data,comparisonsKeys){
          
          
          drawGrid(map,comparisonsKeys)
-         
+         coverageMenu(map)
          //var color = {property:"priority_high_demand",stops:[[-1,0],[0,1]]}
          
          //map.setPaintProperty("counties","fill-opacity",{property:"percentage_scenario_hotspot_base_case_capacity_30",stops:[[-1,0],[0,1]]})
@@ -543,6 +542,60 @@ function drawChart(data){
 }
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+function coverageMenu(map){
+    var w = 250
+    var h = 200
+    var svg = d3.select("#coverageMenu").append("svg").attr("width",w).attr("height",h)
+    var startCoverage = pub.coverage.split("_")[3]
+    var coverageDisplay = svg.append("text").text(startCoverage).style("font-size","70px").attr("x",40).attr("y",80)
+    var plus = svg.append("text").text("+10").style("font-size","14px").attr("x",130).attr("y",40).style("font-weight","bold")
+    .style('cursor',"pointer")
+    
+    .on("click",function(){
+        var newCoverage = parseInt(pub.coverage.split("_")[3])+10
+        if(newCoverage <=80){
+            pub.coverage = pub.coverage.replace(pub.coverage.split("_")[3],newCoverage)
+            coverageDisplay.text(newCoverage)
+            minus.attr("fill","#000")
+              map.setPaintProperty("counties", 'fill-opacity',1)
+              
+              var matchString = ["match",["get",pub.strategy+"_"+pub.coverage+"_group"]].concat(groupColorDict)
+              //console.log(matchString)
+              
+               map.setPaintProperty("counties", 'fill-color', matchString)
+            //  drawHistogram(pub.strategy)
+                pub.histo = histo(pub.all)
+        }
+        if(newCoverage==80){
+            d3.select(this).attr("fill","#aaa")
+        }
+    })
+    
+    var minus = svg.append("text").text("-10").style("font-size","14px").attr("x",130).attr("y",80).style("font-weight","bold")
+    .style('cursor',"pointer")
+        .on("click",function(){
+            var newCoverage = parseInt(pub.coverage.split("_")[3])-10
+            if(newCoverage >=10){
+                pub.coverage = pub.coverage.replace(pub.coverage.split("_")[3],newCoverage)
+                coverageDisplay.text(newCoverage)
+                plus.attr("fill","#000")
+              map.setPaintProperty("counties", 'fill-opacity',1)
+              
+              var matchString = ["match",["get",pub.strategy+"_"+pub.coverage+"_group"]].concat(groupColorDict)
+              //console.log(matchString)
+              
+               map.setPaintProperty("counties", 'fill-color', matchString)
+            //  drawHistogram(pub.strategy)
+                pub.histo = histo(pub.all)
+            }
+            if(newCoverage==10){
+                d3.select(this).attr("fill","#aaa")
+            }
+        })
+    
+    svg.append("text").text("CHW per 100,000 Residents").style("font-size","12px").attr("x",30).attr("y",120)
+  
 }
 function zoomToBounds(mapS){
     //https://docs.mapbox.com/mapbox-gl-js/example/zoomto-linestring/
