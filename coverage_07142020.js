@@ -329,13 +329,13 @@ var countyCentroids = d3.json("county_centroids.geojson")
 // var SVI=d3.csv(root+"/30_50_70_County_level_SVI_pop.csv")
 // var hotspotSVI=d3.csv(root+"/30_50_70_hot_spot_SVI_county.csv")
 var counties = d3.json("counties.geojson")
-var aiannh = d3.json("indian_reservations.geojson")
+//var aiannh = d3.json("indian_reservations.geojson")
 //var prison = d3.json("prisons_centroids.geojson")
-//var usOutline = d3.json("us_outline.geojson")
+var usOutline = d3.json("simple_contiguous.geojson")
 //var normalizedPriority = d3.csv("priority_normalized_for_policies.csv")
 
 //var allData = d3.csv("County_level_coverage_for_all_policies_and_low_mid_high_base_case_capacity.csv")
-var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
+//var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
 var allData = d3.csv("https://media.githubusercontent.com/media/CenterForSpatialResearch/allocating_covid/master/Output/County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")// var headers = ["County_FIPS","SVI_county","priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot",
 
 //var allData = d3.csv("https://media.githubusercontent.com/media/CenterForSpatialResearch/allocating_covid/master/Output/Census_tract_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
@@ -382,7 +382,7 @@ var measureDisplayText = {
 }
 
 
-Promise.all([counties,aiannh,countyCentroids,allData])
+Promise.all([counties,usOutline,countyCentroids,allData])
 .then(function(data){
     console.log(data[3])
     ready(data[0],data[1],data[2],data[3])
@@ -403,7 +403,7 @@ var fillColor = {
 var centroids = null
 var latestDate = null
 
-function ready(counties,aiannh,centroids,modelData){
+function ready(counties,outline,centroids,modelData){
     //convert to geoid dict
     var dataByFIPS = turnToDictFIPS(modelData,"County_FIPS")
     
@@ -415,7 +415,7 @@ function ready(counties,aiannh,centroids,modelData){
     
 //    console.log(combinedGeojson)
     
-    drawMap(combinedGeojson)
+    drawMap(combinedGeojson,outline)
     
    // drawReservations(aiannh)
     
@@ -558,9 +558,9 @@ function drawReservations(data,map){
               );
 }
 
-function drawMap(data,aiannh,prison){
-	//mapboxgl.accessToken = 'pk.eyJ1Ijoic2lkbCIsImEiOiJkOGM1ZDc0ZTc5NGY0ZGM4MmNkNWIyMmIzNDBkMmZkNiJ9.Qn36nbIqgMc4V0KEhb4iEw';    
-    mapboxgl.accessToken = "pk.eyJ1IjoiYzRzci1nc2FwcCIsImEiOiJja2J0ajRtNzMwOHBnMnNvNnM3Ymw5MnJzIn0.fsTNczOFZG8Ik3EtO9LdNQ"//new account
+function drawMap(data,outline){
+	mapboxgl.accessToken = 'pk.eyJ1Ijoic2lkbCIsImEiOiJkOGM1ZDc0ZTc5NGY0ZGM4MmNkNWIyMmIzNDBkMmZkNiJ9.Qn36nbIqgMc4V0KEhb4iEw';    
+  ////  mapboxgl.accessToken = "pk.eyJ1IjoiYzRzci1nc2FwcCIsImEiOiJja2J0ajRtNzMwOHBnMnNvNnM3Ymw5MnJzIn0.fsTNczOFZG8Ik3EtO9LdNQ"//new account
     var bounds = [
     [-74.1, 40.6], // Southwest coordinates
     [-73.6, 40.9] // Northeast coordinates
@@ -568,8 +568,8 @@ function drawMap(data,aiannh,prison){
    
     map = new mapboxgl.Map({
          container: 'map',
-        style:"mapbox://styles/c4sr-gsapp/ckcl1av4c083d1irpftb75l6j",
- 		//style: "mapbox://styles/sidl/ckbsbi96q3mta1hplaopbjt9s",
+        //style:"mapbox://styles/c4sr-gsapp/ckcl1av4c083d1irpftb75l6j",//dare
+ 		style: "mapbox://styles/sidl/ckbsbi96q3mta1hplaopbjt9s",
  		//style:"mapbox://styles/c4sr-gsapp/ckc4s079z0z5q1ioiybc8u6zp",//new account
         center:[-100,37],
          zoom: 3.8,
@@ -581,18 +581,18 @@ function drawMap(data,aiannh,prison){
      //us-outline
      
      map.on("load",function(){
-         console.log(map.getStyle().layers)        
-         map.addControl(
-         new mapboxgl.GeolocateControl({
-         positionOptions: {
-         enableHighAccuracy: true
-         },
-         trackUserLocation: true
-         })
-         );
+         // map.addControl(
+//          new mapboxgl.GeolocateControl({
+//          positionOptions: {
+//          enableHighAccuracy: true
+//          },
+//          trackUserLocation: true
+//          })
+//          );
          
          drawGrid(map,data) 
          //map.setLayoutProperty("mapbox-satellite", 'visibility', 'none');
+         
          map.addSource("counties",{
              "type":"geojson",
              "data":data
@@ -607,7 +607,7 @@ function drawMap(data,aiannh,prison){
                  'line-opacity':.05
              },
              'filter': ['==', '$type', 'Polygon']
-         },"ST-OUTLINE");
+         },"poi-label");
                   
          map.addLayer({
              'id': 'counties',
@@ -619,6 +619,12 @@ function drawMap(data,aiannh,prison){
              },
              'filter': ['==', '$type', 'Polygon']
          },"county_outline");
+         
+         console.log(map.getStyle().layers)        
+         
+         console.log(outline)
+         zoomToBounds(map,outline)
+         
          
          strategyMenu(map)
          coverageMenu(map)
@@ -641,10 +647,10 @@ function drawMap(data,aiannh,prison){
         //  map.setPaintProperty("county_outline", 'line-width',lineWeight)
         //
          
-        d3.select("."+pub.coverage+"_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
-        d3.selectAll("."+pub.coverage).style("color",highlightColor)
-        d3.selectAll("."+pub.strategy).style("color",highlightColor)
-        d3.selectAll("."+pub.strategy+"_radialS").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
+        d3.select("."+pub.coverage+"_radialC")//.style("border","1px solid "+ highlightColor)
+        d3.selectAll("."+pub.coverage).style("background-color","#000").style("color","#fff")
+        d3.selectAll("."+pub.strategy).style("background-color","#000").style("color","#fff")
+        d3.selectAll("."+pub.strategy+"_radialS")//.style("background-color","#000").style("color","#fff")//.style("border","1px solid "+ highlightColor)
           
      })
 
@@ -780,7 +786,7 @@ function drawMap(data,aiannh,prison){
                   d3.select("#layersMenu").style("display","none")
                   d3.select("#mapbox-satellite").style("opacity",.3)
                   //document.getElementById("tract_svi").disabled = true;
-                  document.getElementById("mapbox-satellite").disabled = true;
+                  //document.getElementById("mapbox-satellite").disabled = true;
               }else{
                   d3.select("#layersMenu").style("display","block")
                   d3.select("#mapbox-satellite").style("opacity",1)
@@ -1048,25 +1054,8 @@ function drawKey(demandType){
 }
 
 function strategyMenu(map){
-    var onMenu= true
-    var onMenuItem = true
-    var onLabel = true
-    
-    document.getElementById("strategies").onmousemove = function(){
-        if(onMenu==false && onMenuItem==false && onLabel == false){
-           d3.select("#strategiesMenu").style("visibility","hidden")
-        }
-    
-    };
-    
-    
-    d3.select("#strategiesMenu").style("visibility","hidden")
-    .on("mouseover",function(){
-       onMenu = true
-    })
-    .on("mouseout",function(){
-        onMenu = false
-    })
+
+ 
     
     d3.select("#strategiesSelectecLabel").html(measureDisplayText[pub.strategy])
     
@@ -1078,14 +1067,13 @@ function strategyMenu(map){
         onLabel = true
     })
     
-  // var buttons = d3.select("#strategiesMenu").append("div").attr("class",id)
      for (var i = 0; i < measureSet.length; i++) {
          var id = measureSet[i];
          var displayText = measureDisplayText[id]
          
          var row = d3.select("#strategiesMenu").append("div").attr("class",id+"_radialMenuS radialMenuS").attr("id",id).style("cursor","pointer")
  
-         var label = row.append("div").html(displayText).attr("class",id+"_labelS labelS "+id).style("display","inline-block").style("width","200px")
+         var label = row.append("div").html(displayText).attr("class",id+"_labelS labelS "+id).style("display","inline-block")//.style("width","200px")
          label.on('mouseover',function(){onLabel=true})              
                 .on('mouseout',function(){onLabel=false})   
          
@@ -1097,12 +1085,10 @@ function strategyMenu(map){
               d3.select(this).style("background-color","rgba(0,0,0,0)")
                   onMenuItem=false
           })
-                  //
          
         row.on("click",function(){
             var clickedId = d3.select(this).attr("id")
             pub.strategy = clickedId
-             d3.select("#strategiesSelectecLabel").html(measureDisplayText[pub.strategy])
             if(pub.coverage==undefined){
                  pub.coverage = "show_all"
                  d3.select(".show_all_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
@@ -1111,14 +1097,11 @@ function strategyMenu(map){
              
             
             d3.selectAll(".radialS").style("background-color","white").style("border","1px solid black")
-            d3.selectAll(".labelS").style("color","black")
+            d3.selectAll(".labelS").style("background-color","white").style("color","#000")
             
-            d3.selectAll("."+clickedId).style("color",highlightColor)
-            d3.selectAll("."+clickedId+"_radialS").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
-           
-              d3.select("#currentState").html("Percent of unmet need by county when there are <strong>" +coverageDisplayText[pub.coverage]
-             +"</strong> contact tracers per 100,000 people in each state and <strong>"+measureDisplayText[pub.strategy]+ "</strong> are prioritized.")
-              
+            d3.selectAll("."+clickedId).style("color","#fff").style("background-color","#000")
+            d3.selectAll("."+clickedId+"_radialS").style("background-color",highlightColor)//.style("border","1px solid "+ highlightColor)
+          
               
              lineOpacity["property"]=pub.strategy+"_"+pub.coverage
              lineWeight["property"]=pub.strategy+"_"+pub.coverage
@@ -1127,11 +1110,9 @@ function strategyMenu(map){
               map.setPaintProperty("counties", 'fill-opacity',1)
               var matchString = ["match",["get",pub.strategy+"_"+pub.coverage+"_group"]].concat(groupColorDict)              
                map.setPaintProperty("counties", 'fill-color', matchString)             
-               
                  
                 pub.histo = histo(pub.all)
                  
-          //    drawHistogram(pub.strategy)
         })
      }
 }
@@ -1146,27 +1127,7 @@ function formatSelected(item) {
     return $returnString;
 };
 function coverageMenu(map){
-    d3.select("#coverageSelectecLabel").html(coverageDisplayText[pub.coverage])
     
-    var onMenuC= true
-    var onMenuItemC = true
-    var onLabelC = true
-    
-    document.getElementById("coverage").onmousemove = function(){
-        if(onMenuC==false && onMenuItemC==false && onLabelC == false){
-           d3.select("#coverageMenu").style("visibility","hidden")
-        }
-    
-    };
-    
-    
-    d3.select("#coverageMenu").style("visibility","hidden")
-    // .on("mouseover",function(){
- //       onMenuC = true
- //    })
-    .on("mouseout",function(){
-        onMenuC = false
-    })
         
     d3.select("#coverageSelected")
     .on("click",function(){
@@ -1200,10 +1161,7 @@ function coverageMenu(map){
         
 
  row.on("click",function(){
-             
             var clickedId = d3.select(this).attr("id")
-             
-             console.log([pub.coverage,pub.strategy])
              pub.coverage = clickedId
             d3.select("#coverageSelectecLabel").html(coverageDisplayText[pub.coverage])
              if(pub.strategy==undefined){
@@ -1212,12 +1170,13 @@ function coverageMenu(map){
                  d3.selectAll(".SVI").style("color",highlightColor)
               }
              
-             d3.selectAll(".radialC").style("background-color","white").style("border","1px solid black")
-             d3.selectAll(".labelC").style("color","black")
+            
+            d3.selectAll(".radialC").style("background-color","white").style("border","1px solid black")
+            d3.selectAll(".labelC").style("background-color","white").style("color","#000")
             
             
-             d3.selectAll("."+clickedId).style("color",highlightColor)
-             d3.selectAll("."+clickedId+"_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
+             d3.selectAll("."+clickedId).style("color","#fff").style("background-color","#000")
+             d3.selectAll("."+clickedId+"_radialC").style("background-color",highlightColor)//.style("border","1px solid "+ highlightColor)
            
              lineOpacity["property"]=pub.strategy+"_"+pub.coverage
              lineWeight["property"]=pub.strategy+"_"+pub.coverage
@@ -1240,13 +1199,13 @@ function coverageMenu(map){
     }
 }
 
-function zoomToBounds(map){
+function zoomToBounds(map,outline){
     //https://docs.mapbox.com/mapbox-gl-js/example/zoomto-linestring/
     //49.500739, -63.994022
     //26.829656, -123.232303
 
-    var bounds =  new mapboxgl.LngLatBounds([-123.232303, 26.829656], 
-        [-63.994022, 49.500739]);
+    var bounds =  new mapboxgl.LngLatBounds([-130, 26.829656], 
+        [-50, 49.500739]);
     map.fitBounds(bounds,{padding:20},{bearing:0})
   //  map.fitBounds(bounds,{padding:20})
 	//zoomToBounds(map,boundary)
