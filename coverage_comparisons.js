@@ -38,6 +38,10 @@ SVI:["#A7DCDF","#6EAFC3","#3983A8","#02568B"],
 hotspotSVI:["#A7DCDF","#6EAFC3","#3983A8","#02568B"],
 highDemand:["#A7DCDF","#6EAFC3","#3983A8","#02568B"]}
 
+var minCoverage = 10
+var maxCoverage = 80
+var coverageInterval = 10
+
 var colorEnd = "#6FAFC4"
 var colorStart = "#E27C3B"
 //var colorStart = "#FBD33C"
@@ -47,12 +51,7 @@ var colorStart = "#604F23"
 
 var keyColors = {high_demand:"#EA00FF",SVI_hotspot:"#F45180",SVI_pop:"#45B6A3",hotspot:"#7E6EFF",SVI_high_demand:"#71BF4D"}
 
-var measureDisplayText = {
-    high_demand:"14 day cases",
-    hotspot:"14 day as % pop",
-    SVI_pop:"SVI*pop",
-    SVI_hotspot:"SVI & 14 day as % pop"
-}
+
 
 
 var colorGroups = ["#8DC63F","#9FCF8B","#B2D8D6","#47823B","#5A8B71","#6C93A7","#003E38","#134658","#274F78"]
@@ -132,7 +131,7 @@ for(var c = 1; c<=8; c++){
      percentage_scenario_SVI_high_demand:"SVI and new cases",
      percentage_scenario_hotspot:"new cases per capita",
      percentage_scenario_SVI_pop:"SVI",
-     percentage_scenario_SVI_hotspot:"SVI and per capita"
+     percentage_scenario_SVI_hotspot:"SVI and new cases per capita"
  }
 Promise.all([counties,aiannh,countyCentroids,allData])
 .then(function(data){
@@ -172,44 +171,53 @@ function numberWithCommas(x) {
 function turnToDictFIPS(data,keyColumn){
 //var prioritySet = ["priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot"]
     
+    var minCoverage = 10
+    var maxCoverage = 80
+    var coverageInterval = 10
+    
+
     var newDict = {}
     var maxPriority = 0
     var keys = Object.keys(data[0])
-    
+
     for(var i in data){
         var key = String(data[i][keyColumn])
         if(key.length==4){
             key= "0"+key
         }
-     
-    var newKeys = []
-        
+
+        var newKeys = []
+
         newDict[key]={}
         
-       // var values = data[i]
-        for(var j in measureSet){
-            var k1 = (measureSet[j]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")
-            var v1 = parseFloat(data[i][k1])
-            newDict[key][k1]=v1
-            
-            for(var k in measureSet){
-                var k2 = (measureSet[k]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")
-                var v2 = parseFloat(data[i][k2])
-                var index1 = j
-                var index2 = k
-                if(index1!=index2){
-                    if(index1<index2){
-                        var compareKey = "compare_"+k1+"_"+k2
-                        if(newKeys.indexOf(compareKey)==-1){
-                            newDict[key][compareKey]=v1-v2
-                            newKeys.push(compareKey)                            
-                        }
-                    }else{
-                        var compareKey = "compare_"+k2+"_"+k1
-                        if(newKeys.indexOf(compareKey)==-1){
-                            newDict[key][compareKey]=v2-v1
-                            newKeys.push(compareKey)
-                        }
+        for(var c = minCoverage; c<=maxCoverage; c+=coverageInterval){
+            currentCapactiy = c
+        
+            // var values = data[i]
+            for(var j in measureSet){
+                var k1 = (measureSet[j]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")
+                var v1 = parseFloat(data[i][k1])
+                newDict[key][k1]=v1
+
+                for(var k in measureSet){
+                    var k2 = (measureSet[k]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")
+                    var v2 = parseFloat(data[i][k2])
+                    var index1 = j
+                    var index2 = k
+                    if(index1!=index2){
+                        if(index1<index2){
+                                var compareKey = "compare_"+k1+"_"+k2
+                                if(newKeys.indexOf(compareKey)==-1){
+                                    newDict[key][compareKey]=v1-v2
+                                    newKeys.push(compareKey)                            
+                                }
+                            }else{
+                                var compareKey = "compare_"+k2+"_"+k1
+                                if(newKeys.indexOf(compareKey)==-1){
+                                    newDict[key][compareKey]=v2-v1
+                                    newKeys.push(compareKey)
+                                }
+                            }
                     }
                 }
             }
@@ -244,7 +252,7 @@ function combineGeojson(all,counties){
 
 function drawGrid(map,comparisonsSet){
     var drawn = []
-    var svg = d3.select("#comparisonGrid").append("svg").attr("width",250).attr("height",280)
+    var svg = d3.select("#comparisonGrid").append("svg").attr("width",250).attr("height",200)
     var gridSize = 20
     for(var i in measureSet){
         
@@ -270,7 +278,6 @@ function drawGrid(map,comparisonsSet){
             if(j!=i){
                 if(i<j){
                     var key = "compare_"+(measureSet[i]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")+"_"+(measureSet[j]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")
-                    console.log(key)
                 }else{
                     var key = "compare_"+(measureSet[j]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")+"_"+(measureSet[i]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")
                 }
@@ -322,13 +329,11 @@ function drawKey(key){
   //   _base_case_capacity_30_percentage_scenario_
   //   SVI_pop
   //   _base_case_capacity_30
-    
     var k1 = key.split("_percentage_scenario_")[1].replace("_base_case_capacity_"+currentCapacity,"")
     var k2 = key.split("_percentage_scenario_")[2].replace("_base_case_capacity_"+currentCapacity,"")
     var svg = d3.select("#comparisonKey").append("svg")
         .attr("width",750).attr('height',80)
     var defs = svg.append("defs");
-
     var gradient = defs.append("linearGradient")
        .attr("id", "svgGradient")
        .attr("x1", "0%")
@@ -344,7 +349,12 @@ function drawKey(key){
 
     gradient.append("stop")
        .attr('class', 'end')
-       .attr("offset", "50%")
+       .attr("offset", "30%")
+       .attr("stop-color", "white")
+       .attr("stop-opacity", 1);
+    gradient.append("stop")
+       .attr('class', 'end')
+       .attr("offset", "70%")
        .attr("stop-color", "white")
        .attr("stop-opacity", 1);
     gradient.append("stop")
@@ -352,15 +362,15 @@ function drawKey(key){
        .attr("offset", "100%")
        .attr("stop-color", keyColors[k2])
        .attr("stop-opacity", 1);
-    svg.append("text").text("Higher % of needs met when prioritizing by").attr("y",18).attr("x",20)
+    svg.append("text").text("Higher % of needs met when prioritizing by".toUpperCase()).attr("y",18).attr("x",20)
        .attr("fill","#000").style("font-size","12px").style("font-weight","bold")
        
-    svg.append("text").text("Higher % of needs met when prioritizing by").attr("y",18).attr("x",720)
+    svg.append("text").text("Higher % of needs met when prioritizing by".toUpperCase()).attr("y",18).attr("x",720)
        .attr("fill","#000").style("font-size","12px").attr("text-anchor","end").style("font-weight","bold")
 
-    svg.append("text").text(measureDisplayText[k1]).attr("y",40).attr("x",20).style("font-size","12px").style("font-weight","bold")//.attr("fill",keyColors[k1])
-    svg.append("text").text(measureDisplayText[k2]).attr("y",40).attr("x",720).style("font-size","12px").style("font-weight","bold").attr("text-anchor","end")//.attr("fill",keyColors[k2])
-    svg.append("text").text("no difference").attr("y",70).attr("x",370).attr("text-anchor","middle")
+    svg.append("text").text(measureDisplayText["percentage_scenario_"+k1].toUpperCase()).attr("y",40).attr("x",20).style("font-size","12px").style("font-weight","bold")//.attr("fill",keyColors[k1])
+    svg.append("text").text(measureDisplayText["percentage_scenario_"+k2].toUpperCase()).attr("y",40).attr("x",720).style("font-size","12px").style("font-weight","bold").attr("text-anchor","end")//.attr("fill",keyColors[k2])
+    svg.append("text").text("no difference".toUpperCase()).attr("y",75).attr("x",370).attr("text-anchor","middle").style("font-size","12px").style("font-weight","bold")
     svg.append("rect")
     .attr("class","key")
     .attr('width',700)
@@ -368,6 +378,8 @@ function drawKey(key){
     .attr("x",20)
     .attr("y",50)
     .attr("fill","url(#svgGradient)")
+       .attr("stroke","rgba(0,0,0,.5)")
+       .attr("stroke-width",.1)
     
     
 }
@@ -495,7 +507,7 @@ function drawMap(data,comparisonsKeys){
                  // displayString+=pk+": "+pv+"<br>"
                   chartData.push({axis:pk,value:pv})
               }
-             d3.select("#mapPopup").html(displayString+"<br><br> % Coverage for County under each policy: ")
+             d3.select("#mapPopup").html(displayString+"<br><br> % of needs met under each policy: ".toUpperCase())
              drawChart(chartData)
          }       
          
@@ -515,8 +527,8 @@ function drawMap(data,comparisonsKeys){
     
 }
 function drawChart(data){
-    var xScale = d3.scaleLinear().domain([0,100]).range([2,200])
-    var svg = d3.select("#mapPopup").append("svg").attr("class","chart").attr("width",200).attr("height",200)
+    var xScale = d3.scaleLinear().domain([0,100]).range([2,180])
+    var svg = d3.select("#mapPopup").append("svg").attr("class","chart").attr("width",200).attr("height",160)
     svg.selectAll("rect")
     .data(data)
     .enter()
@@ -526,7 +538,7 @@ function drawChart(data){
     })
     .attr("height",10)
     .attr("x",10)
-    .attr("y",function(d,i){return i*40+40})
+    .attr("y",function(d,i){return i*30+20})
     .attr("fill", function (d,i){
         return keyColors[d.axis.replace("percentage_scenario_","").replace("_base_case_capacity_"+currentCapacity,"")]
     })
@@ -536,20 +548,21 @@ function drawChart(data){
         .enter()
         .append("text")
         .text(function (d,i){
-            return measureDisplayText[d.axis.replace("percentage_scenario_","").replace("_base_case_capacity_"+currentCapacity,"")]
+
+            return measureDisplayText[d.axis.replace("_base_case_capacity_"+currentCapacity,"")]
         })
         .attr("x",10)
-        .attr("y",function(d,i){return i*40+30})
+        .attr("y",function(d,i){return i*30+10})
     
     svg.selectAll(".textValue")
         .data(data)
         .enter()
         .append("text")
         .text(function (d,i){
-            return d.value
+            return Math.round(d.value)+"%"
         })
         .attr("x",10)
-        .attr("y",function(d,i){return i*40+40})
+        .attr("y",function(d,i){return i*30+20})
 }
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
