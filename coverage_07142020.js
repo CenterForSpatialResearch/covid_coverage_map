@@ -1127,64 +1127,20 @@ function formatSelected(item) {
     return $returnString;
 };
 function coverageMenu(map){
+    var w = 200
+    var h = 100
+    var svg = d3.select("#coverageMenu").append("svg").attr("width",w).attr("height",h)
+    var startCoverage = pub.coverage.split("_")[3]
+    var coverageDisplay = svg.append("text").text(startCoverage).style("font-size","60px").attr("x",30).attr("y",h/2)
+    var plus = svg.append("text").text("+10").style("font-size","14px").attr("x",110).attr("y",h/2-30).style("font-weight","bold")
+    .style('cursor',"pointer")
     
-        
-    d3.select("#coverageSelected")
     .on("click",function(){
-        d3.select("#coverageMenu").style("visibility","visible")
-        onMenuC= true
-        onMenuItemC = true
-        onLabelC = true
-    })
-    
-    //var menu = d3.select("#coverageMenu").append("select").attr("id","coverageDropdown")
-    for (var i = 0; i < coverageSet.length; i++) {
-        
-        var id = coverageSet[i];
-        var displayText = coverageDisplayText[id]
-       
-        var row = d3.select("#coverageMenu").append("div").attr("class",id+"_radialMenuC radialMenuC").attr("id",id).style("cursor","pointer")
-        
-        var labelC = row.append("div").html(displayText).attr("class",id+"_labelC labelC "+id).style("width","160px").style("display","inline-block")
-       labelC.on('mouseover',function(){onLabelC=true})              
-              .on('mouseout',function(){
-                  onLabelC=false})   
-       
-        row.on("mouseover",function(){
-            d3.select(this).style("background-color",bghighlightColor)
-            onMenuItemC=true
-        })
-        row.on("mouseout",function(){
-            d3.select(this).style("background-color","rgba(0,0,0,0)")
-                onMenuItemC=false
-        })
-        
-
- row.on("click",function(){
-            var clickedId = d3.select(this).attr("id")
-             pub.coverage = clickedId
-            d3.select("#coverageSelectecLabel").html(coverageDisplayText[pub.coverage])
-             if(pub.strategy==undefined){
-                  pub.strategy = measureSet[0]
-                  d3.select("."+measureSet[0]+"_radialS").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
-                 d3.selectAll(".SVI").style("color",highlightColor)
-              }
-             
-            
-            d3.selectAll(".radialC").style("background-color","white").style("border","1px solid black")
-            d3.selectAll(".labelC").style("background-color","white").style("color","#000")
-            
-            
-             d3.selectAll("."+clickedId).style("color","#fff").style("background-color","#000")
-             d3.selectAll("."+clickedId+"_radialC").style("background-color",highlightColor)//.style("border","1px solid "+ highlightColor)
-           
-             lineOpacity["property"]=pub.strategy+"_"+pub.coverage
-             lineWeight["property"]=pub.strategy+"_"+pub.coverage
-             fillColor["property"]="priority_"+pub.strategy.replace("percentage_scenario_","")
-              
-              d3.select("#currentState").html("Percent of unmet need by county when there are <strong>" +coverageDisplayText[pub.coverage]
-              +"</strong> contact tracers per 100,000 people in each state and <strong>"+measureDisplayText[pub.strategy]+ "</strong> are prioritized.")
-            
+        var newCoverage = parseInt(pub.coverage.split("_")[3])+10
+        if(newCoverage <=80){
+            pub.coverage = pub.coverage.replace(pub.coverage.split("_")[3],newCoverage)
+            coverageDisplay.text(newCoverage)
+            minus.attr("fill","#000")
               map.setPaintProperty("counties", 'fill-opacity',1)
               
               var matchString = ["match",["get",pub.strategy+"_"+pub.coverage+"_group"]].concat(groupColorDict)
@@ -1193,10 +1149,97 @@ function coverageMenu(map){
                map.setPaintProperty("counties", 'fill-color', matchString)
             //  drawHistogram(pub.strategy)
                 pub.histo = histo(pub.all)
+        }
+        if(newCoverage==80){
+            d3.select(this).attr("fill","#aaa")
+        }
+    })
+    
+    var minus = svg.append("text").text("-10").style("font-size","14px").attr("x",110).attr("y",h/2).style("font-weight","bold")
+    .style('cursor',"pointer")
+        .on("click",function(){
+            var newCoverage = parseInt(pub.coverage.split("_")[3])-10
+            if(newCoverage >=10){
+                pub.coverage = pub.coverage.replace(pub.coverage.split("_")[3],newCoverage)
+                coverageDisplay.text(newCoverage)
+                plus.attr("fill","#000")
+              map.setPaintProperty("counties", 'fill-opacity',1)
               
-         })
-
-    }
+              var matchString = ["match",["get",pub.strategy+"_"+pub.coverage+"_group"]].concat(groupColorDict)
+              //console.log(matchString)
+              
+               map.setPaintProperty("counties", 'fill-color', matchString)
+            //  drawHistogram(pub.strategy)
+                pub.histo = histo(pub.all)
+            }
+            if(newCoverage==10){
+                d3.select(this).attr("fill","#aaa")
+            }
+        })
+    
+    svg.append("text").text("CHW per 100,000 Residents").style("font-size","12px").attr("x",20).attr("y",h/2+30)
+  
+    
+  //   var menu = d3.select("#coverageMenu").append("select").attr("id","coverageDropdown")
+ //     for (var i = 0; i < coverageSet.length; i++) {
+ //
+ //         var id = coverageSet[i];
+ //         var displayText = coverageDisplayText[id]
+ //
+ //         var row = d3.select("#coverageMenu").append("div").attr("class",id+"_radialMenuC radialMenuC").attr("id",id).style("cursor","pointer")
+ //
+ //         var labelC = row.append("div").html(displayText).attr("class",id+"_labelC labelC "+id).style("width","160px").style("display","inline-block")
+ //        labelC.on('mouseover',function(){onLabelC=true})
+ //               .on('mouseout',function(){
+ //                   onLabelC=false})
+ //
+ //         row.on("mouseover",function(){
+ //             d3.select(this).style("background-color",bghighlightColor)
+ //             onMenuItemC=true
+ //         })
+ //         row.on("mouseout",function(){
+ //             d3.select(this).style("background-color","rgba(0,0,0,0)")
+ //                 onMenuItemC=false
+ //         })
+ //
+ //
+ // row.on("click",function(){
+ //            var clickedId = d3.select(this).attr("id")
+ //             pub.coverage = clickedId
+ //            d3.select("#coverageSelectecLabel").html(coverageDisplayText[pub.coverage])
+ //             if(pub.strategy==undefined){
+ //                  pub.strategy = measureSet[0]
+ //                  d3.select("."+measureSet[0]+"_radialS").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
+ //                 d3.selectAll(".SVI").style("color",highlightColor)
+ //              }
+ //
+ //
+ //            d3.selectAll(".radialC").style("background-color","white").style("border","1px solid black")
+ //            d3.selectAll(".labelC").style("background-color","white").style("color","#000")
+ //
+ //
+ //             d3.selectAll("."+clickedId).style("color","#fff").style("background-color","#000")
+ //             d3.selectAll("."+clickedId+"_radialC").style("background-color",highlightColor)//.style("border","1px solid "+ highlightColor)
+ //
+ //             lineOpacity["property"]=pub.strategy+"_"+pub.coverage
+ //             lineWeight["property"]=pub.strategy+"_"+pub.coverage
+ //             fillColor["property"]="priority_"+pub.strategy.replace("percentage_scenario_","")
+ //
+ //              d3.select("#currentState").html("Percent of unmet need by county when there are <strong>" +coverageDisplayText[pub.coverage]
+ //              +"</strong> contact tracers per 100,000 people in each state and <strong>"+measureDisplayText[pub.strategy]+ "</strong> are prioritized.")
+ //
+ //              map.setPaintProperty("counties", 'fill-opacity',1)
+ //
+ //              var matchString = ["match",["get",pub.strategy+"_"+pub.coverage+"_group"]].concat(groupColorDict)
+ //              //console.log(matchString)
+ //
+ //               map.setPaintProperty("counties", 'fill-color', matchString)
+ //            //  drawHistogram(pub.strategy)
+ //                pub.histo = histo(pub.all)
+ //
+ //         })
+ //
+ //    }
 }
 
 function zoomToBounds(map,outline){
