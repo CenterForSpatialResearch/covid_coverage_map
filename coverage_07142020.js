@@ -1176,7 +1176,7 @@ function coverageMenu(map){
             }
         })
     
-    svg.append("text").text("CHW per 100,000 Residents").style("font-size","12px").attr("x",20).attr("y",120)
+    svg.append("text").text("CHW per 100,000 Residents").style("font-size","12px").attr("x",30).attr("y",120)
   
     
   //   var menu = d3.select("#coverageMenu").append("select").attr("id","coverageDropdown")
