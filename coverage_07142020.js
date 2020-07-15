@@ -147,7 +147,7 @@ function drawGrid(map,data){
         
     
     var gridHeight = 200
-    var gridWidth = 250
+    var gridWidth = 220
     var colorGridSvg = d3.select("#colorGrid").append("svg").attr("width",gridWidth).attr("height",gridHeight)
     var gridSize = 40
         
@@ -178,7 +178,7 @@ function drawGrid(map,data){
             return rScale(bins[i].length)
         })
         .attr('fill',function(d){return d})
-        .attr("transform","translate(100,0)")
+        .attr("transform","translate(80,0)")
         .attr("cursor","pointer")
         .on("mouseover",function(d,i){
             var groupName = "_"+(i+1)            
@@ -237,15 +237,15 @@ function drawGrid(map,data){
   //         .attr("text-anchor","middle")
   //         .attr("transform","translate(100,0)")
     
-    colorGridSvg.append("text").text("% of unmet need").attr("x",120).attr("y",195).style("font-weight","bold")
-    colorGridSvg.append("text").text("less").attr("x",100).attr("y",180)
-    colorGridSvg.append("text").text("more").attr("x",190).attr("y",180)
+    colorGridSvg.append("text").text("% of unmet need").attr("x",80).attr("y",200).style("font-weight","bold").style("font-size","14px")
+    colorGridSvg.append("text").text("less").attr("x",80).attr("y",180)
+    colorGridSvg.append("text").text("more").attr("x",170).attr("y",180)
       
-    colorGridSvg.append("text").text("high").attr("x",60).attr("y",40).attr("text-anchor","end")
-    colorGridSvg.append("text").text("low").attr("x",60).attr("y",150).attr("text-anchor","end")
+    colorGridSvg.append("text").text("high").attr("x",40).attr("y",40).attr("text-anchor","end")
+    colorGridSvg.append("text").text("low").attr("x",40).attr("y",150).attr("text-anchor","end")
      
-    colorGridSvg.append("text").text("priority").attr("x",60).attr("y",145)
-        .attr("transform","rotate(-90 30,140)").style("font-weight","bold")
+    colorGridSvg.append("text").text("priority").attr("x",10).attr("y",120).style("font-size","14px")
+        .attr("transform","rotate(-90 10,120)").style("font-weight","bold")
       
       
     var degree = ["low","med","high"]
@@ -261,7 +261,7 @@ function drawGrid(map,data){
         .attr("cursor","pointer")
         .attr("text-anchor","middle")
          .attr("text-decoration","underline")
-        .attr("transform","translate(100,0)")
+        .attr("transform","translate(80,0)")
           .on("mouseover",function(d,i){
               var column = d3.select(this).attr("column")
               d3.selectAll(".gridCell").attr("opacity",.3)
@@ -293,7 +293,7 @@ function drawGrid(map,data){
               return i
           })
         .attr("text-anchor","end")
-        .attr("transform","translate(95,0)")
+        .attr("transform","translate(75,0)")
         .attr("cursor","pointer")
           .on("mouseover",function(d,i){
               var row = d3.select(this).attr('row')
