@@ -387,7 +387,8 @@ function drawMap(data,comparisonsKeys){
     map = new mapboxgl.Map({
          container: 'map',
  		//style: "mapbox://styles/sidl/ckbsbi96q3mta1hplaopbjt9s",
-        style:"mapbox://styles/c4sr-gsapp/ckcl1av4c083d1irpftb75l6j",//dare
+        //style:"mapbox://styles/c4sr-gsapp/ckcl1av4c083d1irpftb75l6j",//dare
+        style:"mapbox://styles/c4sr-gsapp/ckcnnqpsa2rxx1hp4fhb1j357",//dare2
         
  		//style:"mapbox://styles/c4sr-gsapp/ckc4s079z0z5q1ioiybc8u6zp",//new account
         center:[-100,37],
@@ -412,19 +413,19 @@ function drawMap(data,comparisonsKeys){
              'type': 'line',
              'source': 'counties',
              'paint': {
-                 'line-color':"#aaa",
-                 'line-opacity':.3
+                 'line-color':"#000",
+                 'line-opacity':.1
              },
              'filter': ['==', '$type', 'Polygon']
          },"ST-OUTLINE");
-                  
+               //    },"country-label");
          map.addLayer({
              'id': 'counties',
              'type': 'fill',
              'source': 'counties',
              'paint': {
              'fill-color': "#fff",
-                 'fill-opacity':1
+                 'fill-opacity':.05
              },
              'filter': ['==', '$type', 'Polygon']
          },"county_outline");

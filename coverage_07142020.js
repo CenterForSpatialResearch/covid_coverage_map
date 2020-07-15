@@ -568,7 +568,8 @@ function drawMap(data,outline){
    
     map = new mapboxgl.Map({
          container: 'map',
-        style:"mapbox://styles/c4sr-gsapp/ckcl1av4c083d1irpftb75l6j",//dare
+       // style:"mapbox://styles/c4sr-gsapp/ckcl1av4c083d1irpftb75l6j",//dare
+        style:"mapbox://styles/c4sr-gsapp/ckcnnqpsa2rxx1hp4fhb1j357",//dare2
  		//style: "mapbox://styles/sidl/ckbsbi96q3mta1hplaopbjt9s",
  		//style:"mapbox://styles/c4sr-gsapp/ckc4s079z0z5q1ioiybc8u6zp",//new account
         center:[-100,37],
