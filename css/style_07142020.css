@@ -152,10 +152,10 @@ option{
      width:100%;
      height:100%;
      z-index:-1;
-     margin-left:200px;
+     margin-left:250px;
  }
  #nav{
-     width:200px;
+     width:250px;
      position:fixed;
      left:0px;
      top:120px;
@@ -236,12 +236,12 @@ option{
      border-top:1px solid black;
  }
  .labelS{
-     padding:10px;
      line-height:125%;
      font-size:12px; 
      font-style:none;
      border:1px solid black;
-     margin:4px 10px 4px 10px;
+     margin:0px 25px 8px 25px;
+     padding:15px;
  }
  #mapbox-satellite{
      background-color:rgba(0,0,0,0);
@@ -254,6 +254,7 @@ option{
  #coverageQuestion{
      font-weight:bold;
      margin:10px;
+     padding-top:20px;
  }
 
 
