@@ -45,7 +45,7 @@ var colorStart = "#604F23"
 
 //"priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot"
 
-var keyColors = {high_demand:"#604F23",SVI_hotspot:"#48AEED",SVI_pop:"#E27C3B",hotspot:"#FFF100"}
+var keyColors = {high_demand:"#604F23",SVI_hotspot:"#48AEED",SVI_pop:"#E27C3B",hotspot:"#FFF100",SVI_high_demand:"red"}
 
 var measureDisplayText = {
     high_demand:"14 day cases",
@@ -113,7 +113,7 @@ var counties = d3.json("counties.geojson")
 var aiannh = d3.json("indian_reservations.geojson")
 var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity_07152020.csv")
 //var allData = d3.csv("https://media.githubusercontent.com/media/CenterForSpatialResearch/allocating_covid/master/Output/County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
-var prioritySet = ["priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot"]
+//var prioritySet = ["priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot"]
 
 var coverageSet = []
 var coverageDisplayText = {show_all:"Hide Coverage Info"}
@@ -123,8 +123,15 @@ for(var c = 1; c<=8; c++){
     coverageDisplayText[setTerm] = c*10+' CHW per 100,000 People'
  }
 
-var measureSet = ["percentage_scenario_SVI_pop","percentage_scenario_SVI_hotspot","percentage_scenario_hotspot","percentage_scenario_high_demand"]
-
+//var measureSet = ["percentage_scenario_SVI_pop","percentage_scenario_SVI_hotspot","percentage_scenario_hotspot","percentage_scenario_high_demand"]
+ var measureSet = ["percentage_scenario_SVI_high_demand","percentage_scenario_SVI_pop","percentage_scenario_SVI_hotspot","percentage_scenario_hotspot","percentage_scenario_high_demand"]
+ var measureDisplayText = {
+     percentage_scenario_high_demand:"new cases",
+     percentage_scenario_SVI_high_demand:"SVI and new cases",
+     percentage_scenario_hotspot:"new cases per capita",
+     percentage_scenario_SVI_pop:"SVI",
+     percentage_scenario_SVI_hotspot:"SVI and per capita"
+ }
 Promise.all([counties,aiannh,countyCentroids,allData])
 .then(function(data){
     ready(data[0],data[1],data[2],data[3])
@@ -178,13 +185,13 @@ function turnToDictFIPS(data,keyColumn){
         newDict[key]={}
         
        // var values = data[i]
-        for(var j in prioritySet){
-            var k1 = (prioritySet[j]+"_base_case_capacity_"+currentCapacity).replace("priority_","percentage_scenario_")
+        for(var j in measureSet){
+            var k1 = (measureSet[j]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")
             var v1 = parseFloat(data[i][k1])
             newDict[key][k1]=v1
             
-            for(var k in prioritySet){
-                var k2 = (prioritySet[k]+"_base_case_capacity_"+currentCapacity).replace("priority_","percentage_scenario_")
+            for(var k in measureSet){
+                var k2 = (measureSet[k]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")
                 var v2 = parseFloat(data[i][k2])
                 var index1 = j
                 var index2 = k
@@ -235,34 +242,35 @@ function combineGeojson(all,counties){
 
 function drawGrid(map,comparisonsSet){
     var drawn = []
-    var svg = d3.select("#comparisonGrid").append("svg").attr("width",250).attr("height",220)
-    var gridSize = 30
-    for(var i in prioritySet){
+    var svg = d3.select("#comparisonGrid").append("svg").attr("width",250).attr("height",280)
+    var gridSize = 20
+    for(var i in measureSet){
         
             var x = i*gridSize+140
-        var y = 90
+            var y = 90
+        
                 svg.append("text")
-                .text(measureDisplayText[prioritySet[i].replace("priority_","")])
+                .text(measureDisplayText[measureSet[i]])
                 .attr("x",x)
                 .attr("y",y)
                 .attr("transform","rotate(-90 "+x+","+y+")")
         
-        for(var j in prioritySet){
+        for(var j in measureSet){
             if(i==0){
                 svg.append("text")
-                .text(measureDisplayText[prioritySet[j].replace("priority_","")])
+                .text(measureDisplayText[measureSet[j]])
                 .attr("x",i)
                 .attr("y",j*gridSize+gridSize/2)
-                .attr("transform","translate(115,100)")
+                .attr("transform","translate(120,100)")
                 .attr("text-anchor","end")
             }
             
             if(j!=i){
                 if(i<j){
-                    
-                    var key = "compare_"+(prioritySet[i]+"_base_case_capacity_"+currentCapacity).replace("priority_","percentage_scenario_")+"_"+(prioritySet[j]+"_base_case_capacity_"+currentCapacity).replace("priority_","percentage_scenario_")
+                    var key = "compare_"+(measureSet[i]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")+"_"+(measureSet[j]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")
+                    console.log(key)
                 }else{
-                    var key = "compare_"+(prioritySet[j]+"_base_case_capacity_"+currentCapacity).replace("priority_","percentage_scenario_")+"_"+(prioritySet[i]+"_base_case_capacity_"+currentCapacity).replace("priority_","percentage_scenario_")
+                    var key = "compare_"+(measureSet[j]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")+"_"+(measureSet[i]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")
                 }
                 
                 if(comparisonsSet.indexOf(key)>-1 && drawn.indexOf(key)==-1){
@@ -273,7 +281,7 @@ function drawGrid(map,comparisonsSet){
                         .attr("y",gridSize*i)
                         .attr("id",key)
                         .attr("class","grid")
-                        .attr("transform","translate(120,100)")
+                        .attr("transform","translate(130,100)")
                         .attr("cursor","pointer")
                         .on("click",function(){
                             colorMap(map,d3.select(this).attr("id"))
@@ -288,7 +296,7 @@ function drawGrid(map,comparisonsSet){
                         .attr("height",gridSize-6)
                         .attr("x",gridSize*j)
                         .attr("y",gridSize*i)
-                        .attr("transform","translate(120,100)")
+                        .attr("transform","translate(130,100)")
                         .attr("fill","none")
                         .attr("stroke","#ddd")
                     }
@@ -298,7 +306,7 @@ function drawGrid(map,comparisonsSet){
                         .attr("height",gridSize-6)
                         .attr("x",gridSize*j)
                         .attr("y",gridSize*i)
-                        .attr("transform","translate(120,100)")
+                        .attr("transform","translate(130,100)")
                         .attr("fill","none")
                         .attr("stroke","#ddd")
             }
