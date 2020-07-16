@@ -123,7 +123,7 @@ var histo = d3.histogram()
 var bins = histo(pub.all.features)
     return bins
 }
-function drawGrid(map){
+function drawGrid(map,data){
     d3.select("#colorGrid svg").remove()
     var currentFilter = null
     
@@ -143,8 +143,8 @@ function drawGrid(map){
         .domain([1,10])
         .thresholds(9)
             
-    // var bins = histo(data.features)
-   //  pub.histo = bins
+     var bins = histo(data.features)
+     pub.histo = bins
    //
     
     var gridHeight = 200
@@ -601,7 +601,7 @@ function drawMap(data,outline){
 //          );
          
          
-         drawGrid(map) 
+         drawGrid(map,data) 
          //map.setLayoutProperty("mapbox-satellite", 'visibility', 'none');
          
          map.addSource("counties",{
