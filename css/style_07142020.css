@@ -135,7 +135,8 @@ font-family: 'Raleway', sans-serif;
     position:fixed;
     top:80px;
     width:30%;
-    padding:80px;
+    padding-left:50px;
+    padding-top:80px;
 }
 #FAQ{
     position:absolute;
@@ -147,6 +148,7 @@ font-family: 'Raleway', sans-serif;
 .question{
     font-weight:800;
     font-size:16px;
+    padding-bottom:20px;
 }
 .answer{
     padding-left:20px;
