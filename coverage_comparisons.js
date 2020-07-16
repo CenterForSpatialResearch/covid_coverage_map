@@ -17,9 +17,8 @@ var themesDefinitions ={
     "SPL_THEMES":"Sum of series themes", 
     "RPL_THEMES":"Overall percentile ranking for themes"
 }
-var currentCapacity = 50
+var currentCapacity = 30
 var pub = {
-    strategy:"percentage_scenario_SVI_hotspot",
     coverage:"base_case_capacity_"+currentCapacity,
     aiannh:false,
     prison:false,
@@ -27,7 +26,8 @@ var pub = {
     tract_svi:false,
     all:null,
     centroids:null,
-    histo:null
+    histo:null,
+    pair:"SVI_popXXXSVI_hotspot"
 }
 var highlightColor = "#DF6D2A"
 var bghighlightColor = "gold"
@@ -156,6 +156,7 @@ var latestDate = null
 function ready(counties,aiannh,centroids,modelData){
     var processed = turnToDictFIPS(modelData,"County_FIPS")
     var comparisonsKeys = processed[1]
+   // console.log(comparisonsKeys)
     var dataByFIPS = processed[0]
     var combinedGeojson = combineGeojson(dataByFIPS,counties)
     pub.all = combinedGeojson
@@ -191,31 +192,35 @@ function turnToDictFIPS(data,keyColumn){
         newDict[key]={}
         
         for(var c = minCoverage; c<=maxCoverage; c+=coverageInterval){
-            currentCapactiy = c
-        
+         
             // var values = data[i]
             for(var j in measureSet){
-                var k1 = (measureSet[j]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")
+                var k1 = (measureSet[j]+"_base_case_capacity_"+c)//.replace("percentage_scenario_","percentage_scenario_")
                 var v1 = parseFloat(data[i][k1])
                 newDict[key][k1]=v1
-
                 for(var k in measureSet){
-                    var k2 = (measureSet[k]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")
+                    var k2 = (measureSet[k]+"_base_case_capacity_"+c)//.replace("percentage_scenario_","percentage_scenario_")
                     var v2 = parseFloat(data[i][k2])
                     var index1 = j
                     var index2 = k
                     if(index1!=index2){
                         if(index1<index2){
                                 var compareKey = "compare_"+k1+"_"+k2
-                                if(newKeys.indexOf(compareKey)==-1){
+                                var trackingKey = measureSet[j].replace("percentage_scenario_","")
+                                    +"XXX"+measureSet[k].replace("percentage_scenario_","")
                                     newDict[key][compareKey]=v1-v2
-                                    newKeys.push(compareKey)                            
+                            
+                                if(newKeys.indexOf(trackingKey)==-1){
+                                    newKeys.push(trackingKey)                            
                                 }
                             }else{
                                 var compareKey = "compare_"+k2+"_"+k1
-                                if(newKeys.indexOf(compareKey)==-1){
+                                var trackingKey = measureSet[k].replace("percentage_scenario_","")
+                                    +"XXX"+measureSet[j].replace("percentage_scenario_","")
                                     newDict[key][compareKey]=v2-v1
-                                    newKeys.push(compareKey)
+                                
+                                if(newKeys.indexOf(trackingKey)==-1){
+                                    newKeys.push(trackingKey)                            
                                 }
                             }
                     }
@@ -277,11 +282,12 @@ function drawGrid(map,comparisonsSet){
             
             if(j!=i){
                 if(i<j){
-                    var key = "compare_"+(measureSet[i]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")+"_"+(measureSet[j]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")
+                    var key = measureSet[i].replace("percentage_scenario_","")
+                    +"XXX"+measureSet[j].replace("percentage_scenario_","")
                 }else{
-                    var key = "compare_"+(measureSet[j]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")+"_"+(measureSet[i]+"_base_case_capacity_"+currentCapacity).replace("percentage_scenario_","percentage_scenario_")
+                    var key = measureSet[j].replace("percentage_scenario_","")
+                    +"XXX"+measureSet[i].replace("percentage_scenario_","")
                 }
-                
                 if(comparisonsSet.indexOf(key)>-1 && drawn.indexOf(key)==-1){
                     svg.append("rect")
                         .attr("width",gridSize-4)
@@ -293,9 +299,13 @@ function drawGrid(map,comparisonsSet){
                         .attr("transform","translate(130,100)")
                         .attr("cursor","pointer")
                         .on("click",function(){
-                            colorMap(map,d3.select(this).attr("id"))
+                            var id = d3.select(this).attr("id")
+                          //  var key = "compare_"+id.split("XXX")[0]+"_"+currentCapacity+"_"+id.split("XXX")[1]+"_"+currentCapacity
+                            pub.pair = id
+                            colorMap(map,id)
                             d3.selectAll(".grid").attr("fill","black")
                             d3.select(this).attr("fill","gold")
+                            
                             drawKey(d3.select(this).attr("id"))
                         })
                         drawn.push(key)
@@ -329,8 +339,9 @@ function drawKey(key){
   //   _base_case_capacity_30_percentage_scenario_
   //   SVI_pop
   //   _base_case_capacity_30
-    var k1 = key.split("_percentage_scenario_")[1].replace("_base_case_capacity_"+currentCapacity,"")
-    var k2 = key.split("_percentage_scenario_")[2].replace("_base_case_capacity_"+currentCapacity,"")
+    var k1 = key.split("XXX")[0]//.replace("_base_case_capacity_"+currentCapacity,"")
+    var k2 = key.split("XXX")[1]//.replace("_base_case_capacity_"+currentCapacity,"")
+   // console.log([k1,k2])
     var svg = d3.select("#comparisonKey").append("svg")
         .attr("width",750).attr('height',80)
     var defs = svg.append("defs");
@@ -384,9 +395,17 @@ function drawKey(key){
     
 }
 function colorMap(map,key){
-    var colorStart = keyColors[key.split("_percentage_scenario_")[1].replace("_base_case_capacity_"+currentCapacity,"")]
-    var colorEnd = keyColors[key.split("_percentage_scenario_")[2].replace("_base_case_capacity_"+currentCapacity,"")]
-    var color = {property:key,stops:[[-1,colorEnd],[0,"#fff"],[1,colorStart]]}
+    //console.log(key)
+   // console.log(currentCapacity)
+    var measureStart = key.split("XXX")[0]
+    var measureEnd = key.split("XXX")[1]
+    var colorStart = keyColors[measureStart]
+    var colorEnd = keyColors[measureEnd]
+    var dataProperty = "compare_percentage_scenario_"+measureStart+"_base_case_capacity_"
+    +currentCapacity+"_percentage_scenario_"+measureEnd+"_base_case_capacity_"+currentCapacity
+    
+   // console.log(dataProperty)
+    var color = {property:dataProperty,stops:[[-1,colorEnd],[0,"#fff"],[1,colorStart]]}
     map.setPaintProperty("counties", 'fill-color', color)  
     
 }
@@ -415,7 +434,6 @@ function drawMap(data,comparisonsKeys){
     
      map.on("load",function(){        
          zoomToBounds(map)
-         console.log(map.getStyle().layers)
          //map.setLayoutProperty("mapbox-satellite", 'visibility', 'none');
          map.addSource("counties",{
              "type":"geojson",
@@ -447,6 +465,9 @@ function drawMap(data,comparisonsKeys){
          
          drawGrid(map,comparisonsKeys)
          coverageMenu(map)
+         colorMap(map,pub.pair)
+         d3.select("#"+pub.pair).attr("fill","gold")
+         drawKey(pub.pair)
          //var color = {property:"priority_high_demand",stops:[[-1,0],[0,1]]}
          
          //map.setPaintProperty("counties","fill-opacity",{property:"percentage_scenario_hotspot_base_case_capacity_30",stops:[[-1,0],[0,1]]})
@@ -454,9 +475,9 @@ function drawMap(data,comparisonsKeys){
          var filter = ["!=","percentage_scenario_SVI_hotspot_base_case_capacity_"+currentCapacity,-1]
          map.setFilter("counties",filter)
          
-        lineOpacity["property"]=pub.strategy+"_"+pub.coverage
-        lineWeight["property"]=pub.strategy+"_"+pub.coverage
-        fillColor["property"]="priority_"+pub.strategy.replace("percentage_scenario_","")
+        //lineOpacity["property"]=pub.strategy+"_"+pub.coverage
+       // lineWeight["property"]=pub.strategy+"_"+pub.coverage
+        //fillColor["property"]=pub.pai
      
          map.setPaintProperty("counties", 'fill-opacity',1)
         // map.setPaintProperty("counties", 'fill-color',fillColor)
@@ -578,40 +599,40 @@ function coverageMenu(map){
     
     .on("click",function(){
         var newCoverage = parseInt(pub.coverage.split("_")[3])+10
+        if(newCoverage>80){
+            newCoverage=80
+        }
+        currentCapacity = newCoverage
         if(newCoverage <=80){
+            var key = pub.pair.split(parseInt(pub.coverage.split("_")[3])).join(newCoverage)
+            pub.pair = key
             pub.coverage = pub.coverage.replace(pub.coverage.split("_")[3],newCoverage)
             coverageDisplay.text(newCoverage)
             minus.attr("fill","#000")
-              map.setPaintProperty("counties", 'fill-opacity',1)
-              
-              var matchString = ["match",["get",pub.strategy+"_"+pub.coverage+"_group"]].concat(groupColorDict)
-              //console.log(matchString)
-              
-               map.setPaintProperty("counties", 'fill-color', matchString)
-            //  drawHistogram(pub.strategy)
-                pub.histo = histo(pub.all)
+            colorMap(map,key)
         }
         if(newCoverage==80){
             d3.select(this).attr("fill","#aaa")
         }
+        
     })
     
     var minus = svg.append("text").text("-10").style("font-size","14px").attr("x",130).attr("y",80).style("font-weight","bold")
     .style('cursor',"pointer")
         .on("click",function(){
             var newCoverage = parseInt(pub.coverage.split("_")[3])-10
+            if(newCoverage<10){
+                newCoverage=10
+            }
+        currentCapacity = newCoverage
+            
             if(newCoverage >=10){
+                var key = pub.pair
+                
                 pub.coverage = pub.coverage.replace(pub.coverage.split("_")[3],newCoverage)
                 coverageDisplay.text(newCoverage)
                 plus.attr("fill","#000")
-              map.setPaintProperty("counties", 'fill-opacity',1)
-              
-              var matchString = ["match",["get",pub.strategy+"_"+pub.coverage+"_group"]].concat(groupColorDict)
-              //console.log(matchString)
-              
-               map.setPaintProperty("counties", 'fill-color', matchString)
-            //  drawHistogram(pub.strategy)
-                pub.histo = histo(pub.all)
+                colorMap(map,key)
             }
             if(newCoverage==10){
                 d3.select(this).attr("fill","#aaa")
@@ -628,11 +649,7 @@ function zoomToBounds(mapS){
     map.fitBounds(bounds,{padding:20},{bearing:0})
 }
 
-function filterMap(gids){
-  //  console.log(gids)
-  var filter = ['in',["get",'FIPS'],["literal",gids]];
-	map.setFilter("counties",filter)
-}
+
 //#### Version
 //Determine the current version of dc with `dc.version`
 d3.selectAll("#version").text(dc.version);
