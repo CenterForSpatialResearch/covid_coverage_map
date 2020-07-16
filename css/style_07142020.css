@@ -91,9 +91,10 @@ font-family: 'Raleway', sans-serif;
     padding:15px;
     background-color:rgba(255,255,255,1);
     position:absolute;
-    right:20px;
-    top:150px;
-    filter: drop-shadow(3px 3px 4px rgba(0,0,0,.1));
+    right:5px;
+    top:130px;
+    border-radius:5px;
+    filter: drop-shadow(1px 1px 4px rgba(0,0,0,.1));
 }
 #comparisonKey{
     z-index:99999;
@@ -108,6 +109,7 @@ font-family: 'Raleway', sans-serif;
     font-size:16px;
     font-weight:bold;
 }
+
 #currentState{
     color:#000000;
     line-height:150%;
@@ -139,6 +141,8 @@ font-family: 'Raleway', sans-serif;
     width:30%;
     padding-left:50px;
     padding-top:80px;
+    font-size:20px;
+    line-height:150%;
 }
 #FAQ{
     position:absolute;
@@ -149,19 +153,20 @@ font-family: 'Raleway', sans-serif;
 }
 .question{
     font-weight:800;
-    font-size:16px;
+    font-size:20px;
     padding-bottom:20px;
+    padding-top:20px;
 }
 .answer{
     padding-left:20px;
-    font-size:14px;
+    font-size:15px;
 }
 
 /* for charts and maps */
  #map{
 	 position:absolute;
 	 left:0px;
-     top:70px;
+     top:120px;
      width:100%;
      height:100%;
      z-index:-1;
@@ -181,11 +186,22 @@ font-family: 'Raleway', sans-serif;
  }
  #nav2{
      position:fixed;
-     right:0px;
-     top:65px;
+     left:250px;
+     top:120px;
      font-size:12px;
      text-align:right;
      padding:10px;
+ }
+ #placesMenu{
+     font-size:14px;
+     padding:20px;
+     margin:10px;
+     width:190px;
+     border-top:1px solid black;
+ }
+ .activeLink{
+     margin-left:20px;
+     display:inline-block;
  }
  #subtitle{
      top:50px;

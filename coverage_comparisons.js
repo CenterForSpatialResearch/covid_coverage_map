@@ -129,10 +129,10 @@ for(var c = 1; c<=8; c++){
  var measureSet = ["percentage_scenario_SVI_high_demand","percentage_scenario_SVI_pop","percentage_scenario_SVI_hotspot","percentage_scenario_hotspot","percentage_scenario_high_demand"]
  var measureDisplayText = {
      percentage_scenario_high_demand:"new cases",
-     percentage_scenario_SVI_high_demand:"SVI and new cases",
+     percentage_scenario_SVI_high_demand:"SVI + new cases",
      percentage_scenario_hotspot:"new cases per capita",
      percentage_scenario_SVI_pop:"SVI",
-     percentage_scenario_SVI_hotspot:"SVI and new cases per capita"
+     percentage_scenario_SVI_hotspot:"SVI + new cases per capita"
  }
 Promise.all([counties,aiannh,countyCentroids,allData,timeStamp])
 .then(function(data){
@@ -259,12 +259,12 @@ function combineGeojson(all,counties){
 
 function drawGrid(map,comparisonsSet){
     var drawn = []
-    var svg = d3.select("#comparisonGrid").append("svg").attr("width",250).attr("height",200)
-    var gridSize = 20
+    var svg = d3.select("#comparisonGrid").append("svg").attr("width",250).attr("height",260)
+    var gridSize = 18
     for(var i in measureSet){
         
-            var x = i*gridSize+140
-            var y = 90
+            var x = i*gridSize+160
+            var y = 130
         
                 svg.append("text")
                 .text(measureDisplayText[measureSet[i]])
@@ -278,7 +278,7 @@ function drawGrid(map,comparisonsSet){
                 .text(measureDisplayText[measureSet[j]])
                 .attr("x",i)
                 .attr("y",j*gridSize+gridSize/2)
-                .attr("transform","translate(120,100)")
+                .attr("transform","translate(140,140)")
                 .attr("text-anchor","end")
             }
             
@@ -298,7 +298,7 @@ function drawGrid(map,comparisonsSet){
                         .attr("y",gridSize*i)
                         .attr("id",key)
                         .attr("class","grid")
-                        .attr("transform","translate(130,100)")
+                        .attr("transform","translate(150,140)")
                         .attr("cursor","pointer")
                         .on("click",function(){
                             var id = d3.select(this).attr("id")
@@ -317,7 +317,7 @@ function drawGrid(map,comparisonsSet){
                         .attr("height",gridSize-6)
                         .attr("x",gridSize*j)
                         .attr("y",gridSize*i)
-                        .attr("transform","translate(130,100)")
+                        .attr("transform","translate(150,140)")
                         .attr("fill","none")
                         .attr("stroke","#ddd")
                     }
@@ -327,7 +327,7 @@ function drawGrid(map,comparisonsSet){
                         .attr("height",gridSize-6)
                         .attr("x",gridSize*j)
                         .attr("y",gridSize*i)
-                        .attr("transform","translate(130,100)")
+                        .attr("transform","translate(150,140)")
                         .attr("fill","none")
                         .attr("stroke","#ddd")
             }

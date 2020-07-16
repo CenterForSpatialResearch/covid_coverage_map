@@ -598,6 +598,8 @@ function drawMap(data,outline){
 //          trackUserLocation: true
 //          })
 //          );
+    map.addControl(new mapboxgl.NavigationControl(),'top-left');
+    map.dragRotate.disable();
          
          
          drawGrid(map,data) 
@@ -637,7 +639,7 @@ function drawMap(data,outline){
          strategyMenu(map)
          coverageMenu(map)
          //toggleLayers(map)
-        // placesMenus(map)
+         placesMenus(map)
          
         lineOpacity["property"]=pub.strategy+"_"+pub.coverage
         lineWeight["property"]=pub.strategy+"_"+pub.coverage
@@ -704,12 +706,17 @@ function drawMap(data,outline){
              var cases = feature["properties"]["Covid_cases"]             
              var countyId = feature["properties"]["FIPS"]
              var SVI = Math.round(feature["properties"]["SVI_county"]*100)/100
-           //  var columnsToShow = ["hotspotSVI_priority","hotspot_priority","SVI_priority","highDemand_priority"]             
+           //  var columnsToShow = ["hotspotSVI_priority","hotspot_priority","SVI_priority","highDemand_priority"]       
              
             var currentSelection = pub.strategy+"_"+pub.coverage
              
              
              var currentSelectionCoverage = Math.round(feature["properties"][currentSelection]*100)/100
+             
+             var chwAssigned = chwNeed*(feature["properties"][currentSelection]/100)
+             
+             
+             
              if(currentSelectionCoverage==-1){
              var displayString = "<span class=\"popupTitle\">"+countyName+"</span><br>"
                      +"Population: "+numberWithCommas(population)+"<br>"
@@ -720,7 +727,8 @@ function drawMap(data,outline){
                          +"Social Vulnerability Index: "+SVI+"<br>"
                          +"New cases in the past 14 days: "+cases+"<br>"
                          +"Total number of CHWs needed: "+chwNeed+"<br>"
-                         +"Percent of need unmet with current allocation options: "+(100-currentSelectionCoverage)+"% "
+                         +"Total number of CHWs allocated: "+chwAssigned+"<br>"
+                         +"Percent of need <u>unmet</u> with current allocation options: "+(100-currentSelectionCoverage)+"% "
                      
              }
              var needsMetString = currentSelectionCoverage+"% of needs met</strong>"
@@ -1133,7 +1141,7 @@ function formatSelected(item) {
 };
 function coverageMenu(map){
     var w = 250
-    var h = 200
+    var h = 140
     var svg = d3.select("#coverageMenu").append("svg").attr("width",w).attr("height",h)
     var startCoverage = pub.coverage.split("_")[3]
     var coverageDisplay = svg.append("text").text(startCoverage).style("font-size","70px").attr("x",40).attr("y",80)
@@ -1205,7 +1213,7 @@ function placesMenus(map){
         var id = places[i];
         var link = document.createElement('a');
         link.href = '#';
-        link.className = 'active';
+        link.className = 'activeLink';
         link.textContent = id.split("_").join(" ");
         link.id =id;
 
