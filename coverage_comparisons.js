@@ -113,7 +113,8 @@ var aiannh = d3.json("indian_reservations.geojson")
 var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity_07152020.csv")
 //var allData = d3.csv("https://media.githubusercontent.com/media/CenterForSpatialResearch/allocating_covid/master/Output/County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
 
-//var allData ="https://github.com/CenterForSpatialResearch/allocation_chw/blob/master/Output/County_level_coverage_for_all_policies_and_different_base_case_capacity.csv"
+var allData =d3.csv("https://raw.githubusercontent.com/CenterForSpatialResearch/allocation_chw/master/Output/County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
+var timeStamp = d3.csv("https://raw.githubusercontent.com/CenterForSpatialResearch/allocation_chw/master/Output/time_stamp.csv")
 //var prioritySet = ["priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot"]
 
 var coverageSet = []
@@ -133,9 +134,9 @@ for(var c = 1; c<=8; c++){
      percentage_scenario_SVI_pop:"SVI",
      percentage_scenario_SVI_hotspot:"SVI and new cases per capita"
  }
-Promise.all([counties,aiannh,countyCentroids,allData])
+Promise.all([counties,aiannh,countyCentroids,allData,timeStamp])
 .then(function(data){
-    ready(data[0],data[1],data[2],data[3])
+    ready(data[0],data[1],data[2],data[3],data[4])
 })
 
 var lineOpacity = {stops:[[0,1],[100,0.3]]}
@@ -153,7 +154,8 @@ var fillColor = {
 var centroids = null
 var latestDate = null
 
-function ready(counties,aiannh,centroids,modelData){
+function ready(counties,aiannh,centroids,modelData,timeStamp){
+    d3.select("#date").html(timeStamp["columns"][1])
     var processed = turnToDictFIPS(modelData,"County_FIPS")
     var comparisonsKeys = processed[1]
    // console.log(comparisonsKeys)

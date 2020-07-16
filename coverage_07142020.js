@@ -348,20 +348,9 @@ var usOutline = d3.json("simple_contiguous.geojson")
 //var normalizedPriority = d3.csv("priority_normalized_for_policies.csv")
 
 //var allData = d3.csv("County_level_coverage_for_all_policies_and_low_mid_high_base_case_capacity.csv")
-var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity_07152020.csv")
-//var allData = d3.csv("https://media.githubusercontent.com/media/CenterForSpatialResearch/allocating_covid/master/Output/County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")// var headers = ["County_FIPS","SVI_county","priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot",
-
-//var allData = d3.csv("https://media.githubusercontent.com/media/CenterForSpatialResearch/allocating_covid/master/Output/Census_tract_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
-// "percentage_scenario_high_demand_base_case_capacity_low","percentage_scenario_high_demand_base_case_capacity_mid",
-// "percentage_scenario_high_demand_base_case_capacity_high",
-// "percentage_scenario_SVI_hotspot_base_case_capacity_low","percentage_scenario_SVI_hotspot_base_case_capacity_mid",
-// "percentage_scenario_SVI_hotspot_base_case_capacity_high",
-// "percentage_scenario_SVI_pop_base_case_capacity_low",
-// "percentage_scenario_SVI_pop_base_case_capacity_mid",
-// "percentage_scenario_SVI_pop_base_case_capacity_high",
-// "percentage_scenario_hotspot_base_case_capacity_low",
-// "percentage_scenario_hotspot_base_case_capacity_mid",
-// "percentage_scenario_hotspot_base_case_capacity_high"]
+//var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity_07152020.csv")
+var allData =d3.csv("https://raw.githubusercontent.com/CenterForSpatialResearch/allocation_chw/master/Output/County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
+var timeStamp = d3.csv("https://raw.githubusercontent.com/CenterForSpatialResearch/allocation_chw/master/Output/time_stamp.csv")
 
 
 var prioritySet = ["priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot","priority_SVI_high_demand"]
@@ -402,9 +391,9 @@ var measureDisplayText = {
 }
 
 
-Promise.all([counties,usOutline,countyCentroids,allData])
+Promise.all([counties,usOutline,countyCentroids,allData,timeStamp])
 .then(function(data){
-    ready(data[0],data[1],data[2],data[3])
+    ready(data[0],data[1],data[2],data[3],data[4])
 })
 
 var lineOpacity = {stops:[[0,1],[100,0.3]]}
@@ -422,7 +411,8 @@ var fillColor = {
 var centroids = null
 var latestDate = null
 
-function ready(counties,outline,centroids,modelData){
+function ready(counties,outline,centroids,modelData,timeStamp){
+    d3.select("#date").html(timeStamp["columns"][1])
     //convert to geoid dict
     var dataByFIPS = turnToDictFIPS(modelData,"County_FIPS")
     
