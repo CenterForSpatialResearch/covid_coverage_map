@@ -145,7 +145,6 @@ function drawGrid(map,data){
             
      var bins = histo(data.features)
      pub.histo = bins
-   //
     
     var gridHeight = 200
     var gridWidth = 220
