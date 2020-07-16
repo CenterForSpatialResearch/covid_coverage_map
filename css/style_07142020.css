@@ -132,7 +132,7 @@ font-family: 'Raleway', sans-serif;
 }
 
 #about{
-    position:absolute;
+    position:fixed;
     top:80px;
     width:30%;
     padding:80px;
@@ -140,15 +140,17 @@ font-family: 'Raleway', sans-serif;
 #FAQ{
     position:absolute;
     top:80px;
-    left:40%;
-    width:30%;
+    left:35%;
+    width:45%;
     padding:80px;
 }
 .question{
     font-weight:800;
+    font-size:16px;
 }
 .answer{
     padding-left:20px;
+    font-size:14px;
 }
 
 /* for charts and maps */
