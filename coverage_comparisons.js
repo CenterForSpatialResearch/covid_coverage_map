@@ -509,6 +509,17 @@ function drawMap(data,comparisonsKeys){
              
              var x = event.clientX;     // Get the horizontal coordinate
              var y = event.clientY;             
+             
+             var x = event.clientX+20;     // Get the horizontal coordinate
+             var y = event.clientY+20;             
+             var w = window.innerWidth;
+             var h = window.innerHeight;
+             if(x+200>w){
+                 x = x-280
+             }
+             if(y+300>h){
+                 y= y-320
+             }
               d3.select("#mapPopup").style("visibility","visible")
               .style("left",x+"px")
               .style("top",(y+20)+"px") 
@@ -528,7 +539,7 @@ function drawMap(data,comparisonsKeys){
                  // displayString+=pk+": "+pv+"<br>"
                   chartData.push({axis:pk,value:pv})
               }
-             d3.select("#mapPopup").html(displayString+"<br><br> % of needs met under each policy: ".toUpperCase())
+             d3.select("#mapPopup").html(displayString+"<br><br> % of needs met for each policy: ".toUpperCase())
              drawChart(chartData)
          }       
          
