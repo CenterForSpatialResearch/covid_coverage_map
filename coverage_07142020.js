@@ -123,7 +123,8 @@ var histo = d3.histogram()
 var bins = histo(pub.all.features)
     return bins
 }
-function drawGrid(map,data){
+function drawGrid(map){
+    d3.select("#colorGrid svg").remove()
     var currentFilter = null
     
     var domainC = []
@@ -142,9 +143,9 @@ function drawGrid(map,data){
         .domain([1,10])
         .thresholds(9)
             
-    var bins = histo(data.features)
-    pub.histo = bins
-        
+    // var bins = histo(data.features)
+   //  pub.histo = bins
+   //
     
     var gridHeight = 200
     var gridWidth = 220
@@ -241,11 +242,23 @@ function drawGrid(map,data){
     colorGridSvg.append("text").text("less").attr("x",80).attr("y",180)
     colorGridSvg.append("text").text("more").attr("x",170).attr("y",180)
       
-    colorGridSvg.append("text").text("high").attr("x",40).attr("y",40).attr("text-anchor","end")
-    colorGridSvg.append("text").text("low").attr("x",40).attr("y",150).attr("text-anchor","end")
+    colorGridSvg.append("text").text("high").attr("x",50).attr("y",40).attr("text-anchor","end")
+    colorGridSvg.append("text").text("low").attr("x",50).attr("y",150).attr("text-anchor","end")
      
-    colorGridSvg.append("text").text("PRIORITY").attr("x",10).attr("y",120).style("font-size","12px")
-        .attr("transform","rotate(-90 10,120)").style("font-weight","bold")
+      var measureDisplayTextShort = {
+          percentage_scenario_high_demand:"new cases",
+          percentage_scenario_SVI_high_demand:"SVI*new cases",
+          percentage_scenario_hotspot:"new cases/pop",
+          percentage_scenario_SVI_pop:"SVI*pop",
+          percentage_scenario_SVI_hotspot:"SVI*(new cases/pop)"
+      }
+     
+    colorGridSvg.append("text").text(measureDisplayTextShort[pub.strategy].toUpperCase()).attr("x",10).attr("y",100).style("font-size","12px")
+        .attr("transform","rotate(-90 10,100)").style("font-weight","bold")
+          .attr("text-anchor","middle")
+    colorGridSvg.append("text").text("PRIORITY SCORE").attr("x",25).attr("y",100).style("font-size","12px")
+        .attr("transform","rotate(-90 25,100)").style("font-weight","bold")
+          .attr("text-anchor","middle")
       
       
     var degree = ["low","med","high"]
@@ -373,13 +386,19 @@ for(var c = 1; c<=8; c++){
 
 
 
-var measureSet = ["percentage_scenario_SVI_high_demand","percentage_scenario_SVI_pop","percentage_scenario_SVI_hotspot","percentage_scenario_hotspot","percentage_scenario_high_demand"]
+var measureSet = [
+    "percentage_scenario_SVI_pop",
+"percentage_scenario_SVI_high_demand",
+"percentage_scenario_SVI_hotspot",
+"percentage_scenario_high_demand",
+"percentage_scenario_hotspot"
+]
 var measureDisplayText = {
-    percentage_scenario_high_demand:"only new cases within the last 14 days",
-    percentage_scenario_SVI_high_demand:"socially vulnerable population and new cases within the last 14 days",
-    percentage_scenario_hotspot:"new cases within the last 14 days as a percent of population",
-    percentage_scenario_SVI_pop:"large socially vulnerable populations",
-    percentage_scenario_SVI_hotspot:"large socially vulnerable populations and cases as a percent of population"
+    percentage_scenario_high_demand:"New cases within the last 14 days",
+    percentage_scenario_SVI_high_demand:"Socially vulnerable populations and new cases within the last 14 days",
+    percentage_scenario_hotspot:"New cases within the last 14 days as % of population",
+    percentage_scenario_SVI_pop:"Socially vulnerable populations",
+    percentage_scenario_SVI_hotspot:"Socially vulnerable populations and new cases within the last 14 days as % of population"
 }
 
 
@@ -591,7 +610,8 @@ function drawMap(data,outline){
 //          })
 //          );
          
-         drawGrid(map,data) 
+         
+         drawGrid(map) 
          //map.setLayoutProperty("mapbox-satellite", 'visibility', 'none');
          
          map.addSource("counties",{
@@ -621,7 +641,9 @@ function drawMap(data,outline){
              'filter': ['==', '$type', 'Polygon']
          },"county_outline");
          
-         console.log(map.getStyle().layers)        
+         var filter = ["!=","percentage_scenario_SVI_hotspot_base_case_capacity_30",-1]
+         map.setFilter("counties",filter)
+        // console.log(map.getStyle().layers)        
          zoomToBounds(map)
          strategyMenu(map)
          coverageMenu(map)
@@ -665,17 +687,26 @@ function drawMap(data,outline){
      map.on('mousemove', 'counties', function(e) {
          var feature = e.features[0]
          
-         console.log(feature["properties"])
+       //  console.log(feature["properties"])
          //console.log(feature)
          map.getCanvas().style.cursor = 'pointer'; 
         // console.log(feature)
          if(feature["properties"].FIPS!=undefined){
              
-             var x = event.clientX;     // Get the horizontal coordinate
-             var y = event.clientY;             
+             var x = event.clientX+20;     // Get the horizontal coordinate
+             var y = event.clientY+20;             
+             var w = window.innerWidth;
+             var h = window.innerHeight;
+             if(x+200>w){
+                 x = x-280
+             }
+             if(y+300>h){
+                 y= y-320
+             }
+             
               d3.select("#mapPopup").style("visibility","visible")
               .style("left",x+"px")
-              .style("top",(y+20)+"px") 
+              .style("top",y+"px") 
              
              var countyName = feature["properties"]["county"]+" County, "+feature["properties"]["stateAbbr"]
              var population = feature["properties"]["totalPopulation"]
@@ -697,12 +728,10 @@ function drawMap(data,outline){
              }else{
                  var displayString = "<span class=\"popupTitle\">"+countyName+"</span><br>"
                          +"Population: "+numberWithCommas(population)+"<br>"
-                         +"SVI: "+SVI+"<br><strong>"
-                         +"Total number of new cases in the past 14 days: "+cases+"<br>"
-                         + "Total Contact Tracer Need: "+chwNeed+"<br>"
-                         +" Prioritizing "+measureDisplayText[pub.strategy]+", and allocating "+pub.coverage.split("_")[3]
-                         +" CT per 100,000 for "+feature["properties"]["state"]
-                         +" would leave "+(100-currentSelectionCoverage)+"% of the estimated total demand for contact tracers unmet."
+                         +"Social Vulnerability Index: "+SVI+"<br>"
+                         +"New cases in the past 14 days: "+cases+"<br>"
+                         +"Total number of CHWs needed: "+chwNeed+"<br>"
+                         +"Percent of need unmet with current allocation options: "+(100-currentSelectionCoverage)+"% "
                      
              }
              var needsMetString = currentSelectionCoverage+"% of needs met</strong>"
@@ -717,12 +746,12 @@ function drawMap(data,outline){
              d3.select("#popLabel").html(displayString)
              
             // var coords = feature.geometry.coordinates[0][0]
-             var coords = pub.centroids[feature.properties["FIPS"]]
-             var formattedCoords =coords// {lat:coords[1],lng:coords[0]}
-
-             while (Math.abs(e.lngLat.lng - formattedCoords[0]) > 180) {
-                 formattedCoords[0] += e.lngLat.lng > formattedCoords[0] ? 360 : -360;
-             }
+              var coords = pub.centroids[feature.properties["FIPS"]]
+              var formattedCoords =coords// {lat:coords[1],lng:coords[0]}
+     //
+     //         while (Math.abs(e.lngLat.lng - formattedCoords[0]) > 180) {
+     //             formattedCoords[0] += e.lngLat.lng > formattedCoords[0] ? 360 : -360;
+     //         }
 
 /*
              popup
@@ -1053,17 +1082,6 @@ function drawKey(demandType){
 function strategyMenu(map){
 
  
-    
-    d3.select("#strategiesSelectecLabel").html(measureDisplayText[pub.strategy])
-    
-    d3.select("#strategiesSelected")
-    .on("click",function(){
-        d3.select("#strategiesMenu").style("visibility","visible")
-        onMenu= true
-        onMenuItem = true
-        onLabel = true
-    })
-    
      for (var i = 0; i < measureSet.length; i++) {
          var id = measureSet[i];
          var displayText = measureDisplayText[id]
@@ -1086,6 +1104,7 @@ function strategyMenu(map){
         row.on("click",function(){
             var clickedId = d3.select(this).attr("id")
             pub.strategy = clickedId
+            drawGrid(map)
             if(pub.coverage==undefined){
                  pub.coverage = "show_all"
                  d3.select(".show_all_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
