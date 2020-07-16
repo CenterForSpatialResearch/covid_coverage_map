@@ -411,7 +411,7 @@ var centroids = null
 var latestDate = null
 
 function ready(counties,outline,centroids,modelData,timeStamp){
-    d3.select("#date").html(timeStamp["columns"][1])
+    d3.select("#date").html("Model run as of "+timeStamp["columns"][1])
     //convert to geoid dict
     var dataByFIPS = turnToDictFIPS(modelData,"County_FIPS")
     

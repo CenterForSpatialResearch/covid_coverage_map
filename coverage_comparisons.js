@@ -155,7 +155,7 @@ var centroids = null
 var latestDate = null
 
 function ready(counties,aiannh,centroids,modelData,timeStamp){
-    d3.select("#date").html(timeStamp["columns"][1])
+    d3.select("#date").html("Model run as of "+timeStamp["columns"][1])
     var processed = turnToDictFIPS(modelData,"County_FIPS")
     var comparisonsKeys = processed[1]
    // console.log(comparisonsKeys)
@@ -429,7 +429,8 @@ function drawMap(data,comparisonsKeys){
         center:[-100,37],
          zoom: 3.5,
          preserveDrawingBuffer: true,
-        minZoom:3.5//,
+        minZoom:3.5,
+        maxZoom:10//,
        // maxBounds: bounds    
      });
      
