@@ -135,33 +135,6 @@ font-family: 'Raleway', sans-serif;
    margin-top:5px;
 }
 
-#about{
-    position:fixed;
-    top:80px;
-    width:30%;
-    padding-left:50px;
-    padding-top:80px;
-    font-size:20px;
-    line-height:150%;
-}
-#FAQ{
-    position:absolute;
-    top:80px;
-    left:35%;
-    width:45%;
-    padding:80px;
-}
-.question{
-    font-weight:800;
-    font-size:20px;
-    padding-bottom:20px;
-    padding-top:20px;
-}
-.answer{
-    padding-left:20px;
-    font-size:15px;
-}
-
 /* for charts and maps */
  #map{
 	 position:absolute;
