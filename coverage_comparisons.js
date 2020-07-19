@@ -346,7 +346,7 @@ function drawKey(key){
     var k2 = key.split("XXX")[1]//.replace("_base_case_capacity_"+currentCapacity,"")
    // console.log([k1,k2])
     var svg = d3.select("#comparisonKey").append("svg")
-        .attr("width",750).attr('height',80)
+        .attr("width",750).attr('height',120)
     var defs = svg.append("defs");
     var gradient = defs.append("linearGradient")
        .attr("id", "svgGradient")
@@ -394,6 +394,10 @@ function drawKey(key){
     .attr("fill","url(#svgGradient)")
        .attr("stroke","rgba(0,0,0,.5)")
        .attr("stroke-width",.1)
+    
+    
+svg.append("rect").attr("width",20).attr("height",20).attr("x",20).attr("y",90).attr("fill","#ddd")
+svg.append("text").attr("x",45).attr("y",103).text("Counties with no recorded cases")
     
     
 }
