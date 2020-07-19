@@ -176,6 +176,8 @@ function drawGrid(map,data){
 colorGridSvg.append("rect").attr("width",gridSize/2).attr("height",gridSize/2).attr("x",10).attr("y",230).attr("fill","#ddd")
 colorGridSvg.append("text").attr("x",35).attr("y",244).text("Counties with no recorded cases")
         
+        var clicked = false
+        
     colorGridSvg
         .selectAll(".grid")
         .data(colorGroups)
@@ -220,12 +222,22 @@ colorGridSvg.append("text").attr("x",35).attr("y",244).text("Counties with no re
             var gP = ["low","med","high"][Math.floor((i)/3)]
             var gC = ["low","med","high"][i%3]
             d3.select("#gridHover").html(pub.histo[i].length+ " counties have "+ gP+" priority and "+gC+" unmet need")
+         //   console.log("over")
         })
         .on("mouseout",function(d,i){
             //var filter = ["!=",pub.strategy+"_"+pub.coverage+"_group","blahblah"]
-            map.setFilter("counties",currentFilter)
                 d3.selectAll(".gridCell").attr("opacity",1)
-             d3.select("#gridHover").style("visibility","hidden")
+                 d3.select("#gridHover").style("visibility","hidden")
+            
+            if(clicked == false){
+                currentFilter = null
+                map.setFilter("counties",currentFilter)
+              //  console.log("clicked is flase,out ")
+            }else{
+                map.setFilter("counties",currentFilter)
+              //  console.log("clicked is true,out ")
+            }
+           
             
         })
         .on("click",function(d,i){
@@ -236,12 +248,20 @@ colorGridSvg.append("text").attr("x",35).attr("y",244).text("Counties with no re
                 d3.select(this).attr("stroke","none")
                 currentFilter = null
                 map.setFilter("counties",currentFilter)
+                clicked = false
+               // console.log(clicked)
+              //  console.log(currentFilter)
                 
             }else{
                 map.setFilter("counties",filter)
                 currentFilter = filter
                 d3.selectAll(".gridCell").attr("stroke","none")
                 d3.select(this).attr("stroke","#000")
+                clicked = true
+              //  console.log(clicked)
+              //  console.log(currentFilter)
+                
+                
             }
         })
   // colorGridSvg
@@ -309,9 +329,14 @@ colorGridSvg.append("text").attr("x",35).attr("y",244).text("Counties with no re
           })
           .on("mouseout",function(d,i){
               d3.selectAll(".gridCell").attr("opacity",1)
-              
-              var filter = ["!=",pub.strategy+"_"+pub.coverage+"_group","blahblah"]
-              map.setFilter("counties",filter)
+              if(clicked == false){
+                  var filter = null
+                  map.setFilter("counties",filter)
+              }else{
+                  map.setFilter("counties",currentFilter)
+                  
+              }
+             
               
           })
 
@@ -341,9 +366,14 @@ colorGridSvg.append("text").attr("x",35).attr("y",244).text("Counties with no re
           
       })
       .on("mouseout",function(d,i){
-              d3.selectAll(".gridCell").attr("opacity",1)
-          var filter = ["!=",pub.strategy+"_"+pub.coverage+"_group","blahblah"]
-          map.setFilter("counties",filter)
+          d3.selectAll(".gridCell").attr("opacity",1)
+          if(clicked == false){
+              var filter = null
+              map.setFilter("counties",filter)
+          }else{
+              map.setFilter("counties",currentFilter)
+              
+          }
           
       })
 }
@@ -678,7 +708,7 @@ function drawMap(data,outline){
          
          var filter = ["!=","percentage_scenario_SVI_hotspot_base_case_capacity_30",-1]
          map.setFilter("counties",filter)
-         console.log(map.getStyle().layers)        
+    //     console.log(map.getStyle().layers)        
          zoomToBounds(map)
          strategyMenu(map,data)
          coverageMenu(map)
@@ -1274,7 +1304,7 @@ function zoomToBounds(mapS){
 }
 function PopulateDropDownList(features,map) {
            //Build an array containing Customer records.
-    console.log(features)
+    //console.log(features)
     var sorted =features.sort(function(a,b){
         return parseInt(a.properties.GEOID) - parseInt(b.properties.GEOID);
         
@@ -1309,9 +1339,7 @@ function PopulateDropDownList(features,map) {
                });
             })
 }
-function gotoState(state){
-    console.log(state)
-}
+
 function placesMenus(map){
     PopulateDropDownList(pub.states.features,map)
    // var places = ["Contiguous 48","Alaska","Hawaii","Puerto_Rico"]
