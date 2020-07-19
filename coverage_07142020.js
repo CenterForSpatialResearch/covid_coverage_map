@@ -813,7 +813,7 @@ function drawMap(data,outline){
          
          map.on("mouseleave",'counties',function(){
              d3.select("#mapPopup").style("visibility","hidden")
-
+             
          })  
          
          

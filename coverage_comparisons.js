@@ -240,7 +240,8 @@ function combineGeojson(all,counties){
         var data = all[countyFIPS]
        // console.log(data)
         
-        //for now PR is undefined
+        counties.features[c]["id"]=countyFIPS
+        
         if(data!=undefined){            
             var keys = Object.keys(data)
             for(var k in keys){
@@ -449,7 +450,18 @@ function drawMap(data,comparisonsKeys){
              'source': 'counties',
              'paint': {
                  'line-color':"#000",
-                 'line-opacity':.1
+                 'line-opacity':[
+                    'case',
+                    ['boolean', ['feature-state', 'hover'], false],
+                    1,
+                    .05
+                 ],
+                 'line-width':[
+                    'case',
+                    ['boolean', ['feature-state', 'hover'], false],
+                    2,
+                    1
+                 ]
              },
              'filter': ['==', '$type', 'Polygon']
          },"ST-OUTLINE");
@@ -509,6 +521,19 @@ function drawMap(data,comparisonsKeys){
          var feature = e.features[0]
          map.getCanvas().style.cursor = 'pointer'; 
          if(feature["properties"].FIPS!=undefined){
+             
+             if (hoveredStateId) {
+             map.setFeatureState(
+             { source: 'counties', id: hoveredStateId },
+             { hover: false }
+             );
+             }
+             hoveredStateId = e.features[0].id;
+             map.setFeatureState(
+             { source: 'counties', id: hoveredStateId },
+             { hover: true }
+             );
+             
              
              var x = event.clientX;     // Get the horizontal coordinate
              var y = event.clientY;             
