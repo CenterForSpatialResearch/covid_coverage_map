@@ -788,6 +788,8 @@ function drawMap(data,outline){
                                  animate: false
                              })
                      firstMove=false
+d3.select("#popMap").selectAll(".mapboxgl-control-container").remove()
+                             
          }else{
                     
              detailMap.fitBounds(bounds, {
