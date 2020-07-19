@@ -416,6 +416,7 @@ Promise.all([counties,usOutline,countyCentroids,allData,timeStamp])
 .then(function(data){
     ready(data[0],data[1],data[2],data[3],data[4])
 })
+var hoveredStateId = null;
 
 var lineOpacity = {stops:[[0,1],[100,0.3]]}
 var lineWeight = {stops:[[-1,0],[-0.01,0],[0,2],[99,.5],[100,0]]}
@@ -540,7 +541,7 @@ function combineGeojson(all,counties){
         var countyFIPS = counties.features[c].properties.FIPS
         var data = all[countyFIPS]
        // console.log(data)
-        
+        counties.features[c]["id"]=countyFIPS
         //for now PR is undefined
         if(data!=undefined){            
             var keys = Object.keys(data)
@@ -638,9 +639,21 @@ function drawMap(data,outline){
              'type': 'line',
              'source': 'counties',
              'paint': {
-                 'line-color':"#000",
-                 'line-opacity':.05
+                 //'line-color':"#000",
+                 'line-opacity':[
+                    'case',
+                    ['boolean', ['feature-state', 'hover'], false],
+                    1,
+                    .05
+                 ],
+                 'line-width':[
+                    'case',
+                    ['boolean', ['feature-state', 'hover'], false],
+                    2,
+                    1
+                 ]
              },
+             
              'filter': ['==', '$type', 'Polygon']
          },"ST-OUTLINE");
                   
@@ -654,6 +667,7 @@ function drawMap(data,outline){
              },
              'filter': ['==', '$type', 'Polygon']
          },"county_outline");
+        // },"county_outline");
          
          var filter = ["!=","percentage_scenario_SVI_hotspot_base_case_capacity_30",-1]
          map.setFilter("counties",filter)
@@ -697,7 +711,8 @@ function drawMap(data,outline){
      var firstMove = true
          d3.select("#mapPopup").append("div").attr("id","popLabel")//.style("width","200px").style("height","200px")//.style('background-color',"red")
          d3.select("#mapPopup").append("div").attr("id","popMap")//.style("width","200px").style("height","400px")//.style('background-color',"red")
-         
+   
+    
      map.on('mousemove', 'counties', function(e) {
          var feature = e.features[0]
          
@@ -706,6 +721,20 @@ function drawMap(data,outline){
          map.getCanvas().style.cursor = 'pointer'; 
         // console.log(feature)
          if(feature["properties"].FIPS!=undefined){
+             
+             
+             if (hoveredStateId) {
+             map.setFeatureState(
+             { source: 'counties', id: hoveredStateId },
+             { hover: false }
+             );
+             }
+             hoveredStateId = e.features[0].id;
+             map.setFeatureState(
+             { source: 'counties', id: hoveredStateId },
+             { hover: true }
+             );
+             
              
              var x = event.clientX+20;     // Get the horizontal coordinate
              var y = event.clientY+20;             
