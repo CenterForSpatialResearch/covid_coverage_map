@@ -1103,7 +1103,8 @@ function drawKey(demandType){
 
 function strategyMenu(map,data){
 
- 
+ var clickedId
+    
      for (var i = 0; i < measureSet.length; i++) {
          var id = measureSet[i];
          var displayText = measureDisplayText[id]
@@ -1115,16 +1116,23 @@ function strategyMenu(map,data){
                 .on('mouseout',function(){onLabel=false})   
          
           row.on("mouseover",function(){
-              d3.select(this).style("background-color",bghighlightColor)
+              var outId = d3.select(this).attr("class").split(" ")[0].replace("_radialMenuS","")
+              if(outId!=clickedId){
+    
+              d3.select(this).select(".labelS").style("background-color",bghighlightColor)
+              }
               onMenuItem=true
           })
           row.on("mouseout",function(){
-              d3.select(this).style("background-color","rgba(0,0,0,0)")
+              var outId = d3.select(this).attr("class").split(" ")[0].replace("_radialMenuS","")
+              if(outId!=clickedId){
+                  d3.select(this).select(".labelS").style("background-color","rgba(0,0,0,0)")
+              }
                   onMenuItem=false
           })
          
         row.on("click",function(){
-            var clickedId = d3.select(this).attr("id")
+            clickedId = d3.select(this).attr("id")
             pub.strategy = clickedId
             drawGrid(map,data)
             if(pub.coverage==undefined){
@@ -1134,7 +1142,7 @@ function strategyMenu(map,data){
              }
              
             
-            d3.selectAll(".radialS").style("background-color","white").style("border","1px solid black")
+            //d3.selectAll(".radialS").style("background-color","white").style("border","1px solid black")
             d3.selectAll(".labelS").style("background-color","white").style("color","#000")
             
             d3.selectAll("."+clickedId).style("color","#fff").style("background-color","#000")
