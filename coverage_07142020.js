@@ -107,7 +107,26 @@ for(var g =0; g<colorGroups.length; g++){
     groupColorDict.push(colorGroups[g])
 }
 groupColorDict.push("#eee")
+function loader(){
+    function myFunction() {
+      var myVar = setTimeout(showPage, 1000);
+    }
 
+    function showPage() {
+      $("#loader_sec").css("display","none");
+      $("#bodyloader").css("display","block");
+    }
+    
+    if(!localStorage.getItem("visted")){
+        console.log("first")
+       myFunction();
+       localStorage.setItem("visted",true);
+    }else{
+        console.log("not first")
+        
+    }
+
+}
 function histo(){
 var histo = d3.histogram()
     .value(function(d){
@@ -146,12 +165,15 @@ function drawGrid(map,data){
      var bins = histo(data.features)
      pub.histo = bins
     
-    var gridHeight = 200
+    var gridHeight = 250
     var gridWidth = 220
     var colorGridSvg = d3.select("#colorGrid").append("svg").attr("width",gridWidth).attr("height",gridHeight)
     var gridSize = 40
         
     var rScale = d3.scaleLinear().domain([0,800]).range([10,gridSize-5])
+        
+colorGridSvg.append("rect").attr("width",gridSize/2).attr("height",gridSize/2).attr("x",10).attr("y",230).attr("fill","#ddd")
+colorGridSvg.append("text").attr("x",35).attr("y",244).text("Counties with no recorded cases")
         
     colorGridSvg
         .selectAll(".grid")
@@ -411,7 +433,8 @@ var centroids = null
 var latestDate = null
 
 function ready(counties,outline,centroids,modelData,timeStamp){
-    d3.select("#date").html("Model run as of "+timeStamp["columns"][1])
+   loader()
+     d3.select("#date").html("Model run as of "+timeStamp["columns"][1])
     //convert to geoid dict
     var dataByFIPS = turnToDictFIPS(modelData,"County_FIPS")
     
@@ -713,7 +736,7 @@ function drawMap(data,outline){
              
              var currentSelectionCoverage = Math.round(feature["properties"][currentSelection]*100)/100
              
-             var chwAssigned = chwNeed*(feature["properties"][currentSelection]/100)
+             var chwAssigned = Math.round(chwNeed*(feature["properties"][currentSelection]/100))
              
              
              
