@@ -490,6 +490,8 @@ var bounds = [[-130, 26],
          colorMap(map,pub.pair)
          d3.select("#"+pub.pair).attr("fill","gold")
          drawKey(pub.pair)
+         
+         
          //var color = {property:"priority_high_demand",stops:[[-1,0],[0,1]]}
          
          //map.setPaintProperty("counties","fill-opacity",{property:"percentage_scenario_hotspot_base_case_capacity_30",stops:[[-1,0],[0,1]]})
@@ -694,7 +696,89 @@ function zoomToBounds(mapS){
         [-50, 49.500739]);
     map.fitBounds(bounds,{padding:20},{bearing:0})
 }
+function getMaxMin(coords){
+    var maxLat = -999
+    var minLat = 0
+    var maxLng = 0
+    var minLng = 999
+    for(var i in coords){
+        var coord = coords[i]
+        if(coord<0){
+            if(coord<minLat){
+                minLat = coord
+            }else if(coord>maxLat){
+                maxLat = coord
+            }
+        }else{
+            if(coord>maxLng){
+                maxLng = coord
+            }else if(coord<minLng){
+                minLng = coord
+            }
+        }
+    }
+    var bounds = [
+    [minLat,minLng], // Southwest coordinates
+    [maxLat, maxLng] // Northeast coordinates
+    ];
+    return bounds
+    
+   // console.log([minLat,maxLat,minLng,maxLng])
+}
+function flatDeep(arr, d = 1) {
+   return d > 0 ? arr.reduce((acc, val) => acc.concat(Array.isArray(val) ? flatDeep(val, d - 1) : val), [])
+                : arr.slice();
+};
+function PopulateDropDownList(features,map) {
+           //Build an array containing Customer records.
+    console.log(features)
+    var sorted =features.sort(function(a,b){
+        return parseInt(a.properties.GEOID) - parseInt(b.properties["GEOID"]);
+        
+    })          
+    var ddlCustomers = document.getElementById("ddlCustomers");
+ 
+    var option = document.createElement("OPTION");
+    option.innerHTML = "Contiguous 48"
+    option.value = "-93,37,4";
+    ddlCustomers.options.add(option);
+    //Add the Options to the DropDownList.
+    var boundsDict = {}
+    
+    for (var i = 0; i < sorted .length; i++) {
+        var option = document.createElement("OPTION");
 
+        //Set Customer Name in Text part.
+        option.innerHTML = sorted[i].properties.NAME;
+        
+        var coordinates = flatDeep(features[i].geometry.coordinates,Infinity)
+        //console.log(coordinates)
+       boundsDict[sorted[i].properties.GEOID]=getMaxMin(coordinates)
+        //Set CustomerId in Value part.
+        option.value = sorted[i].properties["GEOID"]
+        //Add the Option element to DropDownList.
+        if(sorted[i].properties.NAME!="United States Virgin Islands"&& sorted[i].properties.NAME!="American Samoa"&& sorted[i].properties.NAME!="Commonwealth of the Northern Mariana Islands"&& sorted[i].properties.NAME!="Guam"){
+          ddlCustomers.options.add(option);
+      }
+    }
+    console.log(boundsDict)
+   $('select').on("change",function(){
+       if(this.innerHTML=="Contiguous 48"){
+           map.flyTo({
+               zoom:4,
+               center: [-93,37],
+               speed: 0.8, // make the flying slow
+               curve: 1
+               //essential: true // this animation is considered essential with respect to prefers-reduced-motion
+           });
+       }else{
+           var coords = boundsDict[this.value]
+           console.log(coords)
+           var bounds =  new mapboxgl.LngLatBounds(coords);
+           map.fitBounds(bounds,{padding:20},{bearing:0})
+       }
+    })
+}
 
 //#### Version
 //Determine the current version of dc with `dc.version`

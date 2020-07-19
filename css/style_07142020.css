@@ -87,7 +87,7 @@ font-family: 'Hammersmith One', sans-serif;}
     height:280px;
     padding:15px;
     background-color:rgba(255,255,255,1);
-    position:absolute;
+     position:fixed;
     right:5px;
     top:130px;
     border-radius:0px;
@@ -134,7 +134,7 @@ font-family: 'Hammersmith One', sans-serif;}
 
 /* for charts and maps */
  #map{
-	 position:absolute;
+	 position:fixed;
 	 left:0px;
      top:120px;
      width:100%;
@@ -144,15 +144,13 @@ font-family: 'Hammersmith One', sans-serif;}
  }
  #nav{
      width:250px;
-     position:fixed;
+     position:absolute;
      left:0px;
      top:120px;
      margin-top:0px;
      background:rgba(255,255,255,1);
-     height:100%;
-     overflow:auto;
      border-right:1px solid black;
-     
+     padding-bottom:200px;
  }
  #nav2{
      position:fixed;
