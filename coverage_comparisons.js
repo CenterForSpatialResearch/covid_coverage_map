@@ -425,7 +425,10 @@ function drawMap(data,comparisonsKeys){
  ];
 var bounds = [[-130, 26], 
      [-40, 50]
- ]
+ ] 
+ 
+ d3.select("#map").style("width",window.innerWidth-250+"px")
+          .style("height",window.innerHeight-120+"px")
  map = new mapboxgl.Map({
       container: 'map',
     // style:"mapbox://styles/c4sr-gsapp/ckcl1av4c083d1irpftb75l6j",//dare

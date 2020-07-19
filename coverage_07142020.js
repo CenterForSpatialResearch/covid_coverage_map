@@ -403,7 +403,7 @@ var usOutline = d3.json("simple_contiguous.geojson")
 //var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity_07152020.csv")
 var allData =d3.csv("https://raw.githubusercontent.com/CenterForSpatialResearch/allocation_chw/master/Output/County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
 var timeStamp = d3.csv("https://raw.githubusercontent.com/CenterForSpatialResearch/allocation_chw/master/Output/time_stamp.csv")
-var states = d3.json("state_centroids_ST.geojson")
+var states = d3.json("simplestates.geojson")
 
 var prioritySet = ["priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot","priority_SVI_high_demand"]
 //var coverageSet = ["base_case_capacity_low","base_case_capacity_mid","base_case_capacity_high","show_all"]
@@ -623,6 +623,8 @@ function drawReservations(data,map){
 }
 
 function drawMap(data,outline){
+    d3.select("#map").style("width",window.innerWidth-250+"px")
+          .style("height",window.innerHeight-120+"px")
 	mapboxgl.accessToken = 'pk.eyJ1Ijoic2lkbCIsImEiOiJkOGM1ZDc0ZTc5NGY0ZGM4MmNkNWIyMmIzNDBkMmZkNiJ9.Qn36nbIqgMc4V0KEhb4iEw';    
 //    mapboxgl.accessToken = "pk.eyJ1IjoiYzRzci1nc2FwcCIsImEiOiJja2J0ajRtNzMwOHBnMnNvNnM3Ymw5MnJzIn0.fsTNczOFZG8Ik3EtO9LdNQ"//new account
     var maxBounds = [
@@ -658,6 +660,14 @@ function drawMap(data,outline){
 //          trackUserLocation: true
 //          })
 //          );
+
+
+var geocoder = new MapboxGeocoder({
+accessToken: mapboxgl.accessToken,
+mapboxgl: mapboxgl
+});
+//document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
+
     map.addControl(new mapboxgl.NavigationControl(),'top-left');
     map.dragRotate.disable();
          
@@ -1302,82 +1312,129 @@ function zoomToBounds(mapS){
         [-50, 49.500739]);
     map.fitBounds(bounds,{padding:20},{bearing:0})
 }
+
+function getMaxMin(coords){
+    var maxLat = -999
+    var minLat = 0
+    var maxLng = 0
+    var minLng = 999
+    for(var i in coords){
+        var coord = coords[i]
+        if(coord<0){
+            if(coord<minLat){
+                minLat = coord
+            }else if(coord>maxLat){
+                maxLat = coord
+            }
+        }else{
+            if(coord>maxLng){
+                maxLng = coord
+            }else if(coord<minLng){
+                minLng = coord
+            }
+        }
+    }
+    var bounds = [
+    [minLat,minLng], // Southwest coordinates
+    [maxLat, maxLng] // Northeast coordinates
+    ];
+    return bounds
+    
+   // console.log([minLat,maxLat,minLng,maxLng])
+}
+function flatDeep(arr, d = 1) {
+   return d > 0 ? arr.reduce((acc, val) => acc.concat(Array.isArray(val) ? flatDeep(val, d - 1) : val), [])
+                : arr.slice();
+};
 function PopulateDropDownList(features,map) {
            //Build an array containing Customer records.
-    //console.log(features)
+    console.log(features)
     var sorted =features.sort(function(a,b){
-        return parseInt(a.properties.GEOID) - parseInt(b.properties.GEOID);
+        return parseInt(a.properties.GEOID) - parseInt(b.properties["GEOID"]);
         
     })          
-            var ddlCustomers = document.getElementById("ddlCustomers");
-         
-            //Add the Options to the DropDownList.
-            for (var i = 0; i < sorted .length; i++) {
-                var option = document.createElement("OPTION");
+    var ddlCustomers = document.getElementById("ddlCustomers");
  
-                //Set Customer Name in Text part.
-                option.innerHTML = sorted[i].properties.NAME;
- 
-                //Set CustomerId in Value part.
-                option.value = features[i].geometry.coordinates;
- 
-                //Add the Option element to DropDownList.
-              if(sorted[i].properties.NAME!="United States Virgin Islands"&& sorted[i].properties.NAME!="American Samoa"&& sorted[i].properties.NAME!="Commonwealth of the Northern Mariana Islands"&& sorted[i].properties.NAME!="Guam"){
-                  ddlCustomers.options.add(option);
-              }
-            }
-            
-           $('select').on("change",function(){
-               var coords = this.value.split(",")
-               console.log(coords)
-               map.flyTo({
-                   zoom:6,
-               center: [parseFloat(coords[0]),parseFloat(coords[1]) ],
+    var option = document.createElement("OPTION");
+    option.innerHTML = "Contiguous 48"
+    option.value = "-93,37,4";
+    ddlCustomers.options.add(option);
+    //Add the Options to the DropDownList.
+    var boundsDict = {}
+    
+    for (var i = 0; i < sorted .length; i++) {
+        var option = document.createElement("OPTION");
+
+        //Set Customer Name in Text part.
+        option.innerHTML = sorted[i].properties.NAME;
+        
+        var coordinates = flatDeep(features[i].geometry.coordinates,Infinity)
+        //console.log(coordinates)
+       boundsDict[sorted[i].properties.GEOID]=getMaxMin(coordinates)
+        //Set CustomerId in Value part.
+        option.value = sorted[i].properties["GEOID"]
+        //Add the Option element to DropDownList.
+        if(sorted[i].properties.NAME!="United States Virgin Islands"&& sorted[i].properties.NAME!="American Samoa"&& sorted[i].properties.NAME!="Commonwealth of the Northern Mariana Islands"&& sorted[i].properties.NAME!="Guam"){
+          ddlCustomers.options.add(option);
+      }
+    }
+    console.log(boundsDict)
+   $('select').on("change",function(){
+       if(this.innerHTML=="Contiguous 48"){
+           map.flyTo({
+               zoom:4,
+               center: [-93,37],
                speed: 0.8, // make the flying slow
                curve: 1
                //essential: true // this animation is considered essential with respect to prefers-reduced-motion
-               });
-            })
+           });
+       }else{
+           var coords = boundsDict[this.value]
+           console.log(coords)
+           var bounds =  new mapboxgl.LngLatBounds(coords);
+           map.fitBounds(bounds,{padding:20},{bearing:0})
+       }
+    })
 }
 
 function placesMenus(map){
     PopulateDropDownList(pub.states.features,map)
    // var places = ["Contiguous 48","Alaska","Hawaii","Puerto_Rico"]
-    var places = ["Contiguous 48"]
-    var coords = {
-        "Contiguous 48":{coord:[37,-93],zoom:4},
-        "Alaska":{coord:[63.739,-147.653],zoom:4},
-        "Hawaii":{coord:[20.524,-157.063],zoom:7.1},
-        "Puerto_Rico":{coord:[18.219,-66.338],zoom:8}
-    }
-    
-    for (var i = 0; i < places.length; i++) {
-        var id = places[i];
-        var link = document.createElement('a');
-        link.href = '#';
-        link.className = 'placesLink';
-        link.textContent = id.split("_").join(" ");
-        link.id =id;
-
-        link.onclick = function(e) {
-            var id = d3.select(this).attr("id")
-            var coord = coords[id].coord
-            var zoom = coords[id].zoom
-            map.flyTo({
-                zoom: zoom,
-            center: [
-           coord[1] ,
-            coord[0]
-            ],
-            speed: 0.8, // make the flying slow
-            curve: 1
-            //essential: true // this animation is considered essential with respect to prefers-reduced-motion
-            });
-        };
-
-        var layers = document.getElementById('placesMenu');
-        layers.appendChild(link);
-    }
+    // var places = ["Contiguous 48"]
+ //    var coords = {
+ //        "Contiguous 48":{coord:[37,-93],zoom:4},
+ //        "Alaska":{coord:[63.739,-147.653],zoom:4},
+ //        "Hawaii":{coord:[20.524,-157.063],zoom:7.1},
+ //        "Puerto_Rico":{coord:[18.219,-66.338],zoom:8}
+ //    }
+ //
+ //    for (var i = 0; i < places.length; i++) {
+ //        var id = places[i];
+ //        var link = document.createElement('a');
+ //        link.href = '#';
+ //        link.className = 'placesLink';
+ //        link.textContent = id.split("_").join(" ");
+ //        link.id =id;
+ //
+ //        link.onclick = function(e) {
+ //            var id = d3.select(this).attr("id")
+ //            var coord = coords[id].coord
+ //            var zoom = coords[id].zoom
+ //            map.flyTo({
+ //                zoom: zoom,
+ //            center: [
+ //           coord[1] ,
+ //            coord[0]
+ //            ],
+ //            speed: 0.8, // make the flying slow
+ //            curve: 1
+ //            //essential: true // this animation is considered essential with respect to prefers-reduced-motion
+ //            });
+ //        };
+ //
+ //        var layers = document.getElementById('placesMenu');
+ //        layers.appendChild(link);
+ //    }
 }
 
 function toggleLayers(map){

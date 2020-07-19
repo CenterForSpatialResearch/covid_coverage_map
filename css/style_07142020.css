@@ -90,7 +90,7 @@ font-family: 'Hammersmith One', sans-serif;}
     position:absolute;
     right:5px;
     top:130px;
-    border-radius:5px;
+    border-radius:0px;
     filter: drop-shadow(1px 1px 4px rgba(0,0,0,.1));
 }
 #comparisonKey{
@@ -189,7 +189,15 @@ select{
        font-family:'Open Sans', sans-serif;
        font-size:14px;
        font-weight:200;
+       width:200px;
  }
+ input{
+     -webkit-appearance: none;
+       -moz-appearance: none;
+       appearance: none;
+ }
+
+
  #subtitle{
      top:50px;
      left:20px;
