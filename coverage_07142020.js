@@ -218,7 +218,7 @@ colorGridSvg.append("text").attr("x",35).attr("y",244).text("Counties with no re
             
             var gP = ["low","med","high"][Math.floor((i)/3)]
             var gC = ["low","med","high"][i%3]
-            d3.select("#gridHover").html(pub.histo[i].length+ " counties have "+ gP+" priority and "+gC+" coverage")
+            d3.select("#gridHover").html(pub.histo[i].length+ " counties have "+ gP+" priority and "+gC+" unmet need")
         })
         .on("mouseout",function(d,i){
             //var filter = ["!=",pub.strategy+"_"+pub.coverage+"_group","blahblah"]
