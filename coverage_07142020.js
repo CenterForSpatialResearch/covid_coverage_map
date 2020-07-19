@@ -636,7 +636,7 @@ function drawMap(data,outline){
          map.setFilter("counties",filter)
         // console.log(map.getStyle().layers)        
          zoomToBounds(map)
-         strategyMenu(map)
+         strategyMenu(map,data)
          coverageMenu(map)
          //toggleLayers(map)
          placesMenus(map)
@@ -1076,7 +1076,7 @@ function drawKey(demandType){
 
 }
 
-function strategyMenu(map){
+function strategyMenu(map,data){
 
  
      for (var i = 0; i < measureSet.length; i++) {
@@ -1101,7 +1101,7 @@ function strategyMenu(map){
         row.on("click",function(){
             var clickedId = d3.select(this).attr("id")
             pub.strategy = clickedId
-            drawGrid(map)
+            drawGrid(map,data)
             if(pub.coverage==undefined){
                  pub.coverage = "show_all"
                  d3.select(".show_all_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
