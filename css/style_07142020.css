@@ -169,9 +169,26 @@ font-family: 'Hammersmith One', sans-serif;}
      width:190px;
      border-top:1px solid black;
  }
- .activeLink{
-     margin-left:20px;
-     display:inline-block;
+ .placesLink{
+     margin-top:10px;
+     padding:5px;
+/*     display:inline-block;
+*/ }
+ .ddlCustomers{
+     -webkit-appearance: none;
+       -moz-appearance: none;
+       appearance: none;
+     width:200px;
+     padding: 25px;
+ }
+select{
+     -webkit-appearance: none;
+       -moz-appearance: none;
+       appearance: none;
+       padding: 10px;
+       font-family:'Open Sans', sans-serif;
+       font-size:14px;
+       font-weight:200;
  }
  #subtitle{
      top:50px;

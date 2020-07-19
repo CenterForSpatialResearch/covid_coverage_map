@@ -26,7 +26,8 @@ var pub = {
     tract_svi:false,
     all:null,
     centroids:null,
-    histo:null
+    histo:null,
+    states:null
 }
 var highlightColor = "#DF6D2A"
 var bghighlightColor = "gold"
@@ -372,7 +373,7 @@ var usOutline = d3.json("simple_contiguous.geojson")
 //var allData = d3.csv("County_level_coverage_for_all_policies_and_different_base_case_capacity_07152020.csv")
 var allData =d3.csv("https://raw.githubusercontent.com/CenterForSpatialResearch/allocation_chw/master/Output/County_level_coverage_for_all_policies_and_different_base_case_capacity.csv")
 var timeStamp = d3.csv("https://raw.githubusercontent.com/CenterForSpatialResearch/allocation_chw/master/Output/time_stamp.csv")
-
+var states = d3.json("state_centroids_ST.geojson")
 
 var prioritySet = ["priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot","priority_SVI_high_demand"]
 //var coverageSet = ["base_case_capacity_low","base_case_capacity_mid","base_case_capacity_high","show_all"]
@@ -412,9 +413,9 @@ var measureDisplayText = {
 }
 
 
-Promise.all([counties,usOutline,countyCentroids,allData,timeStamp])
+Promise.all([counties,usOutline,countyCentroids,allData,timeStamp,states])
 .then(function(data){
-    ready(data[0],data[1],data[2],data[3],data[4])
+    ready(data[0],data[1],data[2],data[3],data[4],data[5])
 })
 var hoveredStateId = null;
 
@@ -433,7 +434,8 @@ var fillColor = {
 var centroids = null
 var latestDate = null
 
-function ready(counties,outline,centroids,modelData,timeStamp){
+function ready(counties,outline,centroids,modelData,timeStamp,states){
+    pub.states = states
    loader()
      d3.select("#date").html("Model run as of "+timeStamp["columns"][1])
     //convert to geoid dict
@@ -591,8 +593,8 @@ function drawReservations(data,map){
 }
 
 function drawMap(data,outline){
-//	mapboxgl.accessToken = 'pk.eyJ1Ijoic2lkbCIsImEiOiJkOGM1ZDc0ZTc5NGY0ZGM4MmNkNWIyMmIzNDBkMmZkNiJ9.Qn36nbIqgMc4V0KEhb4iEw';    
-    mapboxgl.accessToken = "pk.eyJ1IjoiYzRzci1nc2FwcCIsImEiOiJja2J0ajRtNzMwOHBnMnNvNnM3Ymw5MnJzIn0.fsTNczOFZG8Ik3EtO9LdNQ"//new account
+	mapboxgl.accessToken = 'pk.eyJ1Ijoic2lkbCIsImEiOiJkOGM1ZDc0ZTc5NGY0ZGM4MmNkNWIyMmIzNDBkMmZkNiJ9.Qn36nbIqgMc4V0KEhb4iEw';    
+//    mapboxgl.accessToken = "pk.eyJ1IjoiYzRzci1nc2FwcCIsImEiOiJja2J0ajRtNzMwOHBnMnNvNnM3Ymw5MnJzIn0.fsTNczOFZG8Ik3EtO9LdNQ"//new account
     var maxBounds = [
     [-190,8], // Southwest coordinates
     [-20, 74] // Northeast coordinates
@@ -603,8 +605,9 @@ function drawMap(data,outline){
     map = new mapboxgl.Map({
          container: 'map',
        // style:"mapbox://styles/c4sr-gsapp/ckcl1av4c083d1irpftb75l6j",//dare
-        style:"mapbox://styles/c4sr-gsapp/ckcnnqpsa2rxx1hp4fhb1j357",//dare2
- 		//style: "mapbox://styles/sidl/ckbsbi96q3mta1hplaopbjt9s",
+        //style:"mapbox://styles/c4sr-gsapp/ckcnnqpsa2rxx1hp4fhb1j357",//dare2
+      //  style:"mapbox://styles/c4sr-gsapp/ckct9rzw02llt1hqpnsosdbe2",//newest
+      style: "mapbox://styles/sidl/ckctaoqfq1mwr1imlq4snjvgw",
  		//style:"mapbox://styles/c4sr-gsapp/ckc4s079z0z5q1ioiybc8u6zp",//new account
         //center:[-100,37],
         bounds:bounds,
@@ -637,6 +640,18 @@ function drawMap(data,outline){
              "data":data
          })
          
+                  
+         map.addLayer({
+             'id': 'counties',
+             'type': 'fill',
+             'source': 'counties',
+             'paint': {
+             'fill-color': "white",
+                 'fill-opacity':0
+             },
+             'filter': ['==', '$type', 'Polygon']
+         },"ST-OUTLINE");
+         
          map.addLayer({
              'id': 'county_outline',
              'type': 'line',
@@ -659,22 +674,11 @@ function drawMap(data,outline){
              
              'filter': ['==', '$type', 'Polygon']
          },"ST-OUTLINE");
-                  
-         map.addLayer({
-             'id': 'counties',
-             'type': 'fill',
-             'source': 'counties',
-             'paint': {
-             'fill-color': "white",
-                 'fill-opacity':0
-             },
-             'filter': ['==', '$type', 'Polygon']
-         },"county_outline");
         // },"county_outline");
          
          var filter = ["!=","percentage_scenario_SVI_hotspot_base_case_capacity_30",-1]
          map.setFilter("counties",filter)
-        // console.log(map.getStyle().layers)        
+         console.log(map.getStyle().layers)        
          zoomToBounds(map)
          strategyMenu(map,data)
          coverageMenu(map)
@@ -718,6 +722,7 @@ function drawMap(data,outline){
     
      map.on('mousemove', 'counties', function(e) {
          var feature = e.features[0]
+        console.log(map.getZoom())
          
        //  console.log(feature["properties"])
          //console.log(feature)
@@ -837,6 +842,8 @@ function drawMap(data,outline){
                 		style: "mapbox://styles/sidl/ckc3ibioh0iza1iqiz0d3vnii",
                 		//style:"mapbox://styles/sidl/ckc4m2i9b0t931jl6o2wahxrp",                      
                         preserveDrawingBuffer: true,
+interactive: false
+                        
                     });
                              detailMap.fitBounds(bounds, {
                                  padding: 5,
@@ -1265,8 +1272,50 @@ function zoomToBounds(mapS){
         [-50, 49.500739]);
     map.fitBounds(bounds,{padding:20},{bearing:0})
 }
+function PopulateDropDownList(features,map) {
+           //Build an array containing Customer records.
+    console.log(features)
+    var sorted =features.sort(function(a,b){
+        return parseInt(a.properties.GEOID) - parseInt(b.properties.GEOID);
+        
+    })          
+            var ddlCustomers = document.getElementById("ddlCustomers");
+         
+            //Add the Options to the DropDownList.
+            for (var i = 0; i < sorted .length; i++) {
+                var option = document.createElement("OPTION");
+ 
+                //Set Customer Name in Text part.
+                option.innerHTML = sorted[i].properties.NAME;
+ 
+                //Set CustomerId in Value part.
+                option.value = features[i].geometry.coordinates;
+ 
+                //Add the Option element to DropDownList.
+              if(sorted[i].properties.NAME!="United States Virgin Islands"&& sorted[i].properties.NAME!="American Samoa"&& sorted[i].properties.NAME!="Commonwealth of the Northern Mariana Islands"&& sorted[i].properties.NAME!="Guam"){
+                  ddlCustomers.options.add(option);
+              }
+            }
+            
+           $('select').on("change",function(){
+               var coords = this.value.split(",")
+               console.log(coords)
+               map.flyTo({
+                   zoom:6,
+               center: [parseFloat(coords[0]),parseFloat(coords[1]) ],
+               speed: 0.8, // make the flying slow
+               curve: 1
+               //essential: true // this animation is considered essential with respect to prefers-reduced-motion
+               });
+            })
+}
+function gotoState(state){
+    console.log(state)
+}
 function placesMenus(map){
-    var places = ["Contiguous 48","Alaska","Hawaii","Puerto_Rico"]
+    PopulateDropDownList(pub.states.features,map)
+   // var places = ["Contiguous 48","Alaska","Hawaii","Puerto_Rico"]
+    var places = ["Contiguous 48"]
     var coords = {
         "Contiguous 48":{coord:[37,-93],zoom:4},
         "Alaska":{coord:[63.739,-147.653],zoom:4},
@@ -1278,7 +1327,7 @@ function placesMenus(map){
         var id = places[i];
         var link = document.createElement('a');
         link.href = '#';
-        link.className = 'activeLink';
+        link.className = 'placesLink';
         link.textContent = id.split("_").join(" ");
         link.id =id;
 
