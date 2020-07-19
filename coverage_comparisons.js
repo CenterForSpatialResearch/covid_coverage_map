@@ -415,26 +415,26 @@ function colorMap(map,key){
 function drawMap(data,comparisonsKeys){
 //	mapboxgl.accessToken = 'pk.eyJ1Ijoic2lkbCIsImEiOiJkOGM1ZDc0ZTc5NGY0ZGM4MmNkNWIyMmIzNDBkMmZkNiJ9.Qn36nbIqgMc4V0KEhb4iEw';    
     mapboxgl.accessToken = "pk.eyJ1IjoiYzRzci1nc2FwcCIsImEiOiJja2J0ajRtNzMwOHBnMnNvNnM3Ymw5MnJzIn0.fsTNczOFZG8Ik3EtO9LdNQ"//new account
-    var bounds = [
-    [-74.1, 40.6], // Southwest coordinates
-    [-73.6, 40.9] // Northeast coordinates
-    ];
-   
-    map = new mapboxgl.Map({
-         container: 'map',
- 		//style: "mapbox://styles/sidl/ckbsbi96q3mta1hplaopbjt9s",
-        //style:"mapbox://styles/c4sr-gsapp/ckcl1av4c083d1irpftb75l6j",//dare
-        style:"mapbox://styles/c4sr-gsapp/ckcnnqpsa2rxx1hp4fhb1j357",//dare2
-        
- 		//style:"mapbox://styles/c4sr-gsapp/ckc4s079z0z5q1ioiybc8u6zp",//new account
-        center:[-100,37],
-         zoom: 3.5,
-         preserveDrawingBuffer: true,
-        minZoom:3.5,
-        maxZoom:10//,
-       // maxBounds: bounds    
-     });
-     
+ var maxBounds = [
+ [-190,8], // Southwest coordinates
+ [-20, 74] // Northeast coordinates
+ ];
+var bounds = [[-130, 26], 
+     [-40, 50]
+ ]
+ map = new mapboxgl.Map({
+      container: 'map',
+    // style:"mapbox://styles/c4sr-gsapp/ckcl1av4c083d1irpftb75l6j",//dare
+     style:"mapbox://styles/c4sr-gsapp/ckcnnqpsa2rxx1hp4fhb1j357",//dare2
+	//style: "mapbox://styles/sidl/ckbsbi96q3mta1hplaopbjt9s",
+	//style:"mapbox://styles/c4sr-gsapp/ckc4s079z0z5q1ioiybc8u6zp",//new account
+     //center:[-100,37],
+     bounds:bounds,
+      zoom: 3.8,
+      preserveDrawingBuffer: true,
+     minZoom:3.5,
+    maxBounds: maxBounds    
+  });
     
      map.on("load",function(){        
          zoomToBounds(map)
