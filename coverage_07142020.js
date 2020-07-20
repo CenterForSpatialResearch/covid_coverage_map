@@ -639,11 +639,12 @@ function drawMap(data,outline){
        // style:"mapbox://styles/c4sr-gsapp/ckcl1av4c083d1irpftb75l6j",//dare
         //style:"mapbox://styles/c4sr-gsapp/ckcnnqpsa2rxx1hp4fhb1j357",//dare2
         style:"mapbox://styles/c4sr-gsapp/ckcnnqpsa2rxx1hp4fhb1j357",//newest
+       //style:"mapbox://styles/mapbox/satellite-v9",//mapbox default
       //style: "mapbox://styles/sidl/ckctaoqfq1mwr1imlq4snjvgw",
  		//style:"mapbox://styles/c4sr-gsapp/ckc4s079z0z5q1ioiybc8u6zp",//new account
         //center:[-100,37],
         bounds:bounds,
-        maxZoom:7.99,
+        maxZoom:10,
          zoom: 3.8,
          preserveDrawingBuffer: true,
         minZoom:3.5,
@@ -651,10 +652,8 @@ function drawMap(data,outline){
      });
      
      //us-outline
-     $('#map').show();
-     
-     map.resize();
-     
+  
+
      map.on("load",function(){
          // map.addControl(
 //          new mapboxgl.GeolocateControl({
@@ -664,6 +663,9 @@ function drawMap(data,outline){
 //          trackUserLocation: true
 //          })
 //          );
+$('#map').show();
+
+map.resize();
 
 
 var geocoder = new MapboxGeocoder({
@@ -795,7 +797,7 @@ mapboxgl: mapboxgl
              if(x+200>w){
                  x = x-280
              }
-             if(y+300>h){
+             if(y+400>h){
                  y= y-320
              }
              
@@ -845,6 +847,9 @@ mapboxgl: mapboxgl
            
           
              d3.select("#popLabel").html(displayString)
+            var gradientSVG = d3.select("#popLabel").append("svg")
+        .attr("width",180).attr('height',40)
+             drawSmallMapKey(gradientSVG)
              
             // var coords = feature.geometry.coordinates[0][0]
               var coords = pub.centroids[feature.properties["FIPS"]]
@@ -866,6 +871,7 @@ mapboxgl: mapboxgl
          map.on("mouseleave",'counties',function(){
              d3.select("#mapPopup").style("visibility","hidden")
              
+             
          })  
          
          
@@ -873,20 +879,20 @@ mapboxgl: mapboxgl
         // console.log([formattedCoords.lat,formattedCoords.lng])
          var coordinates = geometry.coordinates[0]
          
-         var bounds = coordinates.reduce(function(bounds, coord) {
-                 return bounds.extend(coord);
-             }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+         // var bounds = coordinates.reduce(function(bounds, coord) {
+ //                 return bounds.extend(coord);
+ //             }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
              
          if(firstMove==true){
              //d3.select(".mapboxgl-popup-content").append("div").attr("id","sMap").style("width","200px").style("height","200px")
-             	mapboxgl.accessToken = 'pk.eyJ1Ijoic2lkbCIsImEiOiJkOGM1ZDc0ZTc5NGY0ZGM4MmNkNWIyMmIzNDBkMmZkNiJ9.Qn36nbIqgMc4V0KEhb4iEw';    
+//             	mapboxgl.accessToken = 'pk.eyJ1Ijoic2lkbCIsImEiOiJkOGM1ZDc0ZTc5NGY0ZGM4MmNkNWIyMmIzNDBkMmZkNiJ9.Qn36nbIqgMc4V0KEhb4iEw';    
              
              detailMap = new mapboxgl.Map({
                         container: 'popMap',
-                		style: "mapbox://styles/sidl/ckc3ibioh0iza1iqiz0d3vnii",
+                		style: "mapbox://styles/c4sr-gsapp/ckc94kpjp37181iqfpnnowouc",
                 		//style:"mapbox://styles/sidl/ckc4m2i9b0t931jl6o2wahxrp",                      
                         preserveDrawingBuffer: true,
-interactive: false
+                        interactive: false
                         
                     });
                              detailMap.fitBounds(bounds, {
@@ -924,7 +930,44 @@ d3.select("#popMap").selectAll(".mapboxgl-control-container").remove()
               }
           })    
 }
-function subMap(detailMap, center,geometry,countyId){
+function drawSmallMapKey(svg){
+    
+    var defs = svg.append("defs");
+    var gradient = defs.append("linearGradient")
+       .attr("id", "svgGradient")
+       .attr("x1", "0%")
+       .attr("x2", "100%")
+       .attr("y1", "0%")
+       .attr("y2", "0%");
+
+    gradient.append("stop")
+       .attr('class', 'end')
+       .attr("offset", "0%")
+       .attr("stop-color", "#e1e0e0")
+       .attr("stop-opacity", 1);
+    gradient.append("stop")
+       .attr('class', 'start')
+       .attr("offset", "100%")
+       .attr("stop-color", "#525252")
+       .attr("stop-opacity", 1);
+
+   
+       
+    svg.append("rect")
+    .attr("class","key")
+    .attr('width',160)
+    .attr('height',10)
+    .attr("x",20)
+    .attr("y",10)
+    //   .attr("fill","red")
+    .attr("fill","url(#svgGradient)")
+       .attr("stroke","rgba(0,0,0,.5)")
+       .attr("stroke-width",.1)
+       
+      svg.append("text").text("High SVI: 1").attr("x",180).attr("y",32).attr("text-anchor","end")
+      svg.append("text").text("Low SVI: 0").attr("x",20).attr("y",32)//.attr("text-anchor","end")
+}
+function subMap(detailMap, center,geometry,countyId){    
     var coordinates = geometry.coordinates[0]
     var bounds = coordinates.reduce(function(bounds, coord) {
             return bounds.extend(coord);
