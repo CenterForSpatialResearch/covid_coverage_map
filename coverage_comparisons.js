@@ -138,7 +138,7 @@ var coverageDisplayText = {show_all:"Hide Coverage Info"}
 for(var c = 1; c<=8; c++){
     var setTerm = "base_case_capacity_"+c*10
      coverageSet.push(setTerm)
-    coverageDisplayText[setTerm] = c*10+' CHW per 100,000 People'
+    coverageDisplayText[setTerm] = c*10+' CHW per 100,000 residents'
  }
 
 //var measureSet = ["percentage_scenario_SVI_pop","percentage_scenario_SVI_hotspot","percentage_scenario_hotspot","percentage_scenario_high_demand"]
@@ -146,9 +146,9 @@ for(var c = 1; c<=8; c++){
  "percentage_scenario_SVI_hotspot"
  ]
  var measureDisplayText = {
-     percentage_scenario_high_demand:"new cases",
+     percentage_scenario_high_demand:"New cases",
      percentage_scenario_SVI_high_demand:"SVI + new cases",
-     percentage_scenario_hotspot:"new cases per capita",
+     percentage_scenario_hotspot:"New cases per capita",
      percentage_scenario_SVI_pop:"SVI",
      percentage_scenario_SVI_hotspot:"SVI + new cases per capita"
  }
@@ -283,12 +283,13 @@ function drawGrid(map,comparisonsSet){
     for(var i in measureSet){
         
             var x = i*gridSize+160
-            var y = 130
+            var y = 150
         
                 svg.append("text")
                 .text(measureDisplayText[measureSet[i]])
                 .attr("x",x)
                 .attr("y",y)
+                .style("font-size","12px")
                 .attr("transform","rotate(-90 "+x+","+y+")")
                 .attr("fill",keyColors[measureSet[i].replace("percentage_scenario_","")])
         
@@ -296,9 +297,10 @@ function drawGrid(map,comparisonsSet){
             if(i==0){
                 svg.append("text")
                 .text(measureDisplayText[measureSet[j]])
+                .style("font-size","12px")
                 .attr("x",i)
                 .attr("y",j*gridSize+gridSize/2)
-                .attr("transform","translate(140,140)")
+                .attr("transform","translate(145,155)")
                 .attr("text-anchor","end")
                 .attr("fill",keyColors[measureSet[j].replace("percentage_scenario_","")])
             }
@@ -319,7 +321,7 @@ function drawGrid(map,comparisonsSet){
                         .attr("y",gridSize*i)
                         .attr("id",key)
                         .attr("class","grid")
-                        .attr("transform","translate(150,140)")
+                        .attr("transform","translate(150,155)")
                         .attr("cursor","pointer")
                         .on("click",function(){
                             var id = d3.select(this).attr("id")
@@ -338,7 +340,7 @@ function drawGrid(map,comparisonsSet){
                         .attr("height",gridSize-6)
                         .attr("x",gridSize*j)
                         .attr("y",gridSize*i)
-                        .attr("transform","translate(150,140)")
+                        .attr("transform","translate(150,155)")
                         .attr("fill","none")
                         .attr("stroke","#ddd")
                     }
@@ -348,7 +350,7 @@ function drawGrid(map,comparisonsSet){
                         .attr("height",gridSize-6)
                         .attr("x",gridSize*j)
                         .attr("y",gridSize*i)
-                        .attr("transform","translate(150,140)")
+                        .attr("transform","translate(150,155)")
                         .attr("fill","none")
                         .attr("stroke","#ddd")
             }
@@ -725,7 +727,7 @@ function coverageMenu(map){
             }
         })
     
-    svg.append("text").text("CHW per 100,000 Residents").style("font-size","12px").attr("x",30).attr("y",120)
+    svg.append("text").text("CHW per 100,000 residents").style("font-size","12px").attr("x",30).attr("y",120)
   
 }
 function zoomToBounds(mapS){

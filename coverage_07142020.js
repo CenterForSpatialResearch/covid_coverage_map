@@ -434,13 +434,13 @@ var measureSet = [
 "percentage_scenario_high_demand",
 "percentage_scenario_hotspot"
 ]
-var measureDisplayText = {
-    percentage_scenario_high_demand:"New cases within the last 14 days",
-    percentage_scenario_SVI_high_demand:"Socially vulnerable populations <span style=\"color:red; font-size:16px; font-weight:800;\"<strong>+</strong></span> new cases within the last 14 days",
-    percentage_scenario_hotspot:"New cases within the last 14 days as % of population",
-    percentage_scenario_SVI_pop:"Socially vulnerable populations",
-    percentage_scenario_SVI_hotspot:"Socially vulnerable populations  <span style=\"color:red; font-size:16px; font-weight:800;\"<strong>+</strong></span> new cases within the last 14 days as % of population"
-}
+// var measureDisplayText = {
+//     percentage_scenario_high_demand:"New cases within the last 14 days",
+//     percentage_scenario_SVI_high_demand:"Socially vulnerable populations <span style=\"color:red; font-size:16px; font-weight:800;\"<strong>+</strong></span> new cases within the last 14 days",
+//     percentage_scenario_hotspot:"New cases within the last 14 days as % of population",
+//     percentage_scenario_SVI_pop:"Socially vulnerable populations",
+//     percentage_scenario_SVI_hotspot:"Socially vulnerable populations  <span style=\"color:red; font-size:16px; font-weight:800;\"<strong>+</strong></span> new cases within the last 14 days as % of population"
+// }
 
 var measureDisplayText = {
     percentage_scenario_high_demand:"New cases within the last 14 days",
@@ -841,7 +841,7 @@ mapboxgl: mapboxgl
                          +"Social Vulnerability Index: "+SVI+"<br>"
                          +"New cases in the past 14 days: "+cases+"<br>"
                          +"Total number of CHWs needed: "+chwNeed+"<br>"
-                         +"Total number of CHWs allocated: "+chwAssigned+"<br>"
+                         +"Total number of CHWs assigned: "+chwAssigned+"<br>"
                          +"Percent of need <u>unmet</u> with current allocation options: "+(100-currentSelectionCoverage)+"% "
                      
              }
