@@ -643,6 +643,7 @@ function drawMap(data,outline){
  		//style:"mapbox://styles/c4sr-gsapp/ckc4s079z0z5q1ioiybc8u6zp",//new account
         //center:[-100,37],
         bounds:bounds,
+        maxZoom:7.99,
          zoom: 3.8,
          preserveDrawingBuffer: true,
         minZoom:3.5,
@@ -650,6 +651,9 @@ function drawMap(data,outline){
      });
      
      //us-outline
+     $('#map').show();
+     
+     map.resize();
      
      map.on("load",function(){
          // map.addControl(
@@ -918,8 +922,7 @@ d3.select("#popMap").selectAll(".mapboxgl-control-container").remove()
                   d3.select("#layersMenu").style("display","block")
                   d3.select("#mapbox-satellite").style("opacity",1)
               }
-          })
-    
+          })    
 }
 function subMap(detailMap, center,geometry,countyId){
     var coordinates = geometry.coordinates[0]
