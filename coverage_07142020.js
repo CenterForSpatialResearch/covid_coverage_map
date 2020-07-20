@@ -413,7 +413,7 @@ var coverageDisplayText = {show_all:"Hide Coverage Info"}
 for(var c = 1; c<=8; c++){
     var setTerm = "base_case_capacity_"+c*10
      coverageSet.push(setTerm)
-    coverageDisplayText[setTerm] = c*10+' CHW per 100,000 People'
+    coverageDisplayText[setTerm] = c*10+' CHW per 100,000 residents'
  }
 // coverageSet.push("show_all")
 // console.log(coverageSet)
@@ -440,6 +440,14 @@ var measureDisplayText = {
     percentage_scenario_hotspot:"New cases within the last 14 days as % of population",
     percentage_scenario_SVI_pop:"Socially vulnerable populations",
     percentage_scenario_SVI_hotspot:"Socially vulnerable populations  <span style=\"color:red; font-size:16px; font-weight:800;\"<strong>+</strong></span> new cases within the last 14 days as % of population"
+}
+
+var measureDisplayText = {
+    percentage_scenario_high_demand:"New cases within the last 14 days",
+    percentage_scenario_SVI_high_demand:"SVI  <span style=\"color:red; font-size:16px; font-weight:800;\"<strong>+</strong></span> new cases within the last 14 days",
+    percentage_scenario_hotspot:"New cases within the last 14 days as % of population",
+    percentage_scenario_SVI_pop:"Social Vulnerability Index (SVI) * Population",
+    percentage_scenario_SVI_hotspot:"SVI <span style=\"color:red; font-size:16px; font-weight:800;\"<strong>+</strong></span> new cases within the last 14 days as % of population"
 }
 
 
