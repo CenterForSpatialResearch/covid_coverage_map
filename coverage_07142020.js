@@ -708,7 +708,7 @@ mapboxgl: mapboxgl
                     'case',
                     ['boolean', ['feature-state', 'hover'], false],
                     1,
-                    .05
+                    .15
                  ],
                  'line-width':[
                     'case',
