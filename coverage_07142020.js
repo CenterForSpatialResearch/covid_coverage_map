@@ -436,10 +436,10 @@ var measureSet = [
 ]
 var measureDisplayText = {
     percentage_scenario_high_demand:"New cases within the last 14 days",
-    percentage_scenario_SVI_high_demand:"Socially vulnerable populations and new cases within the last 14 days",
+    percentage_scenario_SVI_high_demand:"Socially vulnerable populations <span style=\"color:red; font-size:16px; font-weight:800;\"<strong>+</strong></span> new cases within the last 14 days",
     percentage_scenario_hotspot:"New cases within the last 14 days as % of population",
     percentage_scenario_SVI_pop:"Socially vulnerable populations",
-    percentage_scenario_SVI_hotspot:"Socially vulnerable populations and new cases within the last 14 days as % of population"
+    percentage_scenario_SVI_hotspot:"Socially vulnerable populations  <span style=\"color:red; font-size:16px; font-weight:800;\"<strong>+</strong></span> new cases within the last 14 days as % of population"
 }
 
 
@@ -625,8 +625,8 @@ function drawReservations(data,map){
 function drawMap(data,outline){
     d3.select("#map").style("width",window.innerWidth-250+"px")
           .style("height",window.innerHeight-120+"px")
-	mapboxgl.accessToken = 'pk.eyJ1Ijoic2lkbCIsImEiOiJkOGM1ZDc0ZTc5NGY0ZGM4MmNkNWIyMmIzNDBkMmZkNiJ9.Qn36nbIqgMc4V0KEhb4iEw';    
-//    mapboxgl.accessToken = "pk.eyJ1IjoiYzRzci1nc2FwcCIsImEiOiJja2J0ajRtNzMwOHBnMnNvNnM3Ymw5MnJzIn0.fsTNczOFZG8Ik3EtO9LdNQ"//new account
+//	mapboxgl.accessToken = 'pk.eyJ1Ijoic2lkbCIsImEiOiJkOGM1ZDc0ZTc5NGY0ZGM4MmNkNWIyMmIzNDBkMmZkNiJ9.Qn36nbIqgMc4V0KEhb4iEw';    
+    mapboxgl.accessToken = "pk.eyJ1IjoiYzRzci1nc2FwcCIsImEiOiJja2J0ajRtNzMwOHBnMnNvNnM3Ymw5MnJzIn0.fsTNczOFZG8Ik3EtO9LdNQ"//new account
     var maxBounds = [
     [-190,8], // Southwest coordinates
     [-20, 74] // Northeast coordinates
@@ -638,8 +638,8 @@ function drawMap(data,outline){
          container: 'map',
        // style:"mapbox://styles/c4sr-gsapp/ckcl1av4c083d1irpftb75l6j",//dare
         //style:"mapbox://styles/c4sr-gsapp/ckcnnqpsa2rxx1hp4fhb1j357",//dare2
-      //  style:"mapbox://styles/c4sr-gsapp/ckct9rzw02llt1hqpnsosdbe2",//newest
-      style: "mapbox://styles/sidl/ckctaoqfq1mwr1imlq4snjvgw",
+        style:"mapbox://styles/c4sr-gsapp/ckcnnqpsa2rxx1hp4fhb1j357",//newest
+      //style: "mapbox://styles/sidl/ckctaoqfq1mwr1imlq4snjvgw",
  		//style:"mapbox://styles/c4sr-gsapp/ckc4s079z0z5q1ioiybc8u6zp",//new account
         //center:[-100,37],
         bounds:bounds,
