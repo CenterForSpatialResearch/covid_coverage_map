@@ -27,7 +27,7 @@ var pub = {
     all:null,
     centroids:null,
     histo:null,
-    pair:"SVI_popXXXSVI_hotspot"
+    pair:"hotspotXXXSVI_hotspot"
 }
 var highlightColor = "#DF6D2A"
 var bghighlightColor = "gold"
@@ -50,42 +50,58 @@ var colorStart = "#604F23"
 //"priority_high_demand","priority_SVI_hotspot","priority_SVI_pop","priority_hotspot"
 
 var keyColors = {high_demand:"#EA00FF",SVI_hotspot:"#F45180",SVI_pop:"#45B6A3",hotspot:"#7E6EFF",SVI_high_demand:"#71BF4D"}
+//var keyColors = {high_demand:"#fccc0a",SVI_hotspot:"#996633",SVI_pop:"#0039a6",hotspot:"#00933c",SVI_high_demand:"#b933ad"}
+//var keyColors ={high_demand:"#437337",SVI_hotspot:"#c8b046",SVI_pop:"#63bb91",hotspot:"#837632",SVI_high_demand:"#6dbf45"}
+//var keyColors = {high_demand:"#717b44",SVI_hotspot:"#79db55",SVI_pop:"#c3d59a",hotspot:"#ccd149",SVI_high_demand:"#619f46"}
 
+var keyColors = {
+    SVI_hotspot:"#70ca7c",
+SVI_pop:"#44caaf",
+SVI_high_demand:"#6fac38",
+high_demand:"#cb983f",
+hotspot:"#d6be3d"
+}
 
+var keyColors = {
+    SVI_hotspot:"#569f3d",
+SVI_pop:"#71d770",
+SVI_high_demand:"#bec23f",
+high_demand:"#eb9519",
+hotspot:"#e8b72b"
+}
 
-
-var colorGroups = ["#8DC63F","#9FCF8B","#B2D8D6","#47823B","#5A8B71","#6C93A7","#003E38","#134658","#274F78"]
-
-var colorGroups = ["#B2D8D6","#6C93A7","#274F78","#9FCF8B","#5A8B71","#134658","#8DC63F","#47823B","#003E38"]
-var colorGroups = ["#003E38","#134658","#274F78","#47823B","#5A8B71","#6C93A7","#8DC63F","#9FCF8B","#B2D8D6"]
-
-var colorGroups = ["#FF8608","#D8AF6F","#B2D8D6","#CA6C19","#9B8060","#6C93A7","#94512A","#5D5051","#274F78"]
-
-
-var colorGroups = ["#DDDDD7","#91B3C4","#4488B2","#EED66C","#88B078","#228983","#FFCE00","#80AC2A","#008954"]
-
-var colorGroups = ["#FDECB2","#CED9C4","#CFDEDF","#FCE477","#9EBD9C","#9FC6D2","#FADB3C","#6DA173","#6FAFC4"]
-var colorGroups = ["rgba(250,219,60,.4)","rgba(136,176,120,.4)","rgba(75,142,191,.4)","rgba(250,219,60,.7)","rgba(136,176,120,.7)","rgba(75,142,191,.7)","rgba(250,219,60,1)","rgba(136,176,120,1)","rgba(75,142,191,1)"]
-var colorGroups = [
-"rgba(75,142,191,1)","rgba(75,142,191,.7)","rgba(75,142,191,.4)",
-"rgba(136,176,120,1)","rgba(136,176,120,.7)","rgba(136,176,120,.4)",
-"rgba(250,219,60,1)","rgba(250,219,60,.7)","rgba(250,219,60,.4)"
-]
-//var colorGroups = ["#FDD6B9","#DBCEC5","#B8C5D1","#FCAE74","#B79D8C","#718BA4","#F77A26","#91664E","#2A5176"]
+// var colorGroups = ["#8DC63F","#9FCF8B","#B2D8D6","#47823B","#5A8B71","#6C93A7","#003E38","#134658","#274F78"]
 //
-// var pStops = [[0,.33],[.34,.66],[.67,1]]
-// var cStops = [[0,33],[34,66],[67,100]]
+// var colorGroups = ["#B2D8D6","#6C93A7","#274F78","#9FCF8B","#5A8B71","#134658","#8DC63F","#47823B","#003E38"]
+// var colorGroups = ["#003E38","#134658","#274F78","#47823B","#5A8B71","#6C93A7","#8DC63F","#9FCF8B","#B2D8D6"]
+//
+// var colorGroups = ["#FF8608","#D8AF6F","#B2D8D6","#CA6C19","#9B8060","#6C93A7","#94512A","#5D5051","#274F78"]
+//
+//
+// var colorGroups = ["#DDDDD7","#91B3C4","#4488B2","#EED66C","#88B078","#228983","#FFCE00","#80AC2A","#008954"]
+//
+// var colorGroups = ["#FDECB2","#CED9C4","#CFDEDF","#FCE477","#9EBD9C","#9FC6D2","#FADB3C","#6DA173","#6FAFC4"]
+// var colorGroups = ["rgba(250,219,60,.4)","rgba(136,176,120,.4)","rgba(75,142,191,.4)","rgba(250,219,60,.7)","rgba(136,176,120,.7)","rgba(75,142,191,.7)","rgba(250,219,60,1)","rgba(136,176,120,1)","rgba(75,142,191,1)"]
+// var colorGroups = [
+// "rgba(75,142,191,1)","rgba(75,142,191,.7)","rgba(75,142,191,.4)",
+// "rgba(136,176,120,1)","rgba(136,176,120,.7)","rgba(136,176,120,.4)",
+// "rgba(250,219,60,1)","rgba(250,219,60,.7)","rgba(250,219,60,.4)"
+// ]
+// //var colorGroups = ["#FDD6B9","#DBCEC5","#B8C5D1","#FCAE74","#B79D8C","#718BA4","#F77A26","#91664E","#2A5176"]
+// //
+// // var pStops = [[0,.33],[.34,.66],[.67,1]]
+// // var cStops = [[0,33],[34,66],[67,100]]
 
     
-var pStops = [[0,.34],[.34,.67],[.67,1]]
-var cStops = [[0,34],[34,67],[67,100]]
+// var pStops = [[0,.34],[.34,.67],[.67,1]]
+// var cStops = [[0,34],[34,67],[67,100]]
 
-var groupColorDict = []
-for(var g =0; g<colorGroups.length; g++){
-    groupColorDict.push("_"+String(g+1))
-    groupColorDict.push(colorGroups[g])
-}
-groupColorDict.push("#eee")
+// var groupColorDict = []
+// for(var g =0; g<colorGroups.length; g++){
+//     groupColorDict.push("_"+String(g+1))
+//     groupColorDict.push(colorGroups[g])
+// }
+// groupColorDict.push("#eee")
 
 function histo(){
 var histo = d3.histogram()
@@ -126,7 +142,9 @@ for(var c = 1; c<=8; c++){
  }
 
 //var measureSet = ["percentage_scenario_SVI_pop","percentage_scenario_SVI_hotspot","percentage_scenario_hotspot","percentage_scenario_high_demand"]
- var measureSet = ["percentage_scenario_SVI_high_demand","percentage_scenario_SVI_pop","percentage_scenario_SVI_hotspot","percentage_scenario_hotspot","percentage_scenario_high_demand"]
+ var measureSet = ["percentage_scenario_SVI_pop","percentage_scenario_high_demand","percentage_scenario_SVI_high_demand","percentage_scenario_hotspot",
+ "percentage_scenario_SVI_hotspot"
+ ]
  var measureDisplayText = {
      percentage_scenario_high_demand:"new cases",
      percentage_scenario_SVI_high_demand:"SVI + new cases",
@@ -272,6 +290,7 @@ function drawGrid(map,comparisonsSet){
                 .attr("x",x)
                 .attr("y",y)
                 .attr("transform","rotate(-90 "+x+","+y+")")
+                .attr("fill",keyColors[measureSet[i].replace("percentage_scenario_","")])
         
         for(var j in measureSet){
             if(i==0){
@@ -281,6 +300,7 @@ function drawGrid(map,comparisonsSet){
                 .attr("y",j*gridSize+gridSize/2)
                 .attr("transform","translate(140,140)")
                 .attr("text-anchor","end")
+                .attr("fill",keyColors[measureSet[j].replace("percentage_scenario_","")])
             }
             
             if(j!=i){
@@ -376,14 +396,15 @@ function drawKey(key){
        .attr("offset", "100%")
        .attr("stop-color", keyColors[k2])
        .attr("stop-opacity", 1);
+       
     svg.append("text").text("Higher % of needs met when prioritizing by".toUpperCase()).attr("y",18).attr("x",20)
-       .attr("fill","#000").style("font-size","12px").style("font-weight","bold")
+       .attr("fill","#000").style("font-size","12px").style("font-weight","bold").attr("fill",keyColors[k1])
        
     svg.append("text").text("Higher % of needs met when prioritizing by".toUpperCase()).attr("y",18).attr("x",720)
-       .attr("fill","#000").style("font-size","12px").attr("text-anchor","end").style("font-weight","bold")
+       .attr("fill","#000").style("font-size","12px").attr("text-anchor","end").style("font-weight","bold").attr("fill",keyColors[k2])
 
-    svg.append("text").text(measureDisplayText["percentage_scenario_"+k1].toUpperCase()).attr("y",40).attr("x",20).style("font-size","12px").style("font-weight","bold")//.attr("fill",keyColors[k1])
-    svg.append("text").text(measureDisplayText["percentage_scenario_"+k2].toUpperCase()).attr("y",40).attr("x",720).style("font-size","12px").style("font-weight","bold").attr("text-anchor","end")//.attr("fill",keyColors[k2])
+    svg.append("text").text(measureDisplayText["percentage_scenario_"+k1].toUpperCase()).attr("y",40).attr("x",20).style("font-size","12px").style("font-weight","bold").attr("fill",keyColors[k1])//.attr("fill",keyColors[k1])
+    svg.append("text").text(measureDisplayText["percentage_scenario_"+k2].toUpperCase()).attr("y",40).attr("x",720).style("font-size","12px").style("font-weight","bold").attr("text-anchor","end").attr("fill",keyColors[k2])//.attr("fill",keyColors[k2])
     svg.append("text").text("no difference".toUpperCase()).attr("y",75).attr("x",370).attr("text-anchor","middle").style("font-size","12px").style("font-weight","bold")
     svg.append("rect")
     .attr("class","key")
@@ -510,11 +531,11 @@ var bounds = [[-130, 26],
               
              //  map.setPaintProperty("counties", 'fill-color', matchString)  
          
-        d3.select("."+pub.coverage+"_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
-        d3.selectAll("."+pub.coverage).style("color",highlightColor)
-        d3.selectAll("."+pub.strategy).style("color",highlightColor)
-        d3.selectAll("."+pub.strategy+"_radialS").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
-          
+        // d3.select("."+pub.coverage+"_radialC").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
+ //        d3.selectAll("."+pub.coverage).style("color",highlightColor)
+ //        d3.selectAll("."+pub.strategy).style("color",highlightColor)
+ //        d3.selectAll("."+pub.strategy+"_radialS").style("background-color",highlightColor).style("border","1px solid "+ highlightColor)
+ //   
      })
 
     
@@ -596,8 +617,9 @@ var bounds = [[-130, 26],
     
 }
 function drawChart(data){
-    var xScale = d3.scaleLinear().domain([0,100]).range([2,180])
-    var svg = d3.select("#mapPopup").append("svg").attr("class","chart").attr("width",200).attr("height",160)
+    var barHeight = 35
+    var xScale = d3.scaleLinear().domain([0,100]).range([2,140])
+    var svg = d3.select("#mapPopup").append("svg").attr("class","chart").attr("width",200).attr("height",200)
     svg.selectAll("rect")
     .data(data)
     .enter()
@@ -606,9 +628,23 @@ function drawChart(data){
         return xScale(d.value)
     })
     .attr("height",10)
-    .attr("x",10)
-    .attr("y",function(d,i){return i*30+20})
+    .attr("x",40)
+    .attr("y",function(d,i){return i*35+20})
     .attr("fill", function (d,i){
+        return keyColors[d.axis.replace("percentage_scenario_","").replace("_base_case_capacity_"+currentCapacity,"")]
+    })
+    svg.selectAll(".emptyBar")
+    .data(data)
+    .enter()
+    .append("rect")
+    .attr("width",function (d,i){
+        return xScale(100)
+    })
+    .attr("height",10)
+    .attr("x",40)
+    .attr("y",function(d,i){return i*35+20})
+    .attr("fill","none")
+    .attr("stroke", function (d,i){
         return keyColors[d.axis.replace("percentage_scenario_","").replace("_base_case_capacity_"+currentCapacity,"")]
     })
     
@@ -620,8 +656,8 @@ function drawChart(data){
 
             return measureDisplayText[d.axis.replace("_base_case_capacity_"+currentCapacity,"")]
         })
-        .attr("x",10)
-        .attr("y",function(d,i){return i*30+10})
+        .attr("x",40)
+        .attr("y",function(d,i){return i*35+15})
     
     svg.selectAll(".textValue")
         .data(data)
@@ -630,8 +666,10 @@ function drawChart(data){
         .text(function (d,i){
             return Math.round(d.value)+"%"
         })
-        .attr("x",10)
-        .attr("y",function(d,i){return i*30+20})
+        .attr("x",35)
+        .style("font-size","14px")
+        .attr("y",function(d,i){return i*35+30})
+        .attr("text-anchor","end")
 }
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
