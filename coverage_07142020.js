@@ -1182,7 +1182,7 @@ function drawKey(demandType){
 
 function strategyMenu(map,data){
 
- var clickedId
+ var clickedId = "percentage_scenario_SVI_hotspot"
     
      for (var i = 0; i < measureSet.length; i++) {
          var id = measureSet[i];
@@ -1197,6 +1197,7 @@ function strategyMenu(map,data){
           row.on("mouseover",function(){
               var outId = d3.select(this).attr("class").split(" ")[0].replace("_radialMenuS","")
               if(outId!=clickedId){
+              d3.select(this).select(".labelS").style("color","#000")
     
               d3.select(this).select(".labelS").style("background-color",bghighlightColor)
               }
@@ -1211,8 +1212,10 @@ function strategyMenu(map,data){
           })
          
         row.on("click",function(){
+            
             clickedId = d3.select(this).attr("id")
             pub.strategy = clickedId
+    console.log(clickedId)
             drawGrid(map,data)
             if(pub.coverage==undefined){
                  pub.coverage = "show_all"
@@ -1378,7 +1381,6 @@ function PopulateDropDownList(features,map) {
           ddlCustomers.options.add(option);
       }
     }
-    console.log(boundsDict)
    $('select').on("change",function(){
        if(this.innerHTML=="Contiguous 48"){
            map.flyTo({
